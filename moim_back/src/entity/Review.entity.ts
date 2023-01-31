@@ -4,11 +4,13 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   JoinColumn,
+  Unique,
 } from 'typeorm';
 import { Event } from './Event.entity';
 import { User } from './User.entity';
 
 @Entity()
+@Unique('unique_Review_createdAt_reviewerId', ['createdAt', 'reviewerId'])
 export class Review {
   @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_Review' })
   reviewId: number;
