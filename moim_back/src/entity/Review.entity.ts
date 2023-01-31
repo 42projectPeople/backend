@@ -25,6 +25,13 @@ export class Review {
   })
   likes: number;
 
+  @Column({
+    type: 'varchar',
+    length: 400,
+    nullable: false,
+  })
+  content: string;
+
   /*
    * userId
    * */
