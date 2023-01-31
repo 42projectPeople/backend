@@ -29,13 +29,17 @@ export class Review {
    * userId
    * */
   @ManyToOne(() => User, (user) => user.userId)
-  @JoinColumn()
+  @JoinColumn({
+    name: 'reviewerId',
+  })
   reviewerId: User;
 
   /*
    * referencing event
    * */
   @ManyToOne(() => Event, (event) => event.eventId)
-  @JoinColumn()
+  @JoinColumn({
+    name: 'eventId',
+  })
   eventId: Event;
 }
