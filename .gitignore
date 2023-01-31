@@ -113,4 +113,5 @@ dist
 # TernJS port file
 .tern-port
 
-
+# Database ENV file
+moim_back/.env.prod
