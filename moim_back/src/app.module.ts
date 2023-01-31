@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import localConfiguration from './config/localConfiguration';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Hashtag } from './entity/Hashtag.entity';
 import { Event } from './entity/Event.entity';
@@ -13,7 +12,6 @@ import { User } from './entity/User.entity';
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env.dev.local'],
-      load: [localConfiguration],
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
