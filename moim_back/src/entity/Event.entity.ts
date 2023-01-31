@@ -5,7 +5,6 @@ import {
   ManyToMany,
   OneToMany,
   ManyToOne,
-  JoinTable,
   Unique,
 } from 'typeorm';
 import { Hashtag } from './Hashtag.entity';
@@ -35,6 +34,14 @@ export class Event {
     nullable: true,
   })
   modifiedAt: string;
+
+  @Column({
+    type: 'char',
+    length: '100',
+    nullable: true,
+    comment: 'URL',
+  })
+  main_image: string;
 
   @Column({
     type: 'text',
