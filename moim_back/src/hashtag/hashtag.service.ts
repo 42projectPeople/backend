@@ -9,4 +9,9 @@ export class HashtagService {
     @InjectRepository(Hashtag)
     private hashtagRepository: Repository<Hashtag>,
   ) {}
+
+  //get all hashtags
+  async getHashtag(): Promise<Hashtag[]> {
+    return await this.hashtagRepository.find();
+  }
 }
