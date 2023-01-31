@@ -1,4 +1,14 @@
-import { Controller, Get } from '@nestjs/common'
+import { Controller, Get, Param, Post } from '@nestjs/common'
+import { Event } from 'src/entity/Event.entity'
+import { EventService } from './event.service'
 
 @Controller('event')
-export class EventController {}
+export class EventController {
+  constructor(private readonly eventService: EventService) {}
+  @Get('/:id')
+  async FindOneEvent(@Param('id') id: number): Promise<Event> {
+    const ret = await this.eventService.eventFindOneById(id)
+    console.log(`\n\n ret = ${ret}`)
+    return ret
+  }
+}

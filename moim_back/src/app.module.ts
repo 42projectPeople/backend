@@ -1,13 +1,13 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Hashtag } from './entity/Hashtag.entity';
-import { Event } from './entity/Event.entity';
-import { Review } from './entity/Review.entity';
-import { User } from './entity/User.entity';
-import { EventModule } from './event/event.module';
+import { Module } from '@nestjs/common'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { ConfigModule } from '@nestjs/config'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { Hashtag } from './entity/Hashtag.entity'
+import { Event } from './entity/Event.entity'
+import { Review } from './entity/Review.entity'
+import { User } from './entity/User.entity'
+import { EventModule } from './event/event.module'
 
 @Module({
   imports: [
