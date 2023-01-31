@@ -101,7 +101,7 @@ export class Event {
   @JoinColumn({
     name: 'hostId',
   })
-  host: User | number;
+  host: User;
 
   @ManyToMany(() => User, (user) => user.enrollEvents)
   enrollUsers: User[];
