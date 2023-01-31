@@ -1,3 +1,12 @@
+
+#### PROJECT DEFINE IGNORE
+.vscode/
+moim_back/.vscode/
+moim_back/node_modules/
+
+
+
+
 # Logs
 logs
 *.log
@@ -102,3 +111,5 @@ dist
 
 # TernJS port file
 .tern-port
+
+
