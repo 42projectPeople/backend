@@ -57,7 +57,7 @@ export class User {
 
   @ManyToMany(() => Hashtag, (hashtag) => hashtag.users)
   @JoinTable({
-    name: 'user_hashtags',
+    name: 'user_interest_hashtags',
     joinColumn: {
       name: 'User',
       referencedColumnName: 'userId',
