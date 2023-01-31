@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
@@ -23,8 +24,8 @@ export class Hashtag {
   })
   hashtagName: string;
 
-  @ManyToMany(() => Event, (event) => event.hashtags)
-  events: Event[];
+  @OneToMany(() => Event, (event) => event.hashtag)
+  event: Event[];
 
   @ManyToMany(() => User, (user) => user.hashtags)
   users: User[];

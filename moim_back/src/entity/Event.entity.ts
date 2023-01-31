@@ -95,19 +95,11 @@ export class Event {
   @ManyToMany(() => User, (user) => user.enrollEvents)
   enrollUsers: User[];
 
-  @ManyToMany(() => Hashtag, (hashtag) => hashtag.events)
-  @JoinTable({
-    name: 'event_hashtags',
-    joinColumn: {
-      name: 'Event',
-      referencedColumnName: 'eventId',
-    },
-    inverseJoinColumn: {
-      name: 'Hashtag',
-      referencedColumnName: 'hashtagId',
-    },
-  })
-  hashtags: Hashtag[];
+  /*
+   * event's hashtag
+   * */
+  @ManyToOne(() => Hashtag, (hashtag) => hashtag.event)
+  hashtag: Hashtag[];
 
   @OneToMany(() => Review, (review) => review.reviewId)
   reviewIds: Review[];
