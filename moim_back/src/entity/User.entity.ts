@@ -2,113 +2,76 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  ManyToMany,
-  OneToMany,
-  ManyToOne,
-  JoinTable,
   Unique,
-} from "typeorm";
-import { Hashtag } from "./Hashtag.entity";
-import { Review } from "./Review.entity";
-import { User } from "./User.entity";
+  ManyToMany,
+  JoinTable,
+  OneToMany,
+} from 'typeorm';
+import { Event } from './Event.entity';
+import { Hashtag } from './Hashtag.entity';
+import { Review } from './Review.entity';
 
 @Entity()
-@Unique("unique_event_createdAt_host", ["createdAt", "host"])
-export class Event {
-  @PrimaryGeneratedColumn({ primaryKeyConstraintName: "pk_Event" })
-  eventId: number;
+@Unique('unique_User_userName', ['userName'])
+@Unique('unique_User_userNickName', ['userNickName'])
+export class User {
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_User' })
+  userId: number;
+
+  @Column({ type: 'char', length: 35, nullable: false })
+  userName: string;
+
+  @Column({ type: 'char', length: 100, nullable: false })
+  userNickName: string;
 
   @Column({
-    type: "datetime",
-    nullable: false,
-  })
-  createdAt: string;
-
-  @Column({
-    type: "datetime",
-    nullable: false,
-  })
-  eventDate: string;
-
-  @Column({
-    type: "datetime",
+    type: 'char',
+    length: 100,
     nullable: true,
+    default: '/profile/default.png',
   })
-  modifiedAt: string;
+  userProfilePhoto: string;
 
-  @Column({
-    type: "text",
-    nullable: false,
-  })
-  content: string;
+  @Column({ type: 'float', nullable: false, default: '0' })
+  userLevel: number;
 
-  @Column({
-    type: "int",
-    default: 0,
-  })
-  views: number;
+  @Column({ type: 'char', length: 200, nullable: true })
+  userTitle: string;
 
-  @Column({
-    type: "char",
-    length: 100,
-    nullable: false,
-  })
-  location: string;
-
-  @Column({
-    type: "float",
-    nullable: false,
-  })
-  latitude: number;
-
-  @Column({
-    type: "float",
-    nullable: false,
-  })
-  longitude: number;
-
-  @Column({
-    type: "char",
-    length: 100,
-  })
-  header: string;
-
-  @Column({
-    type: "float",
-    default: 0,
-  })
-  rating: number;
-
-  @Column({
-    type: "int",
-  })
-  maxParticipant: number;
-
-  @Column({
-    type: "int",
-  })
-  curParticipant: number;
-
-  @ManyToOne(() => User, (user) => user.userId)
-  host: User | number;
-
-  @ManyToMany(() => User, (user) => user.enrollEvents)
-  enrollUsers: User[];
-
-  @ManyToMany(() => Hashtag, (hashtag) => hashtag.events)
+  /*
+   * JoinTable => ManyToMany에서 junction 관계 형성 시 사용
+   * */
+  @ManyToMany(() => Event, (event) => event.enrollUsers)
   @JoinTable({
-    name: "event_hashtags",
+    name: 'user_events',
     joinColumn: {
-      name: "Event",
-      referencedColumnName: "eventId",
+      name: 'User',
+      referencedColumnName: 'userId',
     },
     inverseJoinColumn: {
-      name: "Hashtag",
-      referencedColumnName: "hashtagId",
+      name: 'Event',
+      referencedColumnName: 'eventId',
+    },
+  })
+  enrollEvents: Event[];
+
+  @ManyToMany(() => Hashtag, (hashtag) => hashtag.users)
+  @JoinTable({
+    name: 'user_hashtags',
+    joinColumn: {
+      name: 'User',
+      referencedColumnName: 'userId',
+    },
+    inverseJoinColumn: {
+      name: 'Hashtag',
+      referencedColumnName: 'hashtagId',
     },
   })
   hashtags: Hashtag[];
 
-  @OneToMany(() => Review, (review) => review.reviewId)
-  reviewIds: Review[];
+  @OneToMany(() => Event, (event) => event.host)
+  hostingEvent: Event[];
+
+  @OneToMany(() => Review, (review) => review.eventId)
+  reviews: Review[];
 }
