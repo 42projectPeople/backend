@@ -45,8 +45,10 @@ export class Event {
   main_image: string;
 
   @Column({
-    type: 'text',
+    type: 'char',
+    length: 100,
     nullable: false,
+    comment: 'URL',
   })
   content: string;
 
