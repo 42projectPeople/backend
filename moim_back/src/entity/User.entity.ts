@@ -29,6 +29,7 @@ export class User {
     length: 100,
     nullable: true,
     default: '/profile/default.png',
+    comment: 'URL',
   })
   userProfilePhoto: string;
 
