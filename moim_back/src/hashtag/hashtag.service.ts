@@ -11,7 +11,7 @@ export class HashtagService {
   ) {}
 
   //get all hashtags
-  async getHashtag(): Promise<Hashtag[]> {
+  async findAll(): Promise<Hashtag[]> {
     return await this.hashtagRepository.find();
   }
 }
