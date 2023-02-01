@@ -15,6 +15,11 @@ import { UpdateReviewDto } from './dto/update-review.dto';
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
+  @Get(':eventId')
+  async getReviewByEventId(@Param('eventId') eventId: string) {
+    return await this.reviewService.findReviewByEventID(+eventId);
+  }
+
   @Post()
   create(@Body() createReviewDto: CreateReviewDto) {
     return this.reviewService.create(createReviewDto);

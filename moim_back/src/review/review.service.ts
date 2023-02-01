@@ -16,7 +16,11 @@ export class ReviewService {
     return 'This action adds a new review';
   }
 
-  findAll() {}
+  async findReviewByEventID(eventId: number) {
+    return await this.reviewRepository.find({
+      where: { eventId: eventId },
+    });
+  }
 
   update(id: number, updateReviewDto: UpdateReviewDto) {
     return `This action updates a #${id} review`;
