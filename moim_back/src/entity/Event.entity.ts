@@ -20,6 +20,7 @@ export class Event {
 
   @Column({
     type: 'datetime',
+    precision: 6,
     nullable: false,
   })
   createdAt: string
@@ -115,7 +116,7 @@ export class Event {
   @JoinColumn({
     name: 'hashtagId',
   })
-  hashtag: Hashtag[]
+  hashtag: Hashtag
 
   @OneToMany(() => Review, (review) => review.reviewId)
   reviewIds: Review[]
