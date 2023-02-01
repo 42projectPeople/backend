@@ -12,14 +12,14 @@ export class ReviewService {
     private readonly reviewRepository: Repository<Review>,
   ) {}
 
-  create(createReviewDto: CreateReviewDto) {
-    return 'This action adds a new review';
-  }
-
   async findReviewByEventID(eventId: number) {
     return await this.reviewRepository.find({
       where: { eventId: eventId },
     });
+  }
+
+  create(createReviewDto: CreateReviewDto) {
+    return 'This action adds a new review';
   }
 
   update(id: number, updateReviewDto: UpdateReviewDto) {
