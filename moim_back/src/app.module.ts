@@ -9,6 +9,7 @@ import { Review } from './entity/Review.entity'
 import { User } from './entity/User.entity'
 import { EventModule } from './event/event.module'
 
+
 @Module({
   imports: [
     ConfigModule.forRoot({

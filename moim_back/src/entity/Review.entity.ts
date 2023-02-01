@@ -16,7 +16,8 @@ export class Review {
   reviewId: number
 
   @Column({
-    type: 'date',
+    type: 'datetime',
+    precision: 6,
     nullable: false,
   })
   createdAt: string
@@ -50,5 +51,5 @@ export class Review {
   @JoinColumn({
     name: 'eventId',
   })
-  eventId: Event
+  eventId: Event | number;
 }
