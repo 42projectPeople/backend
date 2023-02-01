@@ -11,7 +11,7 @@ export class EventService {
   async eventFindOneById(eventId: number): Promise<Event> {
     return await this.eventRepository.findOneBy({ eventId })
   }
-  async eventCreate(body: any): Promise<Event> {
-    return await this.eventRepository.save()
-  }
+  // async eventCreate(body: any): Promise<Event> {
+  //   return await this.eventRepository.save()
+  // }
 }
