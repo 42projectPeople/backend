@@ -3,9 +3,9 @@
 .vscode/
 moim_back/.vscode/
 moim_back/.idea/
+.idea
+.vscode
 moim_back/node_modules/
-
-
 
 
 # Logs
@@ -116,3 +116,4 @@ dist
 # Database ENV file
 moim_back/.env.prod
 moim_back/.env.dev
+moim_back/.env.dev.local
