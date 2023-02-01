@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateReviewDto } from './dto/create-review.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Review } from 'src/entity/Review.entity';
+import { Repository } from 'typeorm';
+import CreateReviewDto from './dto/createReviewDto';
+import UpdateReviewDto from './dto/updateReviewDto';
 
 @Injectable()
 export class ReviewService {
@@ -8,13 +11,7 @@ export class ReviewService {
     return 'This action adds a new review';
   }
 
-  findAll() {
-    return `This action returns all review`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} review`;
-  }
+  findAll() {}
 
   update(id: number, updateReviewDto: UpdateReviewDto) {
     return `This action updates a #${id} review`;
