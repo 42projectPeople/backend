@@ -7,6 +7,11 @@ import UpdateReviewDto from './dto/updateReviewDto';
 
 @Injectable()
 export class ReviewService {
+  constructor(
+    @InjectRepository(Review)
+    private readonly reviewRepository: Repository<Review>,
+  ) {}
+
   create(createReviewDto: CreateReviewDto) {
     return 'This action adds a new review';
   }
