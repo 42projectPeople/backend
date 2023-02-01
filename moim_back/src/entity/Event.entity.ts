@@ -7,34 +7,35 @@ import {
   ManyToOne,
   Unique,
   JoinColumn,
-} from 'typeorm';
-import { Hashtag } from './Hashtag.entity';
-import { Review } from './Review.entity';
-import { User } from './User.entity';
+} from 'typeorm'
+import { Hashtag } from './Hashtag.entity'
+import { Review } from './Review.entity'
+import { User } from './User.entity'
 
 @Entity()
 @Unique('unique_event_createdAt_host', ['createdAt', 'host'])
 export class Event {
   @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_Event' })
-  eventId: number;
+  eventId: number
+
+  @Column({
+    type: 'datetime',
+    precision: 6,
+    nullable: false,
+  })
+  createdAt: string
 
   @Column({
     type: 'datetime',
     nullable: false,
   })
-  createdAt: string;
-
-  @Column({
-    type: 'datetime',
-    nullable: false,
-  })
-  eventDate: string;
+  eventDate: string
 
   @Column({
     type: 'datetime',
     nullable: true,
   })
-  modifiedAt: string;
+  modifiedAt: string
 
   @Column({
     type: 'char',
@@ -42,7 +43,7 @@ export class Event {
     nullable: true,
     comment: 'URL',
   })
-  main_image: string;
+  main_image: string
 
   @Column({
     type: 'char',
@@ -50,63 +51,63 @@ export class Event {
     nullable: false,
     comment: 'URL',
   })
-  content: string;
+  content: string
 
   @Column({
     type: 'int',
     default: 0,
   })
-  views: number;
+  views: number
 
   @Column({
     type: 'char',
     length: 100,
     nullable: false,
   })
-  location: string;
+  location: string
 
   @Column({
     type: 'float',
     nullable: false,
   })
-  latitude: number;
+  latitude: number
 
   @Column({
     type: 'float',
     nullable: false,
   })
-  longitude: number;
+  longitude: number
 
   @Column({
     type: 'char',
     length: 100,
   })
-  header: string;
+  header: string
 
   @Column({
     type: 'float',
     default: 0,
   })
-  rating: number;
+  rating: number
 
   @Column({
     type: 'int',
   })
-  maxParticipant: number;
+  maxParticipant: number
 
   @Column({
     type: 'int',
   })
-  curParticipant: number;
+  curParticipant: number
 
   @ManyToOne(() => User, (user) => user.userId)
   @JoinColumn({
     name: 'hostId',
   })
-  host: User;
+  host: User
 
   @ManyToMany(() => User, (user) => user.enrollEvents)
-  enrollUsers: User[];
+  enrollUsers: User[]
 
   /*
    * event's hashtag
@@ -115,8 +116,8 @@ export class Event {
   @JoinColumn({
     name: 'hashtagId',
   })
-  hashtag: Hashtag[];
+  hashtag: Hashtag
 
   @OneToMany(() => Review, (review) => review.reviewId)
-  reviewIds: Review[];
+  reviewIds: Review[]
 }

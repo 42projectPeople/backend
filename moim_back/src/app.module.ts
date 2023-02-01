@@ -1,12 +1,13 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Hashtag } from './entity/Hashtag.entity';
-import { Event } from './entity/Event.entity';
-import { Review } from './entity/Review.entity';
-import { User } from './entity/User.entity';
+import { Module } from '@nestjs/common'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { ConfigModule } from '@nestjs/config'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { Hashtag } from './entity/Hashtag.entity'
+import { Event } from './entity/Event.entity'
+import { Review } from './entity/Review.entity'
+import { User } from './entity/User.entity'
+import { EventModule } from './event/event.module'
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { User } from './entity/User.entity';
       synchronize: true, //특정 조건하에서 모든 데이터를 삭제하는 것 같습니다. 프로덕션에서는 사용하지 않는게 좋습니다.
       logging: true,
     }),
+    EventModule,
   ],
   controllers: [AppController],
   providers: [AppService],
