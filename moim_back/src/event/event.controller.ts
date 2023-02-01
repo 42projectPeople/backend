@@ -11,10 +11,10 @@ export class EventController {
     console.log(`\n\n ret = ${ret}`)
     return ret
   }
-  @Post('')
-  async CreateEvent(@Body() body: any): Promise<Event> {
-    const ret = await this.eventService.eventCreate(body)
-    console.log(`\nCreate :${ret}`)
-    return ret
-  }
+  // @Post('')
+  // async CreateEvent(@Body() body: any): Promise<Event> {
+  //   const ret = await this.eventService.eventCreate(body)
+  //   console.log(`\nCreate :${ret}`)
+  //   return ret
+  // }
 }
