@@ -6,10 +6,12 @@ import {
   Patch,
   Param,
   Delete,
-} from '@nestjs/common';
-import { ReviewService } from './review.service';
-import CreateReviewDto from './dto/createReviewDto';
-import UpdateReviewDto from './dto/updateReviewDto';
+  ValidationPipe,
+  UsePipes,
+} from '@nestjs/common'
+import { ReviewService } from './review.service'
+import CreateReviewDto from './dto/createReviewDto'
+import UpdateReviewDto from './dto/updateReviewDto'
 
 @Controller('review')
 export class ReviewController {
@@ -20,9 +22,11 @@ export class ReviewController {
     return await this.reviewService.findReviewByEventID(+eventId)
   }
 
-  @Post()
-  create(@Body() createReviewDto: CreateReviewDto) {
-    return this.reviewService.create(createReviewDto);
+  @Post('/')
+  //check logged in
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async create(@Body() createReviewDto: CreateReviewDto) {
+    await this.reviewService.create(createReviewDto)
   }
 
   @Patch(':id')
