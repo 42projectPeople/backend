@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common'
 import { ReviewService } from './review.service'
 import CreateReviewDto from './dto/createReviewDto'
-import UpdateReviewDto from './dto/updateReviewDto'
+import { UpdateReviewDto } from './dto/updateReviewDto'
 
 @Controller('review')
 export class ReviewController {
