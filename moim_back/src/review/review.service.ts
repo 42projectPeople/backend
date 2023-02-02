@@ -36,8 +36,20 @@ export class ReviewService {
     }
   }
 
-  update(id: number, updateReviewDto: UpdateReviewDto) {
-    return `This action updates a #${id} review`
+  async update(id: number, updateReviewDto: UpdateReviewDto) {
+    try {
+      await this.reviewRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          content: updateReviewDto.content,
+          modifiedAt: () => 'CURRENT_TIMESTAMP',
+        })
+        .where('reviewId = :id', { id: id })
+        .execute()
+    } catch (err) {
+      throw new InternalServerErrorException('database server error')
+    }
   }
 
   remove(id: number) {
