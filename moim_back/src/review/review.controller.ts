@@ -23,15 +23,25 @@ export class ReviewController {
   }
 
   @Post('/')
-  //check logged in
+  //need session guard
   @UsePipes(new ValidationPipe({ transform: true }))
   async create(@Body() createReviewDto: CreateReviewDto) {
     await this.reviewService.create(createReviewDto)
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewService.update(+id, updateReviewDto)
+  @Patch(':reviewId')
+  //need session guard
+  @UsePipes(
+    new ValidationPipe({
+      transform: true, //지정된 객체로 자동변환
+      whitelist: true, //수신돼선 안되는 속성 필터링
+    })
+  )
+  async patchReview(
+    @Param('reviewId') reviewId: string,
+    @Body() updateReviewDto: UpdateReviewDto
+  ) {
+    return this.reviewService.update(+reviewId, updateReviewDto)
   }
 
   @Delete(':id')
