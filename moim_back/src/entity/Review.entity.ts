@@ -19,6 +19,7 @@ export class Review {
     type: 'datetime',
     precision: 6,
     nullable: false,
+    default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: string
 
@@ -42,7 +43,7 @@ export class Review {
   @JoinColumn({
     name: 'reviewerId',
   })
-  reviewerId: User
+  reviewerId: User | number
 
   /*
    * referencing event
