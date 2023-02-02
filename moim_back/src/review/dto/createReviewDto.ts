@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNumber, IsString } from 'class-validator'
+import { Review } from 'src/entity/Review.entity'
 
 export default class CreateReviewDto {
   @ApiProperty({
@@ -19,4 +20,15 @@ export default class CreateReviewDto {
   })
   @IsNumber()
   eventId: number
+
+  /*
+   * dto to entity, static
+   * */
+  static toEntity(createReviewDto: CreateReviewDto): Review {
+    const review = new Review()
+    review.content = createReviewDto.content
+    review.eventId = createReviewDto.eventId
+    review.reviewerId = createReviewDto.reviewerId
+    return review
+  }
 }
