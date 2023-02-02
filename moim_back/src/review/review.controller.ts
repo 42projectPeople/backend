@@ -17,7 +17,7 @@ export class ReviewController {
 
   @Get(':eventId')
   async getReviewByEventId(@Param('eventId') eventId: string) {
-    return await this.reviewService.findReviewByEventID(+eventId);
+    return await this.reviewService.findReviewByEventID(+eventId)
   }
 
   @Post()
@@ -32,6 +32,6 @@ export class ReviewController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.reviewService.remove(+id);
+    return this.reviewService.remove(+id)
   }
 }
