@@ -15,7 +15,7 @@ export class ReviewService {
   async findReviewByEventID(eventId: number) {
     return await this.reviewRepository.find({
       where: { eventId: eventId },
-    });
+    })
   }
 
   create(createReviewDto: CreateReviewDto) {
@@ -23,10 +23,10 @@ export class ReviewService {
   }
 
   update(id: number, updateReviewDto: UpdateReviewDto) {
-    return `This action updates a #${id} review`;
+    return `This action updates a #${id} review`
   }
 
   remove(id: number) {
-    return `This action removes a #${id} review`;
+    return `This action removes a #${id} review`
   }
 }
