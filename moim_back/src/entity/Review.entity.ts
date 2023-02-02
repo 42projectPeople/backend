@@ -24,6 +24,14 @@ export class Review {
   createdAt: string
 
   @Column({
+    type: 'datetime',
+    precision: 1,
+    nullable: false,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  modifiedAt: string
+
+  @Column({
     type: 'int',
     default: 0,
   })
