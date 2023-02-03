@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Review } from 'src/entity/Review.entity'
 import { Repository } from 'typeorm'
 import CreateReviewDto from './dto/createReviewDto'
-import { DeleteReviewDto } from './dto/deleteReviewDto'
 import { UpdateReviewDto } from './dto/updateReviewDto'
 
 @Injectable()
