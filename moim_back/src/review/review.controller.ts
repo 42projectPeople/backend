@@ -26,6 +26,10 @@ export class ReviewController {
   //need session guard
   @UsePipes(new ValidationPipe({ transform: true }))
   async create(@Body() createReviewDto: CreateReviewDto) {
+    /*
+     * if (req.user.userId != createReviewDto.reviewerId)
+     * 	throw new ForbiddenException('Forbidden access')
+     * */
     await this.reviewService.create(createReviewDto)
   }
 

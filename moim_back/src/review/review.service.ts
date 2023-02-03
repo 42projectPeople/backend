@@ -19,10 +19,6 @@ export class ReviewService {
   }
 
   async create(createReviewDto: CreateReviewDto) {
-    /*
-     * if (req.user.userId != createReviewDto.reviewerId)
-     * 	throw new ForbiddenException('Forbidden access')
-     * */
     try {
       await this.reviewRepository
         .createQueryBuilder()
