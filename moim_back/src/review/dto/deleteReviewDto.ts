@@ -1,5 +1,4 @@
-import { ApiProperty, PartialType, PickType } from '@nestjs/swagger'
-import { IsNumber } from 'class-validator'
+import { PartialType, PickType } from '@nestjs/swagger'
 import CreateReviewDto from './createReviewDto'
 
 export class DeleteReviewDto extends PartialType(
