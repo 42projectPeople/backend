@@ -45,6 +45,10 @@ export class ReviewController {
     @Param('reviewId') reviewId: string,
     @Body() updateReviewDto: UpdateReviewDto
   ) {
+    /*
+     * if (req.user.userId != updateReviewDto.reviewerId)
+     *	throw new ForbiddenException('FOrbidden access')
+     * */
     return this.reviewService.update(+reviewId, updateReviewDto)
   }
 
