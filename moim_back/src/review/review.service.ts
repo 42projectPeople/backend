@@ -32,7 +32,7 @@ export class ReviewService {
     }
   }
 
-  async update(id: number, updateReviewDto: UpdateReviewDto) {
+  async update(reviewId: number, updateReviewDto: UpdateReviewDto) {
     try {
       await this.reviewRepository
         .createQueryBuilder()
@@ -41,7 +41,7 @@ export class ReviewService {
           content: updateReviewDto.content,
           modifiedAt: () => 'CURRENT_TIMESTAMP',
         })
-        .where('reviewId = :id', { id: id })
+        .where('reviewId = :id', { id: reviewId })
         .execute()
     } catch (err) {
       throw new InternalServerErrorException('database server error')
