@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Review } from 'src/entity/Review.entity'
 import { Repository } from 'typeorm'
 import CreateReviewDto from './dto/createReviewDto'
+import { DeleteReviewDto } from './dto/deleteReviewDto'
 import { UpdateReviewDto } from './dto/updateReviewDto'
 
 @Injectable()
@@ -48,7 +49,19 @@ export class ReviewService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} review`
+  async remove(reviewId: number) {
+    try {
+      await this.reviewRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          deleted: true,
+          modifiedAt: () => 'CURRENT_TIMESTAMP',
+        })
+        .where('reviewId = :id', { id: reviewId })
+        .execute()
+    } catch (err) {
+      throw new InternalServerErrorException('db err')
+    }
   }
 }
