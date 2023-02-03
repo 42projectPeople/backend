@@ -18,6 +18,12 @@ export class ReviewService {
     })
   }
 
+  async findReviewByUserId(userId: number) {
+    return await this.reviewRepository.find({
+      where: { reviewId: userId, deleted: false },
+    })
+  }
+
   async create(createReviewDto: CreateReviewDto) {
     try {
       await this.reviewRepository
