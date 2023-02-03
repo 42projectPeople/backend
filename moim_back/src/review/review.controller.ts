@@ -12,6 +12,7 @@ import {
 import { ReviewService } from './review.service'
 import CreateReviewDto from './dto/createReviewDto'
 import { UpdateReviewDto } from './dto/updateReviewDto'
+import { DeleteReviewDto } from './dto/deleteReviewDto'
 
 @Controller('review')
 export class ReviewController {
@@ -52,8 +53,22 @@ export class ReviewController {
     return this.reviewService.update(+reviewId, updateReviewDto)
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reviewService.remove(+id)
+  @Delete(':reviewId')
+  //need session guard
+  @UsePipes(
+    new ValidationPipe({
+      transform: true, //지정된 객체로 자동변환
+      whitelist: true, //수신돼선 안되는 속성 필터링
+    })
+  )
+  deleteReview(
+    @Param('reviewId') reviewId: string,
+    @Body() deleteReviewDto: DeleteReviewDto
+  ) {
+    /*
+     * if (req.user.userId != deleteReviewDto.reviewerId)
+     * 	throw new ForbiddenException('forbidden access');
+     * */
+    return this.reviewService.remove(+reviewId)
   }
 }
