@@ -15,7 +15,7 @@ export class ReviewService {
 
   async findReviewByEventID(eventId: number) {
     return await this.reviewRepository.find({
-      where: { eventId: eventId },
+      where: { eventId: eventId, deleted: false },
     })
   }
 
