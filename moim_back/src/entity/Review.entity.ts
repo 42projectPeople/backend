@@ -44,6 +44,13 @@ export class Review {
   })
   content: string
 
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    default: false,
+  })
+  deleted: boolean
+
   /*
    * userId
    * */
