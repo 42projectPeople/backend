@@ -23,6 +23,11 @@ export class ReviewController {
     return await this.reviewService.findReviewByEventID(+eventId)
   }
 
+  @Get(':user/userId')
+  async getReviewByUserId(@Param('userId') userId: string) {
+    return await this.reviewService.findReviewByUserId(+userId)
+  }
+
   @Post('/')
   //need session guard
   @UsePipes(new ValidationPipe({ transform: true }))
