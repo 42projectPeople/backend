@@ -1,41 +1,24 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common'
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common'
 import { UserEventsService } from './user-events.service'
 import { CreateUserEventDto } from './dto/create-user-event.dto'
-import { UpdateUserEventDto } from './dto/update-user-event.dto'
 
 @Controller('user-events')
 export class UserEventsController {
   constructor(private readonly userEventsService: UserEventsService) {}
 
-  @Post()
-  create(@Body() createUserEventDto: CreateUserEventDto) {
-    return this.userEventsService.create(createUserEventDto)
-  }
-
-  @Get()
-  findAll() {
+  @Get('/:guestId/asGuest')
+  getEventsAsGuest() {
     return this.userEventsService.findAll()
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userEventsService.findOne(+id)
+  @Get('/:hostId/asHost')
+  getEventsAsHost() {
+    return this.userEventsService.findAll()
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateUserEventDto: UpdateUserEventDto
-  ) {
-    return this.userEventsService.update(+id, updateUserEventDto)
+  @Post('/')
+  postEventsParticipant(@Body() createUserEventDto: CreateUserEventDto) {
+    return createUserEventDto
   }
 
   @Delete(':id')
