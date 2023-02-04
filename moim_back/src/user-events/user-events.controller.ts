@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common'
 import { UserEventsService } from './user-events.service'
 import { CreateUserEventDto } from './dto/create-user-event.dto'
+import { DeleteUserEventDto } from './dto/delete-user-event.dto'
 
 @Controller('user-events')
 export class UserEventsController {
@@ -49,8 +50,22 @@ export class UserEventsController {
   /*
    * delete current participate
    * */
-  @Delete(':participateId')
-  remove(@Param('participateId') participateId: string) {
-    return this.userEventsService.remove(+participateId)
+  @Delete('/:participateId')
+  //session guard
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+    })
+  )
+  async deleteParticipant(
+    @Param('participateId') participateId: string,
+    deleteUserDto: DeleteUserEventDto
+  ) {
+    /*
+     * if (req.user.userId != deleteUserDto.userId)
+     * 	throw new forbidden()
+     * */
+    await this.userEventsService.remove(+participateId)
   }
 }
