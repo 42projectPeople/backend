@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
 import { User_Events } from 'src/entity/User_Events.entity'
 import { Repository } from 'typeorm'
 import { CreateUserEventDto } from './dto/create-user-event.dto'
@@ -6,7 +7,10 @@ import { UpdateUserEventDto } from './dto/update-user-event.dto'
 
 @Injectable()
 export class UserEventsService {
-  constructor(private readonly userEventsRepository: Repository<User_Events>) {}
+  constructor(
+    @InjectRepository(User_Events)
+    private readonly userEventsRepository: Repository<User_Events>
+  ) {}
 
   create(createUserEventDto: CreateUserEventDto) {
     return 'This action adds a new userEvent'
