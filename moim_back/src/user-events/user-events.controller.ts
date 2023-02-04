@@ -9,17 +9,9 @@ export class UserEventsController {
   /*
    * get events info that guestId is participate in
    * */
-  @Get('/:guestId/asGuest')
-  getEventsAsGuest() {
-    return this.userEventsService.findAll()
-  }
-
-  /*
-   * get events info that hostId is hosted
-   * */
-  @Get('/:hostId/asHost')
-  getEventsAsHost() {
-    return this.userEventsService.findAll()
+  @Get('/:userId')
+  async getEventsParticipateIn(@Param('userId') userId: string) {
+    return await this.userEventsService.findAll(+userId)
   }
 
   /*
