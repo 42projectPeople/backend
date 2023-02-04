@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common'
 import { UserEventsService } from './user-events.service'
 import { CreateUserEventDto } from './dto/create-user-event.dto'
 
@@ -23,8 +32,18 @@ export class UserEventsController {
    * create new participate info
    * */
   @Post('/')
-  postEventsParticipant(@Body() createUserEventDto: CreateUserEventDto) {
-    return createUserEventDto
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+    })
+  )
+  async postEventsParticipant(@Body() createUserEventDto: CreateUserEventDto) {
+    /*
+     * if (req.user.userId != createUserEventDto.userId)
+     * 	throe new forbidden()
+     * */
+    await this.userEventsService.create(createUserEventDto)
   }
 
   /*
