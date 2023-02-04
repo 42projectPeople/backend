@@ -10,7 +10,12 @@ export class UserEventsController {
    * get events info that guestId is participate in
    * */
   @Get('/:userId')
+  //session guard
   async getEventsParticipateIn(@Param('userId') userId: string) {
+    /*
+     * if (req.user.userId != userId)
+     * 	throw new Forbidden("you are not :userId user");
+     * */
     return await this.userEventsService.findAll(+userId)
   }
 
