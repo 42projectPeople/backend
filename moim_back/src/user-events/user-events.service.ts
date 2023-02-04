@@ -38,7 +38,12 @@ export class UserEventsService {
       .execute()
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} userEvent`
+  async remove(participateId: number) {
+    await this.userEventsRepository
+      .createQueryBuilder('user_events')
+      .update(User_Events)
+      .set({ isDeleted: true })
+      .where('user_events.participentId = :id', { id: participateId })
+      .execute()
   }
 }
