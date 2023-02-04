@@ -11,6 +11,7 @@ import {
 import { Hashtag } from './Hashtag.entity'
 import { Review } from './Review.entity'
 import { User } from './User.entity'
+import { User_Events } from './User_Events.entity'
 
 @Entity()
 @Unique('unique_event_createdAt_host', ['createdAt', 'host'])
@@ -106,8 +107,8 @@ export class Event {
   })
   host: User
 
-  @ManyToMany(() => User, (user) => user.enrollEvents)
-  enrollUsers: User[]
+  @OneToMany(() => User_Events, (ue) => ue.eventId)
+  participent: User_Events[]
 
   /*
    * event's hashtag
