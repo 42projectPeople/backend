@@ -7,7 +7,9 @@ import {
   ManyToOne,
   Unique,
   JoinColumn,
+  OneToOne,
 } from 'typeorm'
+import { EventMembers } from './EventMembers.entity'
 import { Hashtag } from './Hashtag.entity'
 import { Review } from './Review.entity'
 import { User } from './User.entity'
@@ -101,11 +103,17 @@ export class Event {
   })
   curParticipant: number
 
+  @OneToOne(() => EventMembers, (eventMembers) => eventMembers.eventMembersId)
+  @JoinColumn({
+    name: 'eventMembersId',
+  })
+  eventMembers: EventMembers
+
   @ManyToOne(() => User, (user) => user.userId)
   @JoinColumn({
     name: 'hostId',
   })
-  host: User
+  host: User | number
 
   @OneToMany(() => User_Events, (ue) => ue.eventId)
   participent: User_Events[]
@@ -117,7 +125,7 @@ export class Event {
   @JoinColumn({
     name: 'hashtagId',
   })
-  hashtag: Hashtag
+  hashtag: Hashtag | number
 
   @OneToMany(() => Review, (review) => review.reviewId)
   reviewIds: Review[]

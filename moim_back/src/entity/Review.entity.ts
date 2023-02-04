@@ -51,5 +51,5 @@ export class Review {
   @JoinColumn({
     name: 'eventId',
   })
-  eventId: Event | number;
+  eventId: Event | number
 }
