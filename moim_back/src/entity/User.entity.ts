@@ -10,7 +10,6 @@ import {
 import { Event } from './Event.entity'
 import { Hashtag } from './Hashtag.entity'
 import { Review } from './Review.entity'
-import { User_Events } from './User_Events.entity'
 
 @Entity()
 @Unique('unique_User_userName', ['userName'])
@@ -40,8 +39,22 @@ export class User {
   @Column({ type: 'char', length: 200, nullable: true })
   userTitle: string
 
-  @OneToMany(() => User_Events, (ue) => ue.userId)
-  participents: User_Events[]
+  /*
+   * JoinTable => ManyToMany에서 junction 관계 형성 시 사용
+   * */
+  @ManyToMany(() => Event, (event) => event.enrollUsers)
+  @JoinTable({
+    name: 'user_events',
+    joinColumn: {
+      name: 'User',
+      referencedColumnName: 'userId',
+    },
+    inverseJoinColumn: {
+      name: 'Event',
+      referencedColumnName: 'eventId',
+    },
+  })
+  enrollEvents: Event[]
 
   @ManyToMany(() => Hashtag, (hashtag) => hashtag.users)
   @JoinTable({

@@ -8,6 +8,7 @@ import { Event } from './entity/Event.entity'
 import { Review } from './entity/Review.entity'
 import { User } from './entity/User.entity'
 import { EventModule } from './event/event.module'
+import { ReviewModule } from './review/review.module'
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { EventModule } from './event/event.module'
       logging: true,
     }),
     EventModule,
+    ReviewModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -25,14 +25,14 @@ export class User_Events {
     default: () => 'CURRENT_TIMESTAMP',
     nullable: false,
   })
-  participatedAt: Date
+  participatedAt: string
 
   @Column({
     type: 'datetime',
     default: null,
     nullable: true,
   })
-  deletedAt: Date
+  deletedAt: string
 
   @Column({
     type: 'boolean',

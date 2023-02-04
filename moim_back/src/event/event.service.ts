@@ -9,9 +9,7 @@ import { CreateEventDto } from './dto/event.create.dto'
 @Injectable()
 export class EventService {
   constructor(
-    @InjectRepository(Event) private eventRepository: Repository<Event>,
-    @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(Hashtag) private hashtagRepository: Repository<Hashtag>
+    @InjectRepository(Event) private eventRepository: Repository<Event>
   ) {}
   async eventFindOneById(eventId: number): Promise<Event> {
     return await this.eventRepository.findOneBy({ eventId })
