@@ -18,11 +18,11 @@ export class User_Events {
   @JoinColumn({
     name: 'userId',
   })
-  userId: User
+  userId: User | number
 
   @ManyToOne(() => Event, (event) => event.eventId, { nullable: false })
   @JoinColumn({
     name: 'eventId',
   })
-  eventId: Event
+  eventId: Event | number
 }
