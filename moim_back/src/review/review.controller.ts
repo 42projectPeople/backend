@@ -18,12 +18,12 @@ import { DeleteReviewDto } from './dto/deleteReviewDto'
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
-  @Get(':eventId/event')
+  @Get('/event/:eventId')
   async getReviewByEventId(@Param('eventId') eventId: string) {
     return await this.reviewService.findReviewByEventID(+eventId)
   }
 
-  @Get(':user/userId')
+  @Get('/userId/:user')
   async getReviewByUserId(@Param('userId') userId: string) {
     return await this.reviewService.findReviewByUserId(+userId)
   }
