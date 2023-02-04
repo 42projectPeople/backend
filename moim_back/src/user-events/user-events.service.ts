@@ -30,7 +30,9 @@ export class UserEventsService {
     return await this.userEventsRepository
       .createQueryBuilder('user_events')
       .innerJoinAndSelect('event', 'e', 'e.eventId = user_events.eventId')
-      .where('user_events.userId = :userId', { userId: userId })
+      .where('user_events.userId = :userId AND user_events.isDeleted = 0', {
+        userId: userId,
+      })
       .innerJoinAndSelect('user', 'u', 'u.userId = e.hostId')
       .innerJoinAndSelect('hashtag', 'h', 'h.hashtagId = e.hashtagId')
       .execute()
