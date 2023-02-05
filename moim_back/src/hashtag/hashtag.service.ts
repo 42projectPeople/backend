@@ -14,4 +14,16 @@ export class HashtagService {
   async findAll(): Promise<Hashtag[]> {
     return await this.hashtagRepository.find();
   }
+
+  async findEventsByHashtagId(hashtagId: number): Promise<Hashtag[]> {
+    return await this.hashtagRepository
+      .createQueryBuilder('hashtag')
+      .innerJoinAndSelect(
+        'event',
+        'event',
+        'event.hashtagId = hashtag.hashtagId',
+      )
+      .where('event.hashtagId = :id', { id: hashtagId })
+      .execute();
+  }
 }
