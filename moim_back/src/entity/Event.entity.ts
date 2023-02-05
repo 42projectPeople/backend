@@ -30,7 +30,7 @@ export class Event {
     type: 'datetime',
     nullable: false,
   })
-  eventDate: string
+  eventDate: string | null
 
   @Column({
     type: 'datetime',
