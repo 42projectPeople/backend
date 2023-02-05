@@ -28,6 +28,6 @@ export class EventController {
     return ret
   }
 
-  @Patch('/:id')
-  async UpdateEvent(@Body() body: Upda)
+  // @Patch('/:id')
+  // async UpdateEvent(@Body() body: Upda)
 }

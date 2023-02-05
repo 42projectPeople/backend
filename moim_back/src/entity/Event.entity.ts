@@ -130,7 +130,7 @@ export class Event {
 
   @ApiProperty({
     example: '1.1',
-    description: 'User의 ',
+    description: 'Event 총평',
   })
   @Column({
     type: 'float',
