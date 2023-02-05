@@ -9,8 +9,15 @@ export default class UserSeeder implements Seeder {
     dataSource: DataSource,
     factoryManager: SeederFactoryManager
   ): Promise<any> {
-    const userFactory = factoryManager.get(User)
+    const Factory = factoryManager.get(User)
 
-    await userFactory.saveMany(10)
+    for (let i = 0; i < 20; i++) {
+      try {
+        await Factory.save()
+      } catch (e) {
+        i--
+        continue
+      }
+    }
   }
 }

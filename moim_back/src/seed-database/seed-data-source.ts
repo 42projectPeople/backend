@@ -10,6 +10,7 @@ import UserSeeder from './seeders/User.seeder'
 import HashtagSeeder from './seeders/Hashtag.seeder'
 import ReviewSeeder from './seeders/Review.seeder'
 import EventSeeder from './seeders/Event.seeder'
+import UserEventSeeder from './seeders/UserEvents.seeder'
 ;(async () => {
   dotenv.config({
     path: '.env.dev.local',
@@ -26,7 +27,13 @@ import EventSeeder from './seeders/Event.seeder'
     dropSchema: true,
     synchronize: true,
     entities: [User, User_Events, Hashtag, Event, Review],
-    seeds: [UserSeeder, HashtagSeeder, EventSeeder, ReviewSeeder],
+    seeds: [
+      UserSeeder,
+      HashtagSeeder,
+      EventSeeder,
+      ReviewSeeder,
+      UserEventSeeder,
+    ],
     factories: ['src/seed-database/factories/*.ts'],
   }
   const datasource = new DataSource(options)
