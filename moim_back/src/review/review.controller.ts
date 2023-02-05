@@ -30,7 +30,14 @@ export class ReviewController {
 
   @Post('/')
   //need session guard
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true, //수신돼선 안되는 속성 필터링
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
   async create(@Body() createReviewDto: CreateReviewDto) {
     /*
      * if (req.user.userId != createReviewDto.reviewerId)
@@ -45,6 +52,8 @@ export class ReviewController {
     new ValidationPipe({
       transform: true, //지정된 객체로 자동변환
       whitelist: true, //수신돼선 안되는 속성 필터링
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
     })
   )
   async patchReview(
@@ -64,6 +73,8 @@ export class ReviewController {
     new ValidationPipe({
       transform: true, //지정된 객체로 자동변환
       whitelist: true, //수신돼선 안되는 속성 필터링
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
     })
   )
   deleteReview(
