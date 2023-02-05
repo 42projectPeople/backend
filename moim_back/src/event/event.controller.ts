@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common'
 import { Event } from 'src/entity/Event.entity'
 import { CreateEventDto } from './dto/event.create.dto'
+import { eventDeleteDto } from './dto/event.delete.dto'
 import { EventGetDto } from './dto/event.get.dto'
 import { EventUpdateDto } from './dto/event.update.dto'
 import { EventService } from './event.service'
@@ -50,6 +51,9 @@ export class EventController {
     return ret
   }
 
-  // @Delete('/:id')
-  // async DeleteEvent(@Body() body: )
+  @Delete('/:id')
+  async DeleteEvent(@Body() body: eventDeleteDto): Promise<any> {
+    const ret = await this.eventService.eventDelete(body)
+    return ret
+  }
 }
