@@ -42,7 +42,7 @@ export class Review {
   @JoinColumn({
     name: 'reviewerId',
   })
-  reviewerId: User
+  reviewerId: User | number
 
   /*
    * referencing event
@@ -51,5 +51,5 @@ export class Review {
   @JoinColumn({
     name: 'eventId',
   })
-  eventId: Event | number;
+  eventId: Event | number
 }

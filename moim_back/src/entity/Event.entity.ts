@@ -2,7 +2,6 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  ManyToMany,
   OneToMany,
   ManyToOne,
   Unique,
@@ -105,7 +104,7 @@ export class Event {
   @JoinColumn({
     name: 'hostId',
   })
-  host: User
+  host: User | number
 
   @OneToMany(() => User_Events, (ue) => ue.eventId)
   participent: User_Events[]
@@ -117,7 +116,7 @@ export class Event {
   @JoinColumn({
     name: 'hashtagId',
   })
-  hashtag: Hashtag
+  hashtag: Hashtag | number
 
   @OneToMany(() => Review, (review) => review.reviewId)
   reviewIds: Review[]
