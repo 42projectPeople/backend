@@ -64,4 +64,6 @@ export class EventService {
       throw new InternalServerErrorException('dbException')
     }
   }
+
+ async deleteEvent(delete: deleteDto)
 }
