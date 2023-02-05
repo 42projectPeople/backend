@@ -11,7 +11,22 @@ import HashtagSeeder from './seeders/Hashtag.seeder'
 import ReviewSeeder from './seeders/Review.seeder'
 import EventSeeder from './seeders/Event.seeder'
 import UserEventSeeder from './seeders/UserEvents.seeder'
-;(async () => {
+
+console.log('.dev.dev.local로만 작동합니다.')
+console.log('.dev.dev.local로만 작동합니다.')
+console.log('.dev.dev.local로만 작동합니다.')
+console.log('.dev.dev.local로만 작동합니다.')
+console.log()
+console.log('프로덕션 환경에서 사용 시, 법적책임은 당신에게 있습니다.')
+console.log(
+  '데이터의 양을 조절하고싶다면, env파일에 변수를 추가하고, 각 seeders의 for문을 수정하세용'
+)
+
+console.log(
+  'drop scheme가 기본적으로 활성화되어있습니다. 기존 데이터베이스가 모두 날라가니 주의하세요'
+)
+console.log('5초뒤 수행됩니다.')
+const runner = async () => {
   dotenv.config({
     path: '.env.dev.local',
   })
@@ -41,4 +56,6 @@ import UserEventSeeder from './seeders/UserEvents.seeder'
 
   runSeeders(datasource)
   console.log('end, SIGINT')
-})()
+}
+
+setTimeout(runner, 5000)
