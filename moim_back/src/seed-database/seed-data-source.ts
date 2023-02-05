@@ -31,7 +31,6 @@ const runner = async () => {
     path: '.env.dev.local',
   })
 
-  if (process.env.DBENV != '.env.dev.local') return
   const options: DataSourceOptions & SeederOptions = {
     type: 'mysql',
     database: process.env.DATABASE,
