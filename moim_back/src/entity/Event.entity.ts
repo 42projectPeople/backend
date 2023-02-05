@@ -7,6 +7,9 @@ import {
   ManyToOne,
   Unique,
   JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm'
 import { Hashtag } from './Hashtag.entity'
 import { Review } from './Review.entity'
@@ -18,24 +21,20 @@ export class Event {
   @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_Event' })
   eventId: number
 
-  @Column({
-    type: 'datetime',
-    precision: 6,
-    nullable: false,
-  })
-  createdAt: string
+  @CreateDateColumn()
+  createdAt: Date
+
+  @DeleteDateColumn()
+  deleteAt: Date
+
+  @UpdateDateColumn()
+  modifiedAt: Date
 
   @Column({
-    type: 'datetime',
-    nullable: false,
+    type: 'char',
+    length: '100',
   })
   eventDate: string | null
-
-  @Column({
-    type: 'datetime',
-    nullable: true,
-  })
-  modifiedAt: string
 
   @Column({
     type: 'char',
@@ -62,19 +61,19 @@ export class Event {
   @Column({
     type: 'char',
     length: 100,
-    nullable: false,
+    nullable: true,
   })
   location: string
 
   @Column({
     type: 'float',
-    nullable: false,
+    nullable: true,
   })
   latitude: number
 
   @Column({
     type: 'float',
-    nullable: false,
+    nullable: true,
   })
   longitude: number
 
@@ -97,6 +96,7 @@ export class Event {
 
   @Column({
     type: 'int',
+    default: 0,
   })
   curParticipant: number
 

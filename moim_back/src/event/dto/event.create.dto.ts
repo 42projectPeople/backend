@@ -14,6 +14,9 @@ export class CreateEventDto {
   @IsString()
   content: string
 
+  @IsString()
+  eventDate: string
+
   @ApiProperty({
     description: 'event가 진행이 되는 주소',
   })

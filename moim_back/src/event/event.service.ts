@@ -28,4 +28,14 @@ export class EventService {
     ret.hashtag = event.hashtag
     return await this.eventRepository.save(event)
   }
+
+  async getEventPage(eventId: number, hostId: number): Promise<Event> {
+    const event = await this.eventRepository
+      .createQueryBuilder('event')
+      .innerJoin('event', 'eventId', 'eventId = :eventId', { eventId: eventId })
+      .innerJoin('event.host', 'host', 'host = :hostId', { hostId: hostId })
+      .getOne()
+
+    return event
+  }
 }
