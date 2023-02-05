@@ -37,6 +37,8 @@ export class UserEventsController {
     new ValidationPipe({
       whitelist: true,
       transform: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
     })
   )
   async postEventsParticipant(@Body() createUserEventDto: CreateUserEventDto) {
@@ -56,6 +58,8 @@ export class UserEventsController {
     new ValidationPipe({
       whitelist: true,
       transform: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
     })
   )
   async deleteParticipant(
