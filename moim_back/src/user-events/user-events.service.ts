@@ -30,7 +30,7 @@ export class UserEventsService {
     return await this.userEventsRepository
       .createQueryBuilder('user_events')
       .innerJoinAndSelect('event', 'e', 'e.eventId = user_events.eventId')
-      .where('user_events.userId = :userId AND user_events.isDeleted = 0', {
+      .where('user_events.userId = :userId AND user_events.deletedAt IS NULL', {
         userId: userId,
       })
       .innerJoinAndSelect('user', 'u', 'u.userId = e.hostId')
@@ -41,8 +41,11 @@ export class UserEventsService {
   async remove(participateId: number) {
     await this.userEventsRepository
       .createQueryBuilder('user_events')
-      .update(User_Events)
-      .set({ isDeleted: true })
+      .update()
+      .set({
+        isDeleted: true,
+        deletedAt: () => 'CURRENT_TIMESTAMP',
+      })
       .where('user_events.participentId = :id', { id: participateId })
       .execute()
   }
