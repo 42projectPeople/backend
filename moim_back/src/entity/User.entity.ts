@@ -6,23 +6,23 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
-} from 'typeorm';
-import { Event } from './Event.entity';
-import { Hashtag } from './Hashtag.entity';
-import { Review } from './Review.entity';
+} from 'typeorm'
+import { Event } from './Event.entity'
+import { Hashtag } from './Hashtag.entity'
+import { Review } from './Review.entity'
 
 @Entity()
 @Unique('unique_User_userName', ['userName'])
 @Unique('unique_User_userNickName', ['userNickName'])
 export class User {
   @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_User' })
-  userId: number;
+  userId: number
 
   @Column({ type: 'char', length: 35, nullable: false })
-  userName: string;
+  userName: string
 
   @Column({ type: 'char', length: 100, nullable: false })
-  userNickName: string;
+  userNickName: string
 
   @Column({
     type: 'char',
@@ -31,13 +31,13 @@ export class User {
     default: '/profile/default.png',
     comment: 'URL',
   })
-  userProfilePhoto: string;
+  userProfilePhoto: string
 
   @Column({ type: 'float', nullable: false, default: '0' })
-  userLevel: number;
+  userLevel: number
 
   @Column({ type: 'char', length: 200, nullable: true })
-  userTitle: string;
+  userTitle: string
 
   /*
    * JoinTable => ManyToMany에서 junction 관계 형성 시 사용
@@ -54,7 +54,7 @@ export class User {
       referencedColumnName: 'eventId',
     },
   })
-  enrollEvents: Event[];
+  enrollEvents: Event[]
 
   @ManyToMany(() => Hashtag, (hashtag) => hashtag.users)
   @JoinTable({
@@ -68,11 +68,11 @@ export class User {
       referencedColumnName: 'hashtagId',
     },
   })
-  hashtags: Hashtag[];
+  hashtags: Hashtag[]
 
   @OneToMany(() => Event, (event) => event.host)
-  hostingEvent: Event[];
+  hostingEvent: Event[]
 
   @OneToMany(() => Review, (review) => review.eventId)
-  reviews: Review[];
+  reviews: Review[]
 }

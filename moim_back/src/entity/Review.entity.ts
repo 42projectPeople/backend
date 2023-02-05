@@ -5,34 +5,51 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
   Unique,
-} from 'typeorm';
-import { Event } from './Event.entity';
-import { User } from './User.entity';
+} from 'typeorm'
+import { Event } from './Event.entity'
+import { User } from './User.entity'
 
 @Entity()
 @Unique('unique_Review_createdAt_reviewerId', ['createdAt', 'reviewerId'])
 export class Review {
   @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_Review' })
-  reviewId: number;
+  reviewId: number
 
   @Column({
-    type: 'date',
+    type: 'datetime',
+    precision: 6,
     nullable: false,
+    default: () => 'CURRENT_TIMESTAMP',
   })
-  createdAt: string;
+  createdAt: string
+
+  @Column({
+    type: 'datetime',
+    precision: 1,
+    nullable: false,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  modifiedAt: string
 
   @Column({
     type: 'int',
     default: 0,
   })
-  likes: number;
+  likes: number
 
   @Column({
     type: 'varchar',
     length: 400,
     nullable: false,
   })
-  content: string;
+  content: string
+
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    default: false,
+  })
+  deleted: boolean
 
   /*
    * userId
@@ -41,7 +58,7 @@ export class Review {
   @JoinColumn({
     name: 'reviewerId',
   })
-  reviewerId: User;
+  reviewerId: User | number
 
   /*
    * referencing event
@@ -50,5 +67,5 @@ export class Review {
   @JoinColumn({
     name: 'eventId',
   })
-  eventId: Event;
+  eventId: Event | number
 }
