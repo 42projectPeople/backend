@@ -1,7 +1,11 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
+  ParseIntPipe,
   Patch,
   Post,
   UsePipes,
@@ -37,8 +41,15 @@ export class EventController {
   }
 
   @Patch('/:id')
-  async UpdateEvent(@Body() body: EventUpdateDto) {
+  async UpdateEvent(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: EventUpdateDto
+  ) {
+    if (id !== body.eventId) return new BadRequestException('너 권한없음')
     const ret = await this.eventService.eventUpdate(body)
     return ret
   }
+
+  // @Delete('/:id')
+  // async DeleteEvent(@Body() body: )
 }
