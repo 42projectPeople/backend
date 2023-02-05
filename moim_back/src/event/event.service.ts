@@ -4,6 +4,7 @@ import { Event } from 'src/entity/Event.entity'
 import { User } from 'src/entity/User.entity'
 import { Repository } from 'typeorm'
 import { CreateEventDto } from './dto/event.create.dto'
+import { eventDeleteDto } from './dto/event.delete.dto'
 import { EventUpdateDto } from './dto/event.update.dto'
 
 @Injectable()
@@ -65,5 +66,20 @@ export class EventService {
     }
   }
 
- async deleteEvent(delete: deleteDto)
+  async eventDelete(curr: eventDeleteDto) {
+    try {
+      const event = await this.eventRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          deleteAt: () => 'CURRENT_TIMESTAMP',
+        })
+        .where('eventId=:id', { id: curr.eventId })
+        .execute()
+
+      return event
+    } catch (err) {
+      throw new InternalServerErrorException('dbException')
+    }
+  }
 }
