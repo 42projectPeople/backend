@@ -3,6 +3,12 @@ import { IsNumber, IsString } from 'class-validator'
 
 export class EventUpdateDto {
   @ApiProperty({
+    description: 'event의 고유 아이디',
+  })
+  @IsNumber()
+  eventId: number
+
+  @ApiProperty({
     description: 'event의 메인 이미지 URL',
   })
   @IsString()
