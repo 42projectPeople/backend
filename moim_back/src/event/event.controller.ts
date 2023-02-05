@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
 } from '@nestjs/common'
 import { Event } from 'src/entity/Event.entity'
@@ -18,7 +19,7 @@ export class EventController {
     const ret = await this.eventService.eventFindOneById(id)
     return ret
   }
-  @Post('')
+  @Post('/')
   async CreateEvent(@Body() body: CreateEventDto) {
     const ret = await this.eventService.eventCreate(body)
     return ret

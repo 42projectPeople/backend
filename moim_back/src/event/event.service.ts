@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Event } from 'src/entity/Event.entity'
+import { User } from 'src/entity/User.entity'
 import { Repository } from 'typeorm'
 import { CreateEventDto } from './dto/event.create.dto'
 
 @Injectable()
 export class EventService {
   constructor(
-    @InjectRepository(Event) private eventRepository: Repository<Event>
+    @InjectRepository(Event) private eventRepository: Repository<Event>,
+    @InjectRepository(User) private userRepository: Repository<User>
   ) {}
   async eventFindOneById(eventId: number): Promise<Event> {
     return await this.eventRepository.findOneBy({ eventId })

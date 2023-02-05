@@ -7,7 +7,6 @@ import {
   ManyToOne,
   Unique,
   JoinColumn,
-  OneToOne,
 } from 'typeorm'
 import { Hashtag } from './Hashtag.entity'
 import { Review } from './Review.entity'
