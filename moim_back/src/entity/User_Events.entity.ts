@@ -32,7 +32,7 @@ export class User_Events {
     default: null,
     nullable: true,
   })
-  deletedAt: Date
+  deletedAt: string
 
   @Column({
     type: 'boolean',
