@@ -8,6 +8,10 @@ export class eventDeleteDto {
   })
   @IsNumber()
   eventId: number
+  @ApiProperty({
+    example: '1',
+    description: '삭제할 event의 작성자 아이디',
+  })
   @IsNumber()
   hostId: number
 }
