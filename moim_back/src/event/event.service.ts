@@ -1,7 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Event } from 'src/entity/Event.entity'
-import { User } from 'src/entity/User.entity'
 import { Repository } from 'typeorm'
 import { CreateEventDto } from './dto/event.create.dto'
 import { eventDeleteDto } from './dto/event.delete.dto'
@@ -10,12 +9,8 @@ import { EventUpdateDto } from './dto/event.update.dto'
 @Injectable()
 export class EventService {
   constructor(
-    @InjectRepository(Event) private eventRepository: Repository<Event>,
-    @InjectRepository(User) private userRepository: Repository<User>
+    @InjectRepository(Event) private eventRepository: Repository<Event>
   ) {}
-  async eventFindOneById(eventId: number): Promise<Event> {
-    return await this.eventRepository.findOneBy({ eventId })
-  }
   async eventCreate(event: CreateEventDto): Promise<Event> {
     const ret = new Event()
 
