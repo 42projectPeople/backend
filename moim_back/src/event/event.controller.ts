@@ -21,9 +21,13 @@ export class EventController {
     const ret = await this.eventService.getEventPage(body.eventId, body.hostId)
     return ret
   }
+
   @Post('/')
   async CreateEvent(@Body() body: CreateEventDto) {
     const ret = await this.eventService.eventCreate(body)
     return ret
   }
+
+  @Patch('/:id')
+  async UpdateEvent(@Body() body: Upda)
 }
