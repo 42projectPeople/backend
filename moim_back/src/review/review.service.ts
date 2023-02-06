@@ -53,18 +53,14 @@ export class ReviewService {
   }
 
   async remove(reviewId: number) {
-    try {
-      await this.reviewRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          deleted: true,
-          modifiedAt: () => 'CURRENT_TIMESTAMP',
-        })
-        .where('reviewId = :id', { id: reviewId })
-        .execute()
-    } catch (err) {
-      throw new InternalServerErrorException('db err')
-    }
+    await this.reviewRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        deleted: true,
+        modifiedAt: () => 'CURRENT_TIMESTAMP',
+      })
+      .where('reviewId = :id', { id: reviewId })
+      .execute()
   }
 }
