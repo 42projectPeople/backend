@@ -2,7 +2,6 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  ManyToMany,
   OneToMany,
   ManyToOne,
   Unique,
@@ -11,6 +10,7 @@ import {
 import { Hashtag } from './Hashtag.entity'
 import { Review } from './Review.entity'
 import { User } from './User.entity'
+import { User_Events } from './User_Events.entity'
 
 @Entity()
 @Unique('unique_event_createdAt_host', ['createdAt', 'host'])
@@ -104,10 +104,10 @@ export class Event {
   @JoinColumn({
     name: 'hostId',
   })
-  host: User
+  host: User | number
 
-  @ManyToMany(() => User, (user) => user.enrollEvents)
-  enrollUsers: User[]
+  @OneToMany(() => User_Events, (ue) => ue.eventId)
+  participent: User_Events[]
 
   /*
    * event's hashtag
@@ -116,7 +116,7 @@ export class Event {
   @JoinColumn({
     name: 'hashtagId',
   })
-  hashtag: Hashtag
+  hashtag: Hashtag | number
 
   @OneToMany(() => Review, (review) => review.reviewId)
   reviewIds: Review[]
