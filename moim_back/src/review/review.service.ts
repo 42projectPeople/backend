@@ -32,9 +32,11 @@ export class ReviewService {
         .into(Review)
         .values(CreateReviewDto.toEntity(createReviewDto))
         .execute()
-    } catch (err) {
-      //database error
-      throw new InternalServerErrorException('Internal Server Error')
+    } catch (e) {
+      if (e.errno == 1062)
+        //createdAt + reviewerId is duplicated because of too many request
+        throw new ConflictException('too fast')
+      else throw e
     }
   }
 
