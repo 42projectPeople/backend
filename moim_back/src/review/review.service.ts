@@ -41,19 +41,15 @@ export class ReviewService {
   }
 
   async update(reviewId: number, updateReviewDto: UpdateReviewDto) {
-    try {
-      await this.reviewRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          content: updateReviewDto.content,
-          modifiedAt: () => 'CURRENT_TIMESTAMP',
-        })
-        .where('reviewId = :id', { id: reviewId })
-        .execute()
-    } catch (err) {
-      throw new InternalServerErrorException('database server error')
-    }
+    await this.reviewRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        content: updateReviewDto.content,
+        modifiedAt: () => 'CURRENT_TIMESTAMP',
+      })
+      .where('reviewId = :id', { id: reviewId })
+      .execute()
   }
 
   async remove(reviewId: number) {
