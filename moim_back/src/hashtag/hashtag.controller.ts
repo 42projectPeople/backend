@@ -1,5 +1,5 @@
-import { Controller, Get, Param } from '@nestjs/common';
-import { HashtagService } from './hashtag.service';
+import { Controller, Get, Param } from '@nestjs/common'
+import { HashtagService } from './hashtag.service'
 
 @Controller('hashtag')
 export class HashtagController {
@@ -7,11 +7,11 @@ export class HashtagController {
 
   @Get('/')
   async getHashtags() {
-    return await this.hashtagService.findAll();
+    return await this.hashtagService.findAll()
   }
 
   @Get('/events/:hashtagId')
   async getEventsByHashtag(@Param('hashtagId') hashtagId: string) {
-    return await this.hashtagService.findEventsByHashtagId(+hashtagId);
+    return await this.hashtagService.findEventsByHashtagId(+hashtagId)
   }
 }
