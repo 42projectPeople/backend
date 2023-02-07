@@ -1,33 +1,15 @@
+import { PickType } from '@nestjs/swagger'
 import { IsNumber, IsString } from 'class-validator'
+import { Event } from 'src/entity/Event.entity'
 
-export class EventCreateDto {
-  @IsString()
-  main_image: string
-
-  @IsString()
-  content: string
-
-  @IsString()
-  location: string
-
-  @IsNumber()
-  latitude: number
-
-  @IsNumber()
-  longitude: number
-
-  @IsString()
-  header: string
-
-  @IsNumber()
-  maxParticipant: number
-
-  @IsNumber()
-  curParticipant: number
-
-  @IsNumber()
-  host: number
-
-  @IsNumber()
-  hashtag: number
-}
+export class EventCreateDto extends PickType(Event, [
+  'eventDate',
+  'main_image',
+  'content',
+  'location',
+  'latitude',
+  'longitude',
+  'header',
+  'maxParticipant',
+  'hashtag',
+]) {}
