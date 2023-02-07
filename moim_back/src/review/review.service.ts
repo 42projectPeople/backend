@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common'
+import { ConflictException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Review } from 'src/entity/Review.entity'
 import { Repository } from 'typeorm'
@@ -56,7 +52,7 @@ export class ReviewService {
       .execute()
   }
 
-  async remove(reviewId: number) {
+  async remove(reviewId: number, userId) {
     await this.reviewRepository
       .createQueryBuilder()
       .update()
@@ -64,7 +60,10 @@ export class ReviewService {
         deleted: true,
         modifiedAt: () => 'CURRENT_TIMESTAMP',
       })
-      .where('reviewId = :id', { id: reviewId })
+      .where('reviewId = :id AND reviewerId :userId', {
+        id: reviewId,
+        userId: userId,
+      })
       .execute()
   }
 }
