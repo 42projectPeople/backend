@@ -2,8 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { NotFoundError } from 'rxjs'
 import { Event } from 'src/entity/Event.entity'
+import { Hashtag } from 'src/entity/Hashtag.entity'
 import { Repository } from 'typeorm'
 import { EventCreateDto } from './dto/event.create.dto'
+import { EventUpdateDto } from './dto/event.update.dto'
 
 @Injectable()
 export class EventService {
@@ -42,5 +44,26 @@ export class EventService {
     } catch (e) {
       throw new NotFoundException('db injection')
     }
+  }
+
+  async eventUpdate(id: number, update: EventUpdateDto) {
+    const event = await this.eventRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        eventDate: update.eventDate,
+        main_image: update.main_image,
+        content: update.content,
+        location: update.location,
+        latitude: update.latitude,
+        longitude: update.longitude,
+        header: update.header,
+        maxParticipant: update.maxParticipant,
+        hashtag: update.hashtag,
+        modifiedAt: () => 'CURRENT_TIMESTAMP',
+      })
+      .where('eventId = :id', { id: id })
+      .execute()
+    return event
   }
 }

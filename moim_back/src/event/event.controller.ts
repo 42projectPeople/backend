@@ -10,7 +10,9 @@ import {
   ValidationPipe,
 } from '@nestjs/common'
 import { Event } from 'src/entity/Event.entity'
+import { UpdateEvent } from 'typeorm'
 import { EventCreateDto } from './dto/event.create.dto'
+import { EventUpdateDto } from './dto/event.update.dto'
 import { EventService } from './event.service'
 
 @Controller('event')
@@ -43,4 +45,10 @@ export class EventController {
   }
 
   @Patch(':id')
+  eventUpdate(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: EventUpdateDto
+  ) {
+    return this.eventService.eventUpdate(id, body)
+  }
 }
