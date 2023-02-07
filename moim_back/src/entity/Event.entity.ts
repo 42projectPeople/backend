@@ -170,8 +170,6 @@ export class Event {
     example: '1',
     description: 'User_Event테이블의 id',
   })
-  @ManyToMany(() => User, (user) => user.enrollEvents)
-  enrollUsers: User[]
 
   /*
    * event's hashtag
