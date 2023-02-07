@@ -72,4 +72,15 @@ export class UserController {
   ) {
     await this.userService.update(+userID, updateUserDto)
   }
+
+  // NOTE: below routers have to be implemented in user_events
+  // @Get(':userID/event/host')
+  // async getUserHostEvents(@Param('userID') userId: string) {
+  //   return await this.userService.findUserHostEvent(+userId)
+  // }
+  //
+  // @Get(':userID/event/guest')
+  // async getUserGuestEvents(@Param('userID') userId: string) {
+  //   return await this.userService.findUserGuestEvent(+userId)
+  // }
 }
