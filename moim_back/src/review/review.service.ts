@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import { ConflictException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Review } from 'src/entity/Review.entity'
 import { Repository } from 'typeorm'
@@ -32,41 +32,38 @@ export class ReviewService {
         .into(Review)
         .values(CreateReviewDto.toEntity(createReviewDto))
         .execute()
-    } catch (err) {
-      //database error
-      throw new InternalServerErrorException('Internal Server Error')
+    } catch (e) {
+      if (e.errno == 1062)
+        //createdAt + reviewerId is duplicated because of too many request
+        throw new ConflictException('too fast')
+      else throw e
     }
   }
 
   async update(reviewId: number, updateReviewDto: UpdateReviewDto) {
-    try {
-      await this.reviewRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          content: updateReviewDto.content,
-          modifiedAt: () => 'CURRENT_TIMESTAMP',
-        })
-        .where('reviewId = :id', { id: reviewId })
-        .execute()
-    } catch (err) {
-      throw new InternalServerErrorException('database server error')
-    }
+    await this.reviewRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        content: updateReviewDto.content,
+        modifiedAt: () => 'CURRENT_TIMESTAMP',
+      })
+      .where('reviewId = :id', { id: reviewId })
+      .execute()
   }
 
-  async remove(reviewId: number) {
-    try {
-      await this.reviewRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          deleted: true,
-          modifiedAt: () => 'CURRENT_TIMESTAMP',
-        })
-        .where('reviewId = :id', { id: reviewId })
-        .execute()
-    } catch (err) {
-      throw new InternalServerErrorException('db err')
-    }
+  async remove(reviewId: number, userId) {
+    await this.reviewRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        deleted: true,
+        modifiedAt: () => 'CURRENT_TIMESTAMP',
+      })
+      .where('reviewId = :id AND reviewerId :userId', {
+        id: reviewId,
+        userId: userId,
+      })
+      .execute()
   }
 }
