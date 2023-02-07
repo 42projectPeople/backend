@@ -11,25 +11,34 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>
   ) {}
 
-  async find(userId: number) {
+  async find(userId: number): Promise<User[]> {
     return await this.userRepository.find({
       where: { userId: userId },
     })
   }
 
+  async getUserByPage(page: number): Promise<User[]> {
+    return await this.userRepository.find({
+      skip: page,
+      take: 10,
+    })
+  }
+
   async update(userId: number, userInfo: UpdateUserDto) {
     try {
-      await this.userRepository
+      const ret = await this.userRepository
         .createQueryBuilder()
         .update()
         .set({
-          userName: userInfo.userName,
           userNickName: userInfo.userNickName,
           userTitle: userInfo.userTitle,
           userProfilePhoto: userInfo.userProfilePhoto,
         })
         .where('userId = :id', { id: userId })
         .execute()
+      if (ret.affected === 0) {
+        // NOTE: throw error or not?
+      }
     } catch (err) {
       throw new InternalServerErrorException('database server error')
     }
@@ -46,5 +55,13 @@ export class UserService {
     } catch (err) {
       throw new InternalServerErrorException('database server error')
     }
+  }
+
+  async checkExistUser(userInfo: CreateUserDto): Promise<boolean> {
+    // get user by name
+    const info = await this.userRepository.find({
+      where: { userName: userInfo.userName },
+    })
+    return info.length !== 0
   }
 }
