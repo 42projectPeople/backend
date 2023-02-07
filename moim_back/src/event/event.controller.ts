@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UsePipes,
   ValidationPipe,
@@ -24,16 +25,22 @@ export class EventController {
       forbidUnknownValues: true,
     })
   )
-  async eventCreate(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: EventCreateDto
-  ) {
-    return await this.eventService.eventCreate(id, body)
+  async getEvent(@Param('id', ParseIntPipe) id: number) {
+    return await this.eventService.eventFindOneById(id)
   }
-  // @Post('')
-  // async CreateEvent(@Body() body: any): Promise<Event> {
-  //   const ret = await this.eventService.eventCreate(body)
-  //   console.log(`\nCreate :${ret}`)
-  //   return ret
-  // }
+
+  @Post('')
+  @UsePipes(
+    new ValidationPipe({
+      transform: true, //지정된 객체로 자동변환
+      whitelist: true, //수신돼선 안되는 속성 필터링
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
+  async eventCreate(@Body() body: EventCreateDto) {
+    return await this.eventService.eventCreate(body)
+  }
+
+  @Patch(':id')
 }

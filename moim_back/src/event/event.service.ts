@@ -15,7 +15,7 @@ export class EventService {
     return await this.eventRepository.findOneBy({ eventId })
   }
 
-  async eventCreate(userId: number, event: EventCreateDto): Promise<any> {
+  async eventCreate(event: EventCreateDto): Promise<any> {
     const tmp_event = new Event()
 
     tmp_event.eventDate = event.eventDate
@@ -26,9 +26,10 @@ export class EventService {
     tmp_event.longitude = event.longitude
     tmp_event.header = event.header
     tmp_event.hashtag = event.hashtag
-    tmp_event.host = userId
+    tmp_event.host = event.host
     tmp_event.maxParticipant = event.maxParticipant
     tmp_event.curParticipant = 0
+    tmp_event.rating = 0
 
     try {
       const ret = await this.eventRepository
@@ -42,7 +43,4 @@ export class EventService {
       throw new NotFoundException('db injection')
     }
   }
-  // async eventCreate(body: any): Promise<Event> {
-  //   return await this.eventRepository.save()
-  // }
 }

@@ -11,4 +11,5 @@ export class EventCreateDto extends PickType(Event, [
   'header',
   'maxParticipant',
   'hashtag',
+  'host',
 ]) {}
