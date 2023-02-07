@@ -40,8 +40,8 @@ export class EventController {
       forbidUnknownValues: true,
     })
   )
-  async eventCreate(@Body() body: EventCreateDto) {
-    return await this.eventService.eventCreate(body)
+  eventCreate(@Body() body: EventCreateDto) {
+    return this.eventService.eventCreate(body)
   }
 
   @Patch(':id')
