@@ -6,32 +6,74 @@ import {
   Patch,
   Param,
   Delete,
+  ValidationPipe,
+  UsePipes,
 } from '@nestjs/common'
 import { ReviewService } from './review.service'
 import CreateReviewDto from './dto/createReviewDto'
-import UpdateReviewDto from './dto/updateReviewDto'
+import { UpdateReviewDto } from './dto/updateReviewDto'
+import { DeleteReviewDto } from './dto/deleteReviewDto'
 
 @Controller('review')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
-  @Get(':eventId')
+  @Get('/event/:eventId')
   async getReviewByEventId(@Param('eventId') eventId: string) {
     return await this.reviewService.findReviewByEventID(+eventId)
   }
 
-  @Post()
-  create(@Body() createReviewDto: CreateReviewDto) {
-    return this.reviewService.create(createReviewDto)
+  @Get('/userId/:user')
+  async getReviewByUserId(@Param('userId') userId: string) {
+    return await this.reviewService.findReviewByUserId(+userId)
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewService.update(+id, updateReviewDto)
+  @Post('/')
+  //need session guard
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async create(@Body() createReviewDto: CreateReviewDto) {
+    /*
+     * if (req.user.userId != createReviewDto.reviewerId)
+     * 	throw new ForbiddenException('Forbidden access')
+     * */
+    await this.reviewService.create(createReviewDto)
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reviewService.remove(+id)
+  @Patch(':reviewId')
+  //need session guard
+  @UsePipes(
+    new ValidationPipe({
+      transform: true, //지정된 객체로 자동변환
+      whitelist: true, //수신돼선 안되는 속성 필터링
+    })
+  )
+  async patchReview(
+    @Param('reviewId') reviewId: string,
+    @Body() updateReviewDto: UpdateReviewDto
+  ) {
+    /*
+     * if (req.user.userId != updateReviewDto.reviewerId)
+     *	throw new ForbiddenException('FOrbidden access')
+     * */
+    return this.reviewService.update(+reviewId, updateReviewDto)
+  }
+
+  @Delete(':reviewId')
+  //need session guard
+  @UsePipes(
+    new ValidationPipe({
+      transform: true, //지정된 객체로 자동변환
+      whitelist: true, //수신돼선 안되는 속성 필터링
+    })
+  )
+  deleteReview(
+    @Param('reviewId') reviewId: string,
+    @Body() deleteReviewDto: DeleteReviewDto
+  ) {
+    /*
+     * if (req.user.userId != deleteReviewDto.reviewerId)
+     * 	throw new ForbiddenException('forbidden access');
+     * */
+    return this.reviewService.remove(+reviewId)
   }
 }
