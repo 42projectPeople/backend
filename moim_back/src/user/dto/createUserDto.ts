@@ -1,6 +1,7 @@
 import { IsByteLength, IsNumber, IsString, IsUrl } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { User } from '../../entity/User.entity'
+import { UserRole } from '../../entity/UserRole'
 
 export class CreateUserDto {
   @ApiProperty({
@@ -36,6 +37,13 @@ export class CreateUserDto {
   @IsString()
   @IsByteLength(0, 200)
   userTitle: string
+
+  @ApiProperty({
+    description: 'user 의 역할 ADMIN | USER',
+  })
+  @IsString()
+  @IsByteLength(0, 20)
+  userRole: UserRole
 
   /**
    * DTO to entity
