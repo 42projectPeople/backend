@@ -11,6 +11,7 @@ import { Event } from './Event.entity'
 import { Hashtag } from './Hashtag.entity'
 import { Review } from './Review.entity'
 import { User_Events } from './User_Events.entity'
+import { UserRole } from './UserRole'
 
 @Entity()
 @Unique('unique_User_userName', ['userName'])
@@ -24,6 +25,9 @@ export class User {
 
   @Column({ type: 'char', length: 100, nullable: false })
   userNickName: string
+
+  @Column({ type: 'char', length: 20, nullable: false })
+  userRole: UserRole
 
   @Column({
     type: 'char',
@@ -41,7 +45,7 @@ export class User {
   userTitle: string
 
   @OneToMany(() => User_Events, (ue) => ue.userId)
-  participents: User_Events[]
+  participants: User_Events[]
 
   @ManyToMany(() => Hashtag, (hashtag) => hashtag.users)
   @JoinTable({
