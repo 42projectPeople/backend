@@ -9,6 +9,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common'
 import { Event } from 'src/entity/Event.entity'
+import { EventCreateDto } from './dto/event.create.dto'
 import { EventService } from './event.service'
 
 @Controller('event')
@@ -23,9 +24,11 @@ export class EventController {
       forbidUnknownValues: true,
     })
   )
-  async FindOneEvent(@Param('id', ParseIntPipe) id: number): Promise<Event> {
-    const ret = await this.eventService.eventFindOneById(id)
-    return ret
+  async eventCreate(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: EventCreateDto
+  ) {
+    return await this.eventService.eventCreate(id, body)
   }
   // @Post('')
   // async CreateEvent(@Body() body: any): Promise<Event> {
