@@ -5,6 +5,8 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
   Unique,
+  UpdateDateColumn,
+  CreateDateColumn,
 } from 'typeorm'
 import { Event } from './Event.entity'
 import { User } from './User.entity'
@@ -15,20 +17,10 @@ export class Review {
   @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_Review' })
   reviewId: number
 
-  @Column({
-    type: 'datetime',
-    precision: 6,
-    nullable: false,
-    default: () => 'CURRENT_TIMESTAMP',
-  })
+  @CreateDateColumn()
   createdAt: string
 
-  @Column({
-    type: 'datetime',
-    precision: 1,
-    nullable: false,
-    default: () => 'CURRENT_TIMESTAMP',
-  })
+  @UpdateDateColumn()
   modifiedAt: string
 
   @Column({
