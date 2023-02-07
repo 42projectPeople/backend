@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { IsNumber, IsString } from 'class-validator'
 import {
   Entity,
   Column,
@@ -20,12 +21,14 @@ export class Event {
     example: '1',
     description: '이벤트의 고유 아이디',
   })
+  @IsNumber()
   @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_Event' })
   eventId: number
 
   @ApiProperty({
     description: '이벤트게시글 생성 시간',
   })
+  @IsString()
   @Column({
     type: 'datetime',
     precision: 6,
@@ -36,6 +39,7 @@ export class Event {
   @ApiProperty({
     description: '이벤트가 진행되는 날짜',
   })
+  @IsString()
   @Column({
     type: 'datetime',
     nullable: false,
@@ -45,6 +49,7 @@ export class Event {
   @ApiProperty({
     description: '이벤트게시글이 수정된 날짜',
   })
+  @IsString()
   @Column({
     type: 'datetime',
     nullable: true,
@@ -55,6 +60,7 @@ export class Event {
     example: 'URL',
     description: '이벤트게시글의 메인이미지(주로 노출)',
   })
+  @IsString()
   @Column({
     type: 'char',
     length: '100',
@@ -68,6 +74,7 @@ export class Event {
     description:
       '이벤트의 이미지URL들과, 상세설명 내용을 담고 있는 S3저장소 URL',
   })
+  @IsString()
   @Column({
     type: 'char',
     length: 100,
@@ -80,6 +87,7 @@ export class Event {
     example: '1',
     description: '이벤트게시글의 조회수',
   })
+  @IsNumber()
   @Column({
     type: 'int',
     default: 0,
@@ -89,6 +97,7 @@ export class Event {
   @ApiProperty({
     description: '이벤트가 진행되는 장소',
   })
+  @IsString()
   @Column({
     type: 'char',
     length: 100,
@@ -99,6 +108,7 @@ export class Event {
   @ApiProperty({
     description: '이벤트가 진행되는 장소의 위도',
   })
+  @IsNumber()
   @Column({
     type: 'float',
     nullable: false,
@@ -108,6 +118,7 @@ export class Event {
   @ApiProperty({
     description: '이벤트가 진행되는 장소의 경도',
   })
+  @IsNumber()
   @Column({
     type: 'float',
     nullable: false,
@@ -117,6 +128,7 @@ export class Event {
   @ApiProperty({
     description: '이벤트 게시글의 메인주제(노출할)',
   })
+  @IsString()
   @Column({
     type: 'char',
     length: 100,
@@ -126,6 +138,7 @@ export class Event {
   @ApiProperty({
     description: '이벤트게시글의 총 평점(없앨수도 있음)',
   })
+  @IsNumber()
   @Column({
     type: 'float',
     default: 0,
@@ -135,6 +148,7 @@ export class Event {
   @ApiProperty({
     description: '이벤트에 참가할 수 있는 총 인원',
   })
+  @IsNumber()
   @Column({
     type: 'int',
   })
@@ -143,6 +157,7 @@ export class Event {
   @ApiProperty({
     description: '이벤트에 참가 중인 인원',
   })
+  @IsNumber()
   @Column({
     type: 'int',
   })
