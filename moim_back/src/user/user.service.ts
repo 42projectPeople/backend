@@ -19,26 +19,23 @@ export class UserService {
 
   async getUserByPage(page: number): Promise<User[]> {
     return await this.userRepository.find({
-      skip: page,
+      skip: page * 10,
       take: 10,
     })
   }
 
   async update(userId: number, userInfo: UpdateUserDto) {
     try {
-      const ret = await this.userRepository
+      const data = {}
+      Object.keys(userInfo).forEach((key) => {
+        data[key] = userInfo[key]
+      })
+      await this.userRepository
         .createQueryBuilder()
         .update()
-        .set({
-          userNickName: userInfo.userNickName,
-          userTitle: userInfo.userTitle,
-          userProfilePhoto: userInfo.userProfilePhoto,
-        })
+        .set(data)
         .where('userId = :id', { id: userId })
         .execute()
-      if (ret.affected === 0) {
-        // NOTE: throw error or not?
-      }
     } catch (err) {
       throw new InternalServerErrorException('database server error')
     }
