@@ -3,12 +3,16 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
 export class EventReturnDto {
   @IsString()
   userNickName: string
+
   @IsString()
   userProfilePhoto: string
+
   @IsNumber()
   userLevel: number
+
   @IsString()
   userTitle: string
+
   @IsNumber()
   eventId: number
 
