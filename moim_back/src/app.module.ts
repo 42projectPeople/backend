@@ -12,6 +12,7 @@ import { User_Events } from './entity/User_Events.entity'
 import { ReviewModule } from './review/review.module'
 import { UserModule } from './user/user.module'
 import { UserEventsModule } from './user-events/user-events.module'
+import { HashtagModule } from './hashtag/hashtag.module'
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { UserEventsModule } from './user-events/user-events.module'
     ReviewModule,
     EventModule,
     UserEventsModule,
+    HashtagModule,
   ],
   controllers: [AppController],
   providers: [AppService],
