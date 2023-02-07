@@ -19,17 +19,8 @@ export class Review {
     type: 'datetime',
     precision: 6,
     nullable: false,
-    default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: string
-
-  @Column({
-    type: 'datetime',
-    precision: 1,
-    nullable: false,
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  modifiedAt: string
 
   @Column({
     type: 'int',
@@ -44,13 +35,6 @@ export class Review {
   })
   content: string
 
-  @Column({
-    type: 'boolean',
-    nullable: false,
-    default: false,
-  })
-  deleted: boolean
-
   /*
    * userId
    * */
@@ -58,7 +42,7 @@ export class Review {
   @JoinColumn({
     name: 'reviewerId',
   })
-  reviewerId: User | number
+  reviewerId: User
 
   /*
    * referencing event

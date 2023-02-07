@@ -4,34 +4,40 @@ import {
   JoinColumn,
   Unique,
   PrimaryGeneratedColumn,
-  DeleteDateColumn,
-  CreateDateColumn,
   Column,
 } from 'typeorm'
 import { User } from './User.entity'
 import { Event } from './Event.entity'
 
 @Entity()
-@Unique('unique_UserEvents_userId_eventId_deletedAt', [
+@Unique('unique_UserEvents_userId_eventId_participatedAt', [
   'userId',
   'eventId',
-  'isDeleted',
+  'participatedAt',
 ])
 export class User_Events {
   @PrimaryGeneratedColumn()
   participentId: number
 
-  /*
-   * special columns for insertion date
-   * */
-  @CreateDateColumn()
-  participatedAt: Date
-
-  @DeleteDateColumn()
-  deletedAt: Date
+  @Column({
+    type: 'datetime',
+    precision: 6,
+    default: () => 'CURRENT_TIMESTAMP',
+    nullable: false,
+  })
+  participatedAt: string
 
   @Column({
+    type: 'datetime',
+    default: null,
+    nullable: true,
+  })
+  deletedAt: string
+
+  @Column({
+    type: 'boolean',
     default: false,
+    nullable: false,
   })
   isDeleted: boolean
 
