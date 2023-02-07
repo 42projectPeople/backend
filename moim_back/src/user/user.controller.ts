@@ -37,7 +37,9 @@ export class UserController {
    * @param userNickName
    */
   @Post('verify/nickname/:userNickName')
-  async checkValidUserNickName(@Param('userNickName') userNickName: string) {}
+  async checkValidUserNickName(@Param('userNickName') userNickName: string) {
+    return
+  }
 
   /**
    * RESTRICTED: login user
