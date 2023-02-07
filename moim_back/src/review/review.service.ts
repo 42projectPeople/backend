@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Review } from 'src/entity/Review.entity'
 import { Repository } from 'typeorm'
 import CreateReviewDto from './dto/createReviewDto'
-import UpdateReviewDto from './dto/updateReviewDto'
+import { UpdateReviewDto } from './dto/updateReviewDto'
 
 @Injectable()
 export class ReviewService {
@@ -14,19 +14,59 @@ export class ReviewService {
 
   async findReviewByEventID(eventId: number) {
     return await this.reviewRepository.find({
-      where: { eventId: eventId },
+      where: { eventId: eventId, deleted: false },
     })
   }
 
-  create(createReviewDto: CreateReviewDto) {
-    return 'This action adds a new review'
+  async findReviewByUserId(userId: number) {
+    return await this.reviewRepository.find({
+      where: { reviewId: userId, deleted: false },
+    })
   }
 
-  update(id: number, updateReviewDto: UpdateReviewDto) {
-    return `This action updates a #${id} review`
+  async create(createReviewDto: CreateReviewDto) {
+    try {
+      await this.reviewRepository
+        .createQueryBuilder()
+        .insert()
+        .into(Review)
+        .values(CreateReviewDto.toEntity(createReviewDto))
+        .execute()
+    } catch (err) {
+      //database error
+      throw new InternalServerErrorException('Internal Server Error')
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} review`
+  async update(reviewId: number, updateReviewDto: UpdateReviewDto) {
+    try {
+      await this.reviewRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          content: updateReviewDto.content,
+          modifiedAt: () => 'CURRENT_TIMESTAMP',
+        })
+        .where('reviewId = :id', { id: reviewId })
+        .execute()
+    } catch (err) {
+      throw new InternalServerErrorException('database server error')
+    }
+  }
+
+  async remove(reviewId: number) {
+    try {
+      await this.reviewRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          deleted: true,
+          modifiedAt: () => 'CURRENT_TIMESTAMP',
+        })
+        .where('reviewId = :id', { id: reviewId })
+        .execute()
+    } catch (err) {
+      throw new InternalServerErrorException('db err')
+    }
   }
 }
