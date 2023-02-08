@@ -16,10 +16,6 @@ export class EventService {
     @InjectRepository(Hashtag) private hashtagRepository: Repository<Hashtag>
   ) {}
 
-  async eventFindOneById(eventId: number): Promise<Event> {
-    return await this.eventRepository.findOneBy({ eventId })
-  }
-
   async eventCreate(newEvent: EventCreateDto): Promise<EventReturnDto> {
     try {
       const createEvent = this.transCreateDto(newEvent)
@@ -40,45 +36,6 @@ export class EventService {
     } catch (e) {
       throw new NotFoundException('db injection')
     }
-  }
-
-  transCreateDto(newEvent: EventCreateDto) {
-    const event = new Event()
-
-    event.eventDate = newEvent.eventDate
-    event.main_image = newEvent.main_image
-    event.content = newEvent.content
-    event.location = newEvent.location
-    event.latitude = newEvent.latitude
-    event.longitude = newEvent.longitude
-    event.header = newEvent.header
-    event.hashtag = newEvent.hashtag
-    event.host = newEvent.host
-    event.maxParticipant = newEvent.maxParticipant
-    event.curParticipant = 0
-    event.rating = 0
-
-    return event
-  }
-
-  transReturnDto(user: User, event: Event, hashtag: Hashtag) {
-    const returnDto = new EventReturnDto()
-
-    returnDto.userNickName = user.userNickName
-    returnDto.userProfilePhoto = user.userProfilePhoto
-    returnDto.userTitle = user.userTitle
-    returnDto.hashtagName = hashtag.hashtagName
-    returnDto.main_image = event.main_image
-    returnDto.header = event.header
-    returnDto.content = event.content
-    returnDto.views = event.views
-    returnDto.location = event.location
-    returnDto.latitude = event.latitude
-    returnDto.longitude = event.longitude
-    returnDto.maxParticipant = event.maxParticipant
-    returnDto.curParticipant = event.curParticipant
-
-    return returnDto
   }
 
   async eventUpdate(eventId: number, update: EventUpdateDto) {
@@ -123,5 +80,60 @@ export class EventService {
     } catch (e) {
       throw new NotFoundException('db injection')
     }
+  }
+  async eventDelete(eventId: number) {
+    try {
+      const deleteEvent = await this.eventRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          isDelete: true,
+          deletedAt: () => 'CURRENT_TIMESTAMP',
+        })
+        .where('eventId=:id', { id: eventId })
+        .execute()
+      return deleteEvent
+    } catch (e) {
+      throw new NotFoundException('db injection')
+    }
+  }
+
+  transCreateDto(newEvent: EventCreateDto) {
+    const event = new Event()
+
+    event.eventDate = newEvent.eventDate
+    event.main_image = newEvent.main_image
+    event.content = newEvent.content
+    event.location = newEvent.location
+    event.latitude = newEvent.latitude
+    event.longitude = newEvent.longitude
+    event.header = newEvent.header
+    event.hashtag = newEvent.hashtag
+    event.host = newEvent.host
+    event.maxParticipant = newEvent.maxParticipant
+    event.curParticipant = 0
+    event.rating = 0
+
+    return event
+  }
+
+  transReturnDto(user: User, event: Event, hashtag: Hashtag) {
+    const returnDto = new EventReturnDto()
+
+    returnDto.userNickName = user.userNickName
+    returnDto.userProfilePhoto = user.userProfilePhoto
+    returnDto.userTitle = user.userTitle
+    returnDto.hashtagName = hashtag.hashtagName
+    returnDto.main_image = event.main_image
+    returnDto.header = event.header
+    returnDto.content = event.content
+    returnDto.views = event.views
+    returnDto.location = event.location
+    returnDto.latitude = event.latitude
+    returnDto.longitude = event.longitude
+    returnDto.maxParticipant = event.maxParticipant
+    returnDto.curParticipant = event.curParticipant
+
+    return returnDto
   }
 }
