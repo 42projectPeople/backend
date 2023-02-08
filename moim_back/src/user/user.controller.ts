@@ -3,16 +3,24 @@ import {
   Get,
   Param,
   Body,
-  Patch,
   Post,
-  BadRequestException,
+  Res,
+  HttpStatus,
+  Query,
+  Put,
+  Delete,
 } from '@nestjs/common'
 import { UserService } from './user.service'
 import { UpdateUserDto } from './dto/updateUserDto'
 import { CreateUserDto } from './dto/createUserDto'
 import { User } from '../entity/User.entity'
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { Response } from 'express'
+import { Users } from './utils/Users.type'
+import { RegisterEventDto } from './dto/registerEventDto'
 
 @Controller('user')
+@ApiTags('user api')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -20,15 +28,20 @@ export class UserController {
    * RESTRICTED: any user
    * Create new user
    * @param createUserDto
+   * @param res
    */
-  @Post('create')
-  async createUser(@Body() createUserDto: CreateUserDto) {
-    // TODO: check user is already exists
-    if (await this.userService.checkExistUser(createUserDto)) {
-      throw new BadRequestException() // FIXME:  We need to return a value that notifies us if the user has already been created.
-    } else {
-      await this.userService.create(createUserDto)
-    }
+  @Post()
+  @ApiOperation({ summary: 'user creation api', description: 'create user' })
+  @ApiResponse({
+    description: 'create user',
+    type: null,
+  })
+  async createUser(
+    @Body() createUserDto: CreateUserDto,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    await this.userService.createUser(createUserDto)
+    res.status(HttpStatus.CREATED)
   }
 
   /**
@@ -36,8 +49,18 @@ export class UserController {
    * check user name is already exists
    * @param userNickName
    */
-  @Post('verify/nickname/:userNickName')
-  async checkValidUserNickName(@Param('userNickName') userNickName: string) {}
+  @Get('verify/nickname/:userNickName')
+  @ApiOperation({
+    summary: 'check user nickname is valid',
+    description: 'validate user nickname',
+  })
+  @ApiResponse({
+    description: 'check valid nickname',
+    type: Boolean,
+  })
+  async checkValidUserNickName(@Param('userNickName') userNickName: string) {
+    return { isValid: await this.userService.checkExistNickname(userNickName) }
+  }
 
   /**
    * RESTRICTED: login user
@@ -45,8 +68,16 @@ export class UserController {
    * @param userID
    */
   @Get(':userID')
-  async getUser(@Param('userID') userID: string) {
-    return await this.userService.find(+userID)
+  @ApiOperation({
+    summary: 'get user by user id',
+    description: 'get user by user id',
+  })
+  @ApiResponse({
+    description: 'get user by user id',
+    type: User,
+  })
+  async getUserByUserId(@Param('userID') userID: string) {
+    return await this.userService.findUserByUserId(+userID)
   }
 
   /**
@@ -55,8 +86,35 @@ export class UserController {
    * to show exist user on db. it will send you by 10 users per page
    */
   @Get()
-  async getUsers(@Param('page') page: number) {
-    return await this.userService.getUserByPage(page)
+  @ApiOperation({
+    summary: 'get users by page',
+    description: 'get users by userID. 10 users returned by 1 page',
+  })
+  @ApiResponse({
+    description: 'get users by page',
+    type: Users,
+  })
+  async getUsersByPage(@Query('page') page: number) {
+    return { Users: await this.userService.findUsersByPage(page) }
+  }
+
+  /**
+   * RESTRICTED: any user
+   * find user by nickname
+   * TODO: make service
+   * @param userNickName
+   */
+  @Get('/nickname/:userNickName')
+  @ApiOperation({
+    summary: 'get user by nickname',
+    description: 'get user by nickname',
+  })
+  @ApiResponse({
+    description: 'get user by nickname',
+    type: User,
+  })
+  async getUserByNickName(@Param('userNickName') userNickName: string) {
+    return await this.userService.findUserByNickName(userNickName)
   }
 
   /**
@@ -64,23 +122,50 @@ export class UserController {
    * update user information in db
    * @param userID
    * @param updateUserDto
+   * @param res
    */
-  @Patch(':userID')
-  async updateUserInfo(
+  @Put(':userID')
+  @ApiOperation({
+    summary: 'update user',
+    description: 'update user',
+  })
+  @ApiResponse({
+    description: 'update user',
+    type: null,
+  })
+  async updateUser(
     @Param('userID') userID: string,
-    @Body() updateUserDto: UpdateUserDto
+    @Body() updateUserDto: UpdateUserDto,
+    @Res({ passthrough: true }) res: Response
   ) {
-    await this.userService.update(+userID, updateUserDto)
+    await this.userService.updateUser(+userID, updateUserDto)
+    res.status(HttpStatus.ACCEPTED)
   }
 
-  // NOTE: below routers have to be implemented in user_events
-  // @Get(':userID/event/host')
-  // async getUserHostEvents(@Param('userID') userId: string) {
-  //   return await this.userService.findUserHostEvent(+userId)
-  // }
-  //
-  // @Get(':userID/event/guest')
-  // async getUserGuestEvents(@Param('userID') userId: string) {
-  //   return await this.userService.findUserGuestEvent(+userId)
-  // }
+  /**
+   * RESTRICTED: login user
+   * TODO: implement services
+   * @param userId
+   * @param registerEventDto
+   */
+  @Post(':userID/event')
+  async registerEvent(
+    @Param('userID') userId: string,
+    @Body() registerEventDto: RegisterEventDto
+  ) {
+    await this.userService.registerEvent(+userId, registerEventDto)
+  }
+
+  /**
+   * RESTRICTED: login user
+   * @param userId
+   * @param registerEventDto
+   */
+  @Delete(':userID/event')
+  async unregisterEvent(
+    @Param('userID') userId: string,
+    @Body() registerEventDto: RegisterEventDto
+  ) {
+    await this.userService.unregisterEvent(+userId, registerEventDto)
+  }
 }
