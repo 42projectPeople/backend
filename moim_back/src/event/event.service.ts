@@ -26,8 +26,11 @@ export class EventService {
 
   async eventCreate(newEvent: EventCreateDto) {
     try {
-      const createEvent = this.transCreateDto(newEvent)
-      return this.eventGet(createEvent.eventId)
+      const event = await this.eventRepository.save(
+        EventCreateDto.transCreateDto(newEvent)
+      )
+
+      return this.eventGet(event.eventId)
     } catch (e) {
       throw new NotFoundException('db injection')
     }
@@ -58,39 +61,20 @@ export class EventService {
       throw new NotFoundException('db injection')
     }
   }
+
   async eventDelete(eventId: number) {
     try {
       const deleteEvent = await this.eventRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          isDelete: true,
-          deletedAt: () => 'CURRENT_TIMESTAMP',
+        .createQueryBuilder('event')
+        .softDelete()
+        .where('event.eventId = :id AND event.deletedAt IS NULL', {
+          id: eventId,
         })
-        .where('eventId=:id', { id: eventId })
         .execute()
+      console.log('\n1111')
       return deleteEvent
     } catch (e) {
       throw new NotFoundException('db injection')
     }
-  }
-
-  transCreateDto(newEvent: EventCreateDto) {
-    const event = new Event()
-
-    event.eventDate = newEvent.eventDate
-    event.main_image = newEvent.main_image
-    event.content = newEvent.content
-    event.location = newEvent.location
-    event.latitude = newEvent.latitude
-    event.longitude = newEvent.longitude
-    event.header = newEvent.header
-    event.hashtag = newEvent.hashtag
-    event.host = newEvent.host
-    event.maxParticipant = newEvent.maxParticipant
-    event.curParticipant = 0
-    event.rating = 0
-
-    return event
   }
 }

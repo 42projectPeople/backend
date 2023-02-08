@@ -8,6 +8,9 @@ import {
   ManyToOne,
   Unique,
   JoinColumn,
+  UpdateDateColumn,
+  CreateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm'
 import { Hashtag } from './Hashtag.entity'
 import { Review } from './Review.entity'
@@ -29,42 +32,29 @@ export class Event {
     description: '이벤트가 진행되는 날짜',
   })
   @IsString()
-  @Column({
-    type: 'datetime',
-    nullable: false,
-  })
+  @Column()
   eventDate: string
 
   @ApiProperty({
     description: '이벤트게시글 생성 시간',
   })
   @IsString()
-  @Column({
-    type: 'datetime',
-    precision: 6,
-    nullable: false,
-  })
-  createdAt: string
+  @CreateDateColumn()
+  createdAt: Date | string
 
   @ApiProperty({
     description: '이벤트게시글이 수정된 날짜',
   })
   @IsString()
-  @Column({
-    type: 'datetime',
-    nullable: true,
-  })
-  modifiedAt: string
+  @UpdateDateColumn()
+  modifiedAt: Date | string
 
   @ApiProperty({
     description: '이벤트게시글이 삭제된 날짜',
   })
   @IsString()
-  @Column({
-    type: 'datetime',
-    nullable: true,
-  })
-  deletedAt: string
+  @DeleteDateColumn()
+  deletedAt: Date | string
 
   @ApiProperty({
     example: 'false',
@@ -127,7 +117,6 @@ export class Event {
   @ApiProperty({
     description: '이벤트가 진행되는 장소의 위도',
   })
-  @IsNumber()
   @Column({
     type: 'float',
     nullable: false,
@@ -137,7 +126,6 @@ export class Event {
   @ApiProperty({
     description: '이벤트가 진행되는 장소의 경도',
   })
-  @IsNumber()
   @Column({
     type: 'float',
     nullable: false,
