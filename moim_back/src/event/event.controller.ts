@@ -14,22 +14,13 @@ import {
   ValidationPipe,
 } from '@nestjs/common'
 import { Response } from 'express'
-import { EventCreateDto } from './dto/event.create.dto'
-import { EventUpdateDto } from './dto/event.update.dto'
+import { EventDefaultDto } from './dto/event.default.dto'
 import { EventService } from './event.service'
 
 @Controller('event')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
   @Get('/:id')
-  @UsePipes(
-    new ValidationPipe({
-      transform: true, //지정된 객체로 자동변환
-      whitelist: true, //수신돼선 안되는 속성 필터링
-      forbidNonWhitelisted: true,
-      forbidUnknownValues: true,
-    })
-  )
   async getEvent(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     const ret = await this.eventService.eventGet(id)
     if (ret == '')
@@ -39,36 +30,20 @@ export class EventController {
   }
 
   @Post('')
-  eventCreate(@Body() body: EventCreateDto) {
+  eventCreate(@Body() body: EventDefaultDto) {
     console.log(body)
     return this.eventService.eventCreate(body)
   }
 
-  @Patch(':id')
-  @UsePipes(
-    new ValidationPipe({
-      transform: true, //지정된 객체로 자동변환
-      whitelist: true, //수신돼선 안되는 속성 필터링
-      forbidNonWhitelisted: true,
-      forbidUnknownValues: true,
-    })
-  )
+  @Patch('/:id')
   eventUpdate(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: EventUpdateDto
+    @Body() body: EventDefaultDto
   ) {
     return this.eventService.eventUpdate(id, body)
   }
 
-  @Delete(':id')
-  @UsePipes(
-    new ValidationPipe({
-      transform: true, //지정된 객체로 자동변환
-      whitelist: true, //수신돼선 안되는 속성 필터링
-      forbidNonWhitelisted: true,
-      forbidUnknownValues: true,
-    })
-  )
+  @Delete('/:id')
   eventDelete(@Param('id', ParseIntPipe) id: number) {
     return this.eventService.eventDelete(id)
   }
