@@ -27,7 +27,7 @@ export class User {
   userNickName: string
 
   @Column({ type: 'char', length: 20, nullable: false, default: 'USER' })
-  userRole: UserRole
+  userRole: UserRoleType
 
   @Column({
     type: 'char',
