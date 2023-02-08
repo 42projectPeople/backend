@@ -1,9 +1,15 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotAcceptableException,
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../entity/User.entity'
 import { Repository } from 'typeorm'
 import { UpdateUserDto } from './dto/updateUserDto'
 import { CreateUserDto } from './dto/createUserDto'
+import { RegisterEventDto } from './dto/registerEventDto'
+import { User_Events } from '../entity/User_Events.entity'
 
 @Injectable()
 export class UserService {
@@ -11,20 +17,27 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>
   ) {}
 
-  async find(userId: number): Promise<User[]> {
+  async findUserByUserId(userId: number): Promise<User[]> {
     return await this.userRepository.find({
       where: { userId: userId },
     })
   }
 
-  async getUserByPage(page: number): Promise<User[]> {
+  async findUsersByPage(page: number): Promise<User[]> {
+    console.log(typeof page)
     return await this.userRepository.find({
-      skip: page * 10,
+      skip: +page * 10,
       take: 10,
     })
   }
 
-  async update(userId: number, userInfo: UpdateUserDto) {
+  async findUserByNickName(userNickName: string): Promise<User[]> {
+    return await this.userRepository.find({
+      where: { userNickName: userNickName },
+    })
+  }
+
+  async updateUser(userId: number, userInfo: UpdateUserDto) {
     try {
       const data = {}
       Object.keys(userInfo).forEach((key) => {
@@ -41,7 +54,7 @@ export class UserService {
     }
   }
 
-  async create(userInfo: CreateUserDto) {
+  async createUser(userInfo: CreateUserDto) {
     try {
       await this.userRepository
         .createQueryBuilder()
@@ -50,14 +63,17 @@ export class UserService {
         .values(CreateUserDto.toEntity(userInfo))
         .execute()
     } catch (err) {
-      throw new InternalServerErrorException('database server error')
+      if (err.code === 'ER_DUP_ENTRY') {
+        throw new NotAcceptableException('duplicated unique value')
+      } else {
+        throw new InternalServerErrorException('database server error')
+      }
     }
   }
 
-  async checkExistUser(userInfo: CreateUserDto): Promise<boolean> {
-    // get user by name
+  async checkExistNickname(userNickName: string): Promise<boolean> {
     const info = await this.userRepository.find({
-      where: { userName: userInfo.userName },
+      where: { userNickName: userNickName },
     })
     return info.length !== 0
   }
