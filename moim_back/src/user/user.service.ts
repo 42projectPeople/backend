@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   NotAcceptableException,
@@ -14,7 +15,9 @@ import { User_Events } from '../entity/User_Events.entity'
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(User_Events)
+    private readonly userEventsRepository: Repository<User_Events>
   ) {}
 
   async findUserByUserId(userId: number): Promise<User[]> {
@@ -81,23 +84,40 @@ export class UserService {
   async registerEvent(userId: number, registerEventDto: RegisterEventDto) {
     // register event
     try {
-      await this.userRepository
-        .createQueryBuilder()
+      await this.userEventsRepository
+        .createQueryBuilder('user_events')
         .insert()
         .into(User_Events)
         .values({
-          participantId: userId,
           eventId: registerEventDto.eventId,
           userId: userId,
         })
         .execute()
     } catch (err) {
-      // catch conflict error
-
-      throw new InternalServerErrorException('database server error')
+      if (err.code === 'ER_DUP_ENTRY') {
+        throw new ConflictException('too fast')
+      } else {
+        throw new InternalServerErrorException('database server error')
+      }
     }
   }
-  async unregisterEvent(userId: number, registerEventDto: RegisterEventDto) {
-    // unregister event
+
+  async unregisterEvent(
+    participateId: number,
+    registerEventDto: RegisterEventDto
+  ) {
+    try {
+      await this.userEventsRepository
+        .createQueryBuilder('user_events')
+        .update()
+        .set({
+          isDeleted: true,
+          deletedAt: () => 'CURRENT_TIMESTAMP',
+        })
+        .where('user_events.participateId = :id', { id: participateId })
+        .execute()
+    } catch (err) {
+      throw new InternalServerErrorException('database server error')
+    }
   }
 }

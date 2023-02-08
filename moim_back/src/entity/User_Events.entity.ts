@@ -12,14 +12,17 @@ import { User } from './User.entity'
 import { Event } from './Event.entity'
 
 @Entity()
-@Unique('unique_UserEvents_userId_eventId_deletedAt', [
+@Unique('unique_UserEvents_userId_eventId_participatedAt', [
   'userId',
   'eventId',
-  'isDeleted',
+  'participatedAt',
 ])
 export class User_Events {
+  /**
+   * pk
+   */
   @PrimaryGeneratedColumn()
-  participentId: number
+  participationId: number
 
   /*
    * special columns for insertion date
