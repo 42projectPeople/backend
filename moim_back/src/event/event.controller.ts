@@ -3,15 +3,16 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
   Post,
+  Res,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common'
-import { Event } from 'src/entity/Event.entity'
-import { UpdateEvent } from 'typeorm'
+import { Response } from 'express'
 import { EventCreateDto } from './dto/event.create.dto'
 import { EventUpdateDto } from './dto/event.update.dto'
 import { EventService } from './event.service'
@@ -70,7 +71,9 @@ export class EventController {
       forbidUnknownValues: true,
     })
   )
-  eventDelete(@Param('id', ParseIntPipe) id: number) {
-    return this.eventService.eventDelete(id)
+  eventDelete(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+    const ret = this.eventService.eventDelete(id)
+    if (ret) return res.status(HttpStatus.OK)
+    else return res.status(HttpStatus.BAD_REQUEST)
   }
 }
