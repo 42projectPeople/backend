@@ -77,4 +77,27 @@ export class UserService {
     })
     return info.length !== 0
   }
+
+  async registerEvent(userId: number, registerEventDto: RegisterEventDto) {
+    // register event
+    try {
+      await this.userRepository
+        .createQueryBuilder()
+        .insert()
+        .into(User_Events)
+        .values({
+          participantId: userId,
+          eventId: registerEventDto.eventId,
+          userId: userId,
+        })
+        .execute()
+    } catch (err) {
+      // catch conflict error
+
+      throw new InternalServerErrorException('database server error')
+    }
+  }
+  async unregisterEvent(userId: number, registerEventDto: RegisterEventDto) {
+    // unregister event
+  }
 }
