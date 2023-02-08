@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Event } from 'src/entity/Event.entity'
 import { Repository } from 'typeorm'
 import { EventDefaultDto } from './dto/event.default.dto'
-import { EventUpdateDto } from './dto/event.update.dto'
 
 @Injectable()
 export class EventService {
@@ -32,7 +31,7 @@ export class EventService {
     }
   }
 
-  async eventUpdate(eventId: number, update: EventUpdateDto) {
+  async eventUpdate(eventId: number, update: EventDefaultDto) {
     try {
       await this.eventRepository
         .createQueryBuilder('event')

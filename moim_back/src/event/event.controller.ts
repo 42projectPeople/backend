@@ -8,10 +8,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Req,
   Res,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common'
 import { Response } from 'express'
 import { EventDefaultDto } from './dto/event.default.dto'
