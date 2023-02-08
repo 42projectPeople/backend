@@ -17,44 +17,18 @@ export class EventService {
   ) {}
 
   async eventGet(eventId: number) {
-    const event = await this.eventRepository
-      .createQueryBuilder()
-      .innerJoin('event', 'e')
-      .where('e.eventID=:event', { event: eventId })
-      .getOne()
-
-    const user = await this.userRepository
-      .createQueryBuilder()
-      .innerJoin('user', 'user')
-      .where('user.userId=:userId', { userId: event.host })
-      .getOne()
-
-    const hashtag = await this.hashtagRepository
-      .createQueryBuilder()
-      .innerJoin('hashtag', 'h')
-      .where('h.hashtagId=:hashtag', { hashtag: event.hashtag })
-      .getOne()
-
-    return await this.transReturnDto(user, event, hashtag)
+    return await this.eventRepository
+      .createQueryBuilder('event')
+      .innerJoinAndSelect('user', 'u', 'u.userId = event.hostId')
+      .innerJoinAndSelect('hashtag', 'ha', 'ha.hashtagId = event.hashtagId')
+      .where('event.eventId=:id', { id: eventId })
+      .execute()
   }
 
   async eventCreate(newEvent: EventCreateDto): Promise<EventReturnDto> {
     try {
       const createEvent = this.transCreateDto(newEvent)
-      const event = await this.eventRepository.save(createEvent)
-      const user = await this.userRepository
-        .createQueryBuilder()
-        .innerJoin('user', 'user')
-        .where('user.userId=:userId', { userId: event.host })
-        .getOne()
-      const hashtag = await this.hashtagRepository
-        .createQueryBuilder()
-        .innerJoin('hashtag', 'h')
-        .where('h.hashtagId=:hashtag', { hashtag: event.hashtag })
-        .getOne()
-      const returnDto = await this.transReturnDto(user, event, hashtag)
-
-      return returnDto
+      return this.eventGet(createEvent.eventId)
     } catch (e) {
       throw new NotFoundException('db injection')
     }

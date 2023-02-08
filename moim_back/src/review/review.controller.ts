@@ -8,18 +8,26 @@ import {
   Delete,
   ValidationPipe,
   UsePipes,
+  Res,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common'
 import { ReviewService } from './review.service'
 import CreateReviewDto from './dto/createReviewDto'
 import { UpdateReviewDto } from './dto/updateReviewDto'
+import { Response } from 'express'
 
 @Controller('review')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @Get('/event/:eventId')
-  async getReviewByEventId(@Param('eventId') eventId: string) {
-    return await this.reviewService.findReviewByEventID(+eventId)
+  async getReviewByEventId(
+    @Param('eventId') eventId: string,
+    @Res() res: Response
+  ) {
+    const ret = await this.reviewService.findReviewByEventID(+eventId)
+    return res.status(HttpStatus.OK).json(ret)
   }
 
   @Get('/userId/:user')
