@@ -14,8 +14,14 @@ export default setSeederFactory(Event, (faker) => {
     max: 5,
   })
   fakeEvent.location = faker.address.streetAddress()
-  fakeEvent.latitude = faker.datatype.number()
-  fakeEvent.longitude = faker.datatype.number()
+  fakeEvent.latitude = faker.datatype.float({
+    min: -90,
+    max: 90,
+  })
+  fakeEvent.longitude = faker.datatype.float({
+    min: -90,
+    max: +90,
+  })
   fakeEvent.header = faker.word.adjective({
     length: {
       min: 0,

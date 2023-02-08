@@ -26,7 +26,7 @@ export class User {
   @Column({ type: 'char', length: 100, nullable: false })
   userNickName: string
 
-  @Column({ type: 'char', length: 20, nullable: false })
+  @Column({ type: 'char', length: 20, nullable: false, default: 'USER' })
   userRole: UserRole
 
   @Column({
