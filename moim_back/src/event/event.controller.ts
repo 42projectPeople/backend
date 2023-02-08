@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -45,10 +46,31 @@ export class EventController {
   }
 
   @Patch(':id')
+  @UsePipes(
+    new ValidationPipe({
+      transform: true, //지정된 객체로 자동변환
+      whitelist: true, //수신돼선 안되는 속성 필터링
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
   eventUpdate(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: EventUpdateDto
   ) {
     return this.eventService.eventUpdate(id, body)
+  }
+
+  @Delete(':id')
+  @UsePipes(
+    new ValidationPipe({
+      transform: true, //지정된 객체로 자동변환
+      whitelist: true, //수신돼선 안되는 속성 필터링
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
+  eventDelete(@Param('id', ParseIntPipe) id: number) {
+    return this.eventService.eventDelete(id)
   }
 }
