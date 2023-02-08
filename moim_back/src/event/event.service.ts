@@ -1,7 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { env } from 'process'
-import { NotFoundError } from 'rxjs'
 import { Event } from 'src/entity/Event.entity'
 import { Hashtag } from 'src/entity/Hashtag.entity'
 import { User } from 'src/entity/User.entity'
@@ -83,25 +81,44 @@ export class EventService {
     return returnDto
   }
 
-  async eventUpdate(id: number, update: EventUpdateDto) {
-    const event = await this.eventRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        eventDate: update.eventDate,
-        main_image: update.main_image,
-        content: update.content,
-        location: update.location,
-        latitude: update.latitude,
-        longitude: update.longitude,
-        header: update.header,
-        maxParticipant: update.maxParticipant,
-        hashtag: update.hashtag,
-        modifiedAt: () => 'CURRENT_TIMESTAMP',
-      })
-      .where('eventId = :id', { id: id })
-      .execute()
+  async eventUpdate(eventId: number, update: EventUpdateDto) {
+    try {
+      await this.eventRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          eventDate: update.eventDate,
+          main_image: update.main_image,
+          content: update.content,
+          location: update.location,
+          latitude: update.latitude,
+          longitude: update.longitude,
+          header: update.header,
+          maxParticipant: update.maxParticipant,
+          hashtag: update.hashtag,
+          modifiedAt: () => 'CURRENT_TIMESTAMP',
+        })
+        .where('eventId = :id', { id: eventId })
+        .execute()
 
-    return event
+      const event = await this.eventRepository
+        .createQueryBuilder()
+        .innerJoin('event', 'e')
+        .where('e.eventID=:event', { event: eventId })
+        .getOne()
+      const user = await this.userRepository
+        .createQueryBuilder()
+        .innerJoin('user', 'user')
+        .where('user.userId=:userId', { userId: event.host })
+        .getOne()
+      const hashtag = await this.hashtagRepository
+        .createQueryBuilder()
+        .innerJoin('hashtag', 'h')
+        .where('h.hashtagId=:hashtag', { hashtag: event.hashtag })
+        .getOne()
+      return await this.transReturnDto(user, event, hashtag)
+    } catch (e) {
+      throw new NotFoundException('db injection')
+    }
   }
 }
