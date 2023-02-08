@@ -5,7 +5,6 @@ import { Hashtag } from 'src/entity/Hashtag.entity'
 import { User } from 'src/entity/User.entity'
 import { Repository } from 'typeorm'
 import { EventCreateDto } from './dto/event.create.dto'
-import { EventReturnDto } from './dto/event.return.dto'
 import { EventUpdateDto } from './dto/event.update.dto'
 
 @Injectable()
@@ -25,7 +24,7 @@ export class EventService {
       .execute()
   }
 
-  async eventCreate(newEvent: EventCreateDto): Promise<EventReturnDto> {
+  async eventCreate(newEvent: EventCreateDto) {
     try {
       const createEvent = this.transCreateDto(newEvent)
       return this.eventGet(createEvent.eventId)
