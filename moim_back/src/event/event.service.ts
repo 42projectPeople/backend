@@ -10,9 +10,7 @@ import { EventUpdateDto } from './dto/event.update.dto'
 @Injectable()
 export class EventService {
   constructor(
-    @InjectRepository(Event) private eventRepository: Repository<Event>,
-    @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(Hashtag) private hashtagRepository: Repository<Hashtag>
+    @InjectRepository(Event) private eventRepository: Repository<Event>
   ) {}
 
   async eventGet(eventId: number) {

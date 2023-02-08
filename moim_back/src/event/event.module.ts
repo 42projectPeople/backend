@@ -7,7 +7,7 @@ import { User } from 'src/entity/User.entity'
 import { Hashtag } from 'src/entity/Hashtag.entity'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Event, User, Hashtag])],
+  imports: [TypeOrmModule.forFeature([Event])],
   providers: [EventService],
   controllers: [EventController],
 })
