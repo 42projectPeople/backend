@@ -1,10 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Event } from 'src/entity/Event.entity'
-import { Hashtag } from 'src/entity/Hashtag.entity'
-import { User } from 'src/entity/User.entity'
 import { Repository } from 'typeorm'
-import { EventCreateDto } from './dto/event.create.dto'
+import { EventDefaultDto } from './dto/event.default.dto'
 import { EventUpdateDto } from './dto/event.update.dto'
 
 @Injectable()
@@ -22,10 +20,10 @@ export class EventService {
       .execute()
   }
 
-  async eventCreate(newEvent: EventCreateDto) {
+  async eventCreate(newEvent: EventDefaultDto) {
     try {
       const event = await this.eventRepository.save(
-        EventCreateDto.transCreateDto(newEvent)
+        EventDefaultDto.transEventDto(newEvent)
       )
 
       return this.eventGet(event.eventId)
@@ -37,7 +35,7 @@ export class EventService {
   async eventUpdate(eventId: number, update: EventUpdateDto) {
     try {
       await this.eventRepository
-        .createQueryBuilder()
+        .createQueryBuilder('event')
         .update()
         .set({
           eventDate: update.eventDate,
@@ -49,9 +47,10 @@ export class EventService {
           header: update.header,
           maxParticipant: update.maxParticipant,
           hashtag: update.hashtag,
-          modifiedAt: () => 'CURRENT_TIMESTAMP',
         })
-        .where('eventId = :id', { id: eventId })
+        .where('event.eventId = :id AND event.deletedAt IS NULL', {
+          id: eventId,
+        })
         .execute()
 
       return await this.eventGet(eventId)
@@ -69,7 +68,6 @@ export class EventService {
           id: eventId,
         })
         .execute()
-      console.log('\n1111')
       return deleteEvent
     } catch (e) {
       throw new NotFoundException('db injection')

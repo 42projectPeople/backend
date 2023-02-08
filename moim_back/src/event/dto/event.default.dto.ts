@@ -1,7 +1,6 @@
-import { PickType } from '@nestjs/swagger'
 import { Event } from 'src/entity/Event.entity'
 
-export class EventCreateDto {
+export class EventDefaultDto {
   eventDate: string
   main_image: string
   content: string
@@ -13,7 +12,7 @@ export class EventCreateDto {
   hashtag: number
   host: number
 
-  static transCreateDto(newEvent: EventCreateDto) {
+  static transEventDto(newEvent: EventDefaultDto) {
     const event = new Event()
 
     event.eventDate = newEvent.eventDate
