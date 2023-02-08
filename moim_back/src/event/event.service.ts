@@ -20,7 +20,7 @@ export class EventService {
       .createQueryBuilder('event')
       .innerJoinAndSelect('user', 'u', 'u.userId = event.hostId')
       .innerJoinAndSelect('hashtag', 'ha', 'ha.hashtagId = event.hashtagId')
-      .where('event.eventId=:id', { id: eventId })
+      .where('event.eventId=:id AND event.deletedAt IS NULL', { id: eventId })
       .execute()
   }
 
