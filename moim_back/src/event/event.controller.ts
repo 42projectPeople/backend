@@ -30,7 +30,7 @@ export class EventController {
     })
   )
   async getEvent(@Param('id', ParseIntPipe) id: number) {
-    return await this.eventService.eventFindOneById(id)
+    return await this.eventService.eventGet(id)
   }
 
   @Post('')
@@ -74,6 +74,6 @@ export class EventController {
   eventDelete(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     const ret = this.eventService.eventDelete(id)
     if (ret) return res.status(HttpStatus.OK)
-    else return res.status(HttpStatus.BAD_REQUEST)
+    else return res.status(HttpStatus.NOT_FOUND).json({ msg: 'db err' })
   }
 }
