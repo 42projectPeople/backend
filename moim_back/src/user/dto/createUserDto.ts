@@ -43,7 +43,7 @@ export class CreateUserDto {
   })
   @IsString()
   @IsByteLength(0, 20)
-  userRole: UserRole
+  userRole: UserRoleType
 
   /**
    * DTO to entity
