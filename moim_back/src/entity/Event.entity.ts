@@ -26,6 +26,16 @@ export class Event {
   eventId: number
 
   @ApiProperty({
+    description: '이벤트가 진행되는 날짜',
+  })
+  @IsString()
+  @Column({
+    type: 'datetime',
+    nullable: false,
+  })
+  eventDate: string
+
+  @ApiProperty({
     description: '이벤트게시글 생성 시간',
   })
   @IsString()
@@ -37,16 +47,6 @@ export class Event {
   createdAt: string
 
   @ApiProperty({
-    description: '이벤트가 진행되는 날짜',
-  })
-  @IsString()
-  @Column({
-    type: 'datetime',
-    nullable: false,
-  })
-  eventDate: string
-
-  @ApiProperty({
     description: '이벤트게시글이 수정된 날짜',
   })
   @IsString()
@@ -55,6 +55,25 @@ export class Event {
     nullable: true,
   })
   modifiedAt: string
+
+  @ApiProperty({
+    description: '이벤트게시글이 삭제된 날짜',
+  })
+  @IsString()
+  @Column({
+    type: 'datetime',
+    nullable: true,
+  })
+  deletedAt: string
+
+  @ApiProperty({
+    example: 'false',
+    description: '이벤트 게시글 삭제여부',
+  })
+  @Column({
+    default: false,
+  })
+  isDelete: boolean
 
   @ApiProperty({
     example: 'URL',
