@@ -54,25 +54,7 @@ export class EventService {
         .where('eventId = :id', { id: eventId })
         .execute()
 
-      const event = await this.eventRepository
-        .createQueryBuilder()
-        .innerJoin('event', 'e')
-        .where('e.eventID=:event', { event: eventId })
-        .getOne()
-
-      const user = await this.userRepository
-        .createQueryBuilder()
-        .innerJoin('user', 'user')
-        .where('user.userId=:userId', { userId: event.host })
-        .getOne()
-
-      const hashtag = await this.hashtagRepository
-        .createQueryBuilder()
-        .innerJoin('hashtag', 'h')
-        .where('h.hashtagId=:hashtag', { hashtag: event.hashtag })
-        .getOne()
-
-      return await this.transReturnDto(user, event, hashtag)
+      return await this.eventGet(eventId)
     } catch (e) {
       throw new NotFoundException('db injection')
     }
@@ -111,25 +93,5 @@ export class EventService {
     event.rating = 0
 
     return event
-  }
-
-  transReturnDto(user: User, event: Event, hashtag: Hashtag) {
-    const returnDto = new EventReturnDto()
-
-    returnDto.userNickName = user.userNickName
-    returnDto.userProfilePhoto = user.userProfilePhoto
-    returnDto.userTitle = user.userTitle
-    returnDto.hashtagName = hashtag.hashtagName
-    returnDto.main_image = event.main_image
-    returnDto.header = event.header
-    returnDto.content = event.content
-    returnDto.views = event.views
-    returnDto.location = event.location
-    returnDto.latitude = event.latitude
-    returnDto.longitude = event.longitude
-    returnDto.maxParticipant = event.maxParticipant
-    returnDto.curParticipant = event.curParticipant
-
-    return returnDto
   }
 }
