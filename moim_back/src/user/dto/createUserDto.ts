@@ -1,7 +1,7 @@
 import { IsByteLength, IsNumber, IsString, IsUrl } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { User } from '../../entity/User.entity'
-import { UserRole } from '../../entity/UserRole'
+import { UserRoleType } from '../utils/UserRole.type'
 
 export class CreateUserDto {
   @ApiProperty({

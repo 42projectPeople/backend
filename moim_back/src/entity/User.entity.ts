@@ -11,7 +11,7 @@ import { Event } from './Event.entity'
 import { Hashtag } from './Hashtag.entity'
 import { Review } from './Review.entity'
 import { User_Events } from './User_Events.entity'
-import { UserRole } from './UserRole'
+import { UserRoleType } from '../user/utils/UserRole.type'
 
 @Entity()
 @Unique('unique_User_userName', ['userName'])
