@@ -16,6 +16,28 @@ export class EventService {
     @InjectRepository(Hashtag) private hashtagRepository: Repository<Hashtag>
   ) {}
 
+  async eventGet(eventId: number) {
+    const event = await this.eventRepository
+      .createQueryBuilder()
+      .innerJoin('event', 'e')
+      .where('e.eventID=:event', { event: eventId })
+      .getOne()
+
+    const user = await this.userRepository
+      .createQueryBuilder()
+      .innerJoin('user', 'user')
+      .where('user.userId=:userId', { userId: event.host })
+      .getOne()
+
+    const hashtag = await this.hashtagRepository
+      .createQueryBuilder()
+      .innerJoin('hashtag', 'h')
+      .where('h.hashtagId=:hashtag', { hashtag: event.hashtag })
+      .getOne()
+
+    return await this.transReturnDto(user, event, hashtag)
+  }
+
   async eventCreate(newEvent: EventCreateDto): Promise<EventReturnDto> {
     try {
       const createEvent = this.transCreateDto(newEvent)
