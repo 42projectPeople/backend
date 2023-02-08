@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { NotFoundError } from 'rxjs'
 import { Event } from 'src/entity/Event.entity'
 import { Hashtag } from 'src/entity/Hashtag.entity'
+import { User } from 'src/entity/User.entity'
 import { Repository } from 'typeorm'
 import { EventCreateDto } from './dto/event.create.dto'
 import { EventUpdateDto } from './dto/event.update.dto'
@@ -10,7 +11,9 @@ import { EventUpdateDto } from './dto/event.update.dto'
 @Injectable()
 export class EventService {
   constructor(
-    @InjectRepository(Event) private eventRepository: Repository<Event>
+    @InjectRepository(Event) private eventRepository: Repository<Event>,
+    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Hashtag) private hashtagRepository: Repository<Hashtag>
   ) {}
 
   async eventFindOneById(eventId: number): Promise<Event> {
