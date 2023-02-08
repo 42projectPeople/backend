@@ -75,7 +75,7 @@ export class UserService {
     const info = await this.userRepository.find({
       where: { userNickName: userNickName },
     })
-    return info.length !== 0
+    return info.length === 0
   }
 
   async registerEvent(userId: number, registerEventDto: RegisterEventDto) {
