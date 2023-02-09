@@ -12,10 +12,10 @@ import { User } from './User.entity'
 import { Event } from './Event.entity'
 
 @Entity()
-@Unique('unique_UserEvents_userId_eventId_participatedAt', [
+@Unique('unique_UserEvents_userId_eventId_deletedAt', [
   'userId',
   'eventId',
-  'participatedAt',
+  'deletedAt',
 ])
 export class User_Events {
   /**
@@ -32,11 +32,6 @@ export class User_Events {
 
   @DeleteDateColumn()
   deletedAt: Date
-
-  @Column({
-    default: false,
-  })
-  isDeleted: boolean
 
   @ManyToOne(() => User, (user) => user.userId, { nullable: false })
   @JoinColumn({

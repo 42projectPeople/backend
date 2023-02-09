@@ -11,6 +11,7 @@ import { UpdateUserDto } from './dto/updateUserDto'
 import { CreateUserDto } from './dto/createUserDto'
 import { RegisterEventDto } from './dto/registerEventDto'
 import { User_Events } from '../entity/User_Events.entity'
+import { UnregisterEventDto } from './dto/unregisterEventDto'
 
 @Injectable()
 export class UserService {
@@ -103,18 +104,18 @@ export class UserService {
   }
 
   async unregisterEvent(
-    participateId: number,
-    registerEventDto: RegisterEventDto
+    userId: number,
+    unregisterEventDto: UnregisterEventDto
   ) {
+    console.log(userId)
     try {
       await this.userEventsRepository
         .createQueryBuilder('user_events')
-        .update()
-        .set({
-          isDeleted: true,
-          deletedAt: () => 'CURRENT_TIMESTAMP',
-        })
-        .where('user_events.participateId = :id', { id: participateId })
+        .softDelete()
+        .where(
+          'user_events.userId = :userId AND user_events.eventId = :eventId AND user_events.deletedAt is not NULL',
+          { userId: userId, eventId: unregisterEventDto.eventId }
+        )
         .execute()
     } catch (err) {
       throw new InternalServerErrorException('database server error')

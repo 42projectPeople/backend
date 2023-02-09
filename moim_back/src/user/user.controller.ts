@@ -18,6 +18,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
 import { Users } from './utils/Users.type'
 import { RegisterEventDto } from './dto/registerEventDto'
+import { UnregisterEventDto } from './dto/unregisterEventDto'
 
 @Controller('user')
 @ApiTags('user api')
@@ -159,13 +160,13 @@ export class UserController {
   /**
    * RESTRICTED: login user
    * @param userId
-   * @param registerEventDto
+   * @param unregisterEventDto
    */
   @Delete(':userID/event')
   async unregisterEvent(
     @Param('userID') userId: string,
-    @Body() registerEventDto: RegisterEventDto
+    @Body() unregisterEventDto: UnregisterEventDto
   ) {
-    await this.userService.unregisterEvent(+userId, registerEventDto)
+    await this.userService.unregisterEvent(+userId, unregisterEventDto)
   }
 }
