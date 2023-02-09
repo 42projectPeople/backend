@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -82,6 +83,15 @@ export class UserService {
     return info.length === 0
   }
 
+  async findAllUserEvent(userId: number) {
+    try {
+      return await this.userEventsRepository.find({
+        where: { userId: userId, deletedAt: null },
+      })
+    } catch (err) {
+      throw new InternalServerErrorException('database server error')
+    }
+  }
   async registerEvent(userId: number, registerEventDto: RegisterEventDto) {
     // register event
     try {
@@ -97,6 +107,8 @@ export class UserService {
     } catch (err) {
       if (err.code === 'ER_DUP_ENTRY') {
         throw new ConflictException('too fast')
+      } else if (err.code === 'ER_NO_REFERENCED_ROW_2') {
+        throw new BadRequestException('invalid key')
       } else {
         throw new InternalServerErrorException('database server error')
       }
@@ -113,7 +125,7 @@ export class UserService {
         .createQueryBuilder('user_events')
         .softDelete()
         .where(
-          'user_events.userId = :userId AND user_events.eventId = :eventId AND user_events.deletedAt is not NULL',
+          'user_events.userId = :userId AND user_events.eventId = :eventId AND user_events.deletedAt is NULL',
           { userId: userId, eventId: unregisterEventDto.eventId }
         )
         .execute()
