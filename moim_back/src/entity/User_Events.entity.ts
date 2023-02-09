@@ -33,15 +33,21 @@ export class User_Events {
   @DeleteDateColumn()
   deletedAt: Date
 
+  @Column({ name: 'userId' })
+  userId: number
+
   @ManyToOne(() => User, (user) => user.userId, { nullable: false })
   @JoinColumn({
     name: 'userId',
   })
-  userId: User | number
+  user: User | number
+
+  @Column({ name: 'eventId' })
+  eventId: number
 
   @ManyToOne(() => Event, (event) => event.eventId, { nullable: false })
   @JoinColumn({
     name: 'eventId',
   })
-  eventId: Event | number
+  event: Event | number
 }
