@@ -9,6 +9,8 @@ import {
   Query,
   Put,
   Delete,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common'
 import { UserService } from './user.service'
 import { UpdateUserDto } from './dto/updateUserDto'
@@ -32,6 +34,14 @@ export class UserController {
    * @param res
    */
   @Post()
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
   @ApiOperation({ summary: 'user creation api', description: 'create user' })
   @ApiResponse({
     description: 'create user',
@@ -126,6 +136,14 @@ export class UserController {
    * @param res
    */
   @Put(':userID')
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
   @ApiOperation({
     summary: 'update user',
     description: 'update user',
@@ -147,9 +165,27 @@ export class UserController {
    * RESTRICTED: login user
    * TODO: implement services
    * @param userId
+   */
+  @Get(':userID/event')
+  async getUserEvents(@Param('userID') userId: string) {
+    return await this.userService.findAllUserEvent(+userId)
+  }
+
+  /**
+   * RESTRICTED: login user
+   * TODO: implement services
+   * @param userId
    * @param registerEventDto
    */
   @Post(':userID/event')
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
   async registerEvent(
     @Param('userID') userId: string,
     @Body() registerEventDto: RegisterEventDto
@@ -163,6 +199,14 @@ export class UserController {
    * @param unregisterEventDto
    */
   @Delete(':userID/event')
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
   async unregisterEvent(
     @Param('userID') userId: string,
     @Body() unregisterEventDto: UnregisterEventDto
