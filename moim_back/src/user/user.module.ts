@@ -4,11 +4,13 @@ import { User } from 'src/entity/User.entity'
 import { UserController } from './user.controller'
 import { UserService } from './user.service'
 import { User_Events } from '../entity/User_Events.entity'
+import { Event } from '../entity/Event.entity'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     TypeOrmModule.forFeature([User_Events]),
+    TypeOrmModule.forFeature([Event]),
   ],
   controllers: [UserController],
   providers: [UserService],

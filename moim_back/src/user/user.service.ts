@@ -13,13 +13,16 @@ import { CreateUserDto } from './dto/createUserDto'
 import { RegisterEventDto } from './dto/registerEventDto'
 import { User_Events } from '../entity/User_Events.entity'
 import { UnregisterEventDto } from './dto/unregisterEventDto'
+import { Event } from '../entity/Event.entity'
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(User_Events)
-    private readonly userEventsRepository: Repository<User_Events>
+    private readonly userEventsRepository: Repository<User_Events>,
+    @InjectRepository(Event)
+    private readonly eventsRepository: Repository<Event>
   ) {}
 
   async findUserByUserId(userId: number): Promise<User[]> {
@@ -83,7 +86,18 @@ export class UserService {
     return info.length === 0
   }
 
-  async findAllUserEvent(userId: number) {
+  async findAllUserHostEvent(userId: number) {
+    try {
+      return await this.eventsRepository.find({
+        where: { host: userId },
+      })
+    } catch (err) {
+      console.log(err)
+      throw new InternalServerErrorException('database server error')
+    }
+  }
+
+  async findAllUserGuestEvent(userId: number) {
     try {
       return await this.userEventsRepository.find({
         where: { userId: userId, deletedAt: null },

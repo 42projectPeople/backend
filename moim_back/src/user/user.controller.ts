@@ -11,6 +11,7 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
+  BadRequestException,
 } from '@nestjs/common'
 import { UserService } from './user.service'
 import { UpdateUserDto } from './dto/updateUserDto'
@@ -163,12 +164,22 @@ export class UserController {
 
   /**
    * RESTRICTED: login user
-   * TODO: implement services
    * @param userId
+   * @param role
    */
   @Get(':userID/event')
-  async getUserEvents(@Param('userID') userId: string) {
-    return await this.userService.findAllUserEvent(+userId)
+  async getUserEvents(
+    @Param('userID') userId: string,
+    @Query('role') role: string
+  ) {
+    console.log(role)
+    if (role === 'host') {
+      return await this.userService.findAllUserHostEvent(+userId)
+    } else if (role === undefined || role === 'guest') {
+      return await this.userService.findAllUserGuestEvent(+userId)
+    } else {
+      throw new BadRequestException('invalid query')
+    }
   }
 
   /**
