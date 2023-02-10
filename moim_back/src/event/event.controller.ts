@@ -43,6 +43,6 @@ export class EventController {
   @Delete('/:id')
   eventDelete(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     this.eventService.eventDelete(id)
-    return res.status(HttpStatus.OK)
+    return res.status(HttpStatus.OK).json({ msg: 'delete finished!' })
   }
 }
