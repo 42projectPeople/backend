@@ -23,7 +23,7 @@ export class EventController {
     if (ret == '')
       // 못 찾은 경우
       return res.status(HttpStatus.NOT_FOUND).send()
-    else return res.status(HttpStatus.CREATED).json(ret).send()
+    else return res.status(HttpStatus.OK).json(ret).send()
   }
 
   @Post('')
@@ -41,7 +41,8 @@ export class EventController {
   }
 
   @Delete('/:id')
-  eventDelete(@Param('id', ParseIntPipe) id: number) {
-    return this.eventService.eventDelete(id)
+  eventDelete(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+    this.eventService.eventDelete(id)
+    return res.status(HttpStatus.OK)
   }
 }
