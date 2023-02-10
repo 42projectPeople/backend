@@ -73,7 +73,7 @@ export class UserService {
         .execute()
     } catch (err) {
       if (err.code === 'ER_DUP_ENTRY') {
-        throw new NotAcceptableException('duplicated unique value')
+        throw new ConflictException('duplicated unique value')
       } else {
         throw new InternalServerErrorException('database server error')
       }
