@@ -13,8 +13,12 @@ export class EventService {
   async eventGet(eventId: number) {
     return await this.eventRepository
       .createQueryBuilder('event')
-      .innerJoinAndSelect('user', 'u', 'u.userId = event.hostId')
-      .innerJoinAndSelect('hashtag', 'ha', 'ha.hashtagId = event.hashtagId')
+      .innerJoinAndSelect('user', 'user', 'user.userId = event.hostId')
+      .innerJoinAndSelect(
+        'hashtag',
+        'hashtag',
+        'hashtag.hashtagId = event.hashtagId'
+      )
       .where('event.eventId=:id AND event.deletedAt IS NULL', { id: eventId })
       .execute()
   }
