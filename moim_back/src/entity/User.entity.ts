@@ -26,7 +26,11 @@ export class User {
   @Column({ type: 'char', length: 100, nullable: false })
   userNickName: string
 
-  @Column({ type: 'char', length: 20, nullable: false, default: 'USER' })
+  @Column({
+    type: 'enum',
+    enum: { ADMIN: 'admin', USER: 'user' }, // FIXME: enum 대신 사용한 부분이라 고려해야함
+    default: UserRoleType.USER,
+  })
   userRole: UserRoleType
 
   @Column({
