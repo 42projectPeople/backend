@@ -20,7 +20,7 @@ export class EventController {
   @Get('/:id')
   async eventGet(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     const ret = await this.eventService.eventGet(id)
-    if (ret == '') {
+    if (!ret) {
       // 못 찾은 경우
       return res.status(HttpStatus.NOT_FOUND).send()
     } else {
@@ -33,8 +33,12 @@ export class EventController {
     const ret = await this.eventService.eventCreate(body)
     if (ret) {
       //생성성공
+      const event = await this.eventService.eventGet(body.host)
+      if (!event) {
+        return res.status(HttpStatus.NOT_FOUND)
+      }
       return res.status(HttpStatus.CREATED).json(ret)
-    } else if (ret == '') {
+    } else {
       //생성 실패
       return res.status(HttpStatus.CONFLICT).json({ msg: '생성실패' })
     }
@@ -48,7 +52,13 @@ export class EventController {
   ) {
     const ret = await this.eventService.eventUpdate(id, body)
     if (ret) {
-      return res.status(HttpStatus.CREATED).json(ret)
+      const event = await this.eventService.eventGet(id)
+      if (!event) {
+        return res.status(HttpStatus.NOT_FOUND)
+      }
+      return res.status(HttpStatus.CREATED).json(event)
+    } else {
+      return res.status(HttpStatus.CONFLICT).json({ msg: 'db error' })
     }
   }
 
@@ -58,6 +68,6 @@ export class EventController {
     @Res() res: Response
   ) {
     await this.eventService.eventDelete(id)
-    return res.status(HttpStatus.OK).json({ msg: 'delete finished!' })
+    return res.status(HttpStatus.CREATED).json({ msg: 'delete finished!' })
   }
 }

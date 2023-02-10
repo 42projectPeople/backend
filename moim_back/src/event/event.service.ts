@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Event } from 'src/entity/Event.entity'
 import { Repository } from 'typeorm'
@@ -29,15 +33,15 @@ export class EventService {
         EventDefaultDto.transEventDto(newEvent)
       )
 
-      return this.eventGet(event.eventId)
+      return event
     } catch (e) {
-      throw new NotFoundException('db injection')
+      throw new ConflictException('db error')
     }
   }
 
   async eventUpdate(eventId: number, update: EventDefaultDto) {
     try {
-      await this.eventRepository
+      const ret = await this.eventRepository
         .createQueryBuilder('event')
         .update()
         .set({
@@ -56,9 +60,9 @@ export class EventService {
         })
         .execute()
 
-      return await this.eventGet(eventId)
+      return ret
     } catch (e) {
-      throw new NotFoundException('db injection')
+      throw new ConflictException('db error')
     }
   }
 
