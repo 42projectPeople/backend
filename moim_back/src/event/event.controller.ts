@@ -20,29 +20,44 @@ export class EventController {
   @Get('/:id')
   async eventGet(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     const ret = await this.eventService.eventGet(id)
-    if (ret == '')
+    if (ret == '') {
       // 못 찾은 경우
       return res.status(HttpStatus.NOT_FOUND).send()
-    else return res.status(HttpStatus.OK).json(ret).send()
+    } else {
+      return res.status(HttpStatus.OK).json(ret).send()
+    }
   }
 
   @Post('')
-  eventCreate(@Body() body: EventDefaultDto) {
-    console.log(body)
-    return this.eventService.eventCreate(body)
+  async eventCreate(@Body() body: EventDefaultDto, @Res() res: Response) {
+    const ret = await this.eventService.eventCreate(body)
+    if (ret) {
+      //생성성공
+      return res.status(HttpStatus.CREATED).json(ret)
+    } else if (ret == '') {
+      //생성 실패
+      return res.status(HttpStatus.CONFLICT).json({ msg: '생성실패' })
+    }
   }
 
   @Patch('/:id')
-  eventUpdate(
+  async eventUpdate(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: EventDefaultDto
+    @Body() body: EventDefaultDto,
+    @Res() res: Response
   ) {
-    return this.eventService.eventUpdate(id, body)
+    const ret = await this.eventService.eventUpdate(id, body)
+    if (ret) {
+      return res.status(HttpStatus.CREATED).json(ret)
+    }
   }
 
   @Delete('/:id')
-  eventDelete(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
-    this.eventService.eventDelete(id)
+  async eventDelete(
+    @Param('id', ParseIntPipe) id: number,
+    @Res() res: Response
+  ) {
+    await this.eventService.eventDelete(id)
     return res.status(HttpStatus.OK).json({ msg: 'delete finished!' })
   }
 }
