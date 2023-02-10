@@ -41,7 +41,7 @@ export class EventService {
 
   async eventUpdate(eventId: number, update: EventDefaultDto) {
     try {
-      const ret = await this.eventRepository
+      const event = await this.eventRepository
         .createQueryBuilder('event')
         .update()
         .set({
@@ -60,7 +60,7 @@ export class EventService {
         })
         .execute()
 
-      return ret
+      return event
     } catch (e) {
       throw new ConflictException('db error')
     }
