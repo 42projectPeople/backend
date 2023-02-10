@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../entity/User.entity'
-import { Repository } from 'typeorm'
+import { DataSource, IsNull, Repository } from 'typeorm'
 import { UpdateUserDto } from './dto/updateUserDto'
 import { CreateUserDto } from './dto/createUserDto'
 import { RegisterEventDto } from './dto/registerEventDto'
@@ -22,7 +22,8 @@ export class UserService {
     @InjectRepository(User_Events)
     private readonly userEventsRepository: Repository<User_Events>,
     @InjectRepository(Event)
-    private readonly eventsRepository: Repository<Event>
+    private readonly eventsRepository: Repository<Event>,
+    private readonly dataSource: DataSource
   ) {}
 
   async findUserByUserId(userId: number): Promise<User[]> {
@@ -106,45 +107,45 @@ export class UserService {
       throw new InternalServerErrorException('database server error')
     }
   }
+
+  /**
+   * NOTE: query runner 를 사용할 경우 개발자에게 권한이 더 주어질 수 있음. (우선은 entityManager 활용함)
+   * @param userId
+   * @param registerEventDto
+   */
   async registerEvent(userId: number, registerEventDto: RegisterEventDto) {
     // register event
-    try {
-      await this.userEventsRepository
-        .createQueryBuilder('user_events')
-        .insert()
-        .into(User_Events)
-        .values({
-          eventId: registerEventDto.eventId,
-          userId: userId,
-        })
-        .execute()
-    } catch (err) {
-      if (err.code === 'ER_DUP_ENTRY') {
-        throw new ConflictException('too fast')
-      } else if (err.code === 'ER_NO_REFERENCED_ROW_2') {
-        throw new BadRequestException('invalid key')
-      } else {
-        throw new InternalServerErrorException('database server error')
-      }
-    }
+    const userEvents = new User_Events()
+
+    userEvents.userId = userId
+    userEvents.eventId = registerEventDto.eventId
+    await this.dataSource.manager.transaction(async (entityManager) => {
+      await entityManager.save(userEvents)
+      await entityManager.increment(
+        Event,
+        { eventId: registerEventDto.eventId },
+        'curParticipant',
+        1
+      )
+    })
   }
 
   async unregisterEvent(
     userId: number,
     unregisterEventDto: UnregisterEventDto
   ) {
-    console.log(userId)
-    try {
-      await this.userEventsRepository
-        .createQueryBuilder('user_events')
-        .softDelete()
-        .where(
-          'user_events.userId = :userId AND user_events.eventId = :eventId AND user_events.deletedAt is NULL',
-          { userId: userId, eventId: unregisterEventDto.eventId }
-        )
-        .execute()
-    } catch (err) {
-      throw new InternalServerErrorException('database server error')
-    }
+    await this.dataSource.manager.transaction(async (entityManager) => {
+      await entityManager.softDelete(User_Events, {
+        userId: userId,
+        eventId: unregisterEventDto.eventId,
+        deletedAt: IsNull(),
+      })
+      await entityManager.decrement(
+        Event,
+        { eventId: unregisterEventDto.eventId },
+        'curParticipant',
+        1
+      )
+    })
   }
 }
