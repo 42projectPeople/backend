@@ -18,7 +18,7 @@ import { EventService } from './event.service'
 export class EventController {
   constructor(private readonly eventService: EventService) {}
   @Get('/:id')
-  async getEvent(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+  async eventGet(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     const ret = await this.eventService.eventGet(id)
     if (ret == '')
       // 못 찾은 경우
