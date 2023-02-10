@@ -13,6 +13,7 @@ import { ReviewModule } from './review/review.module'
 import { UserModule } from './user/user.module'
 import { UserEventsModule } from './user-events/user-events.module'
 import { HashtagModule } from './hashtag/hashtag.module'
+import { HealthModule } from './health/health.module'
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { HashtagModule } from './hashtag/hashtag.module'
       password: process.env.PASSWORD,
       database: process.env.DATABASE,
       entities: [Event, Hashtag, Review, User, User_Events],
-      synchronize: true, //특정 조건하에서 모든 데이터를 삭제하는 것 같습니다. 프로덕션에서는 사용하지 않는게 좋습니다.
+      // synchronize: true, //특정 조건하에서 모든 데이터를 삭제하는 것 같습니다. 프로덕션에서는 사용하지 않는게 좋습니다.
       logging: true,
     }),
     UserModule,
@@ -35,6 +36,7 @@ import { HashtagModule } from './hashtag/hashtag.module'
     EventModule,
     UserEventsModule,
     HashtagModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
