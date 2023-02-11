@@ -98,11 +98,20 @@ export class UserService {
     }
   }
 
-  async findAllUserGuestEvent(userId: number) {
+  async findAllUserGuestEvent(userId: number): Promise<Event[]> {
     try {
-      return await this.userEventsRepository.find({
-        where: { userId: userId, deletedAt: null },
-      })
+      return await this.eventRepository
+        .createQueryBuilder()
+        .leftJoin(
+          'user_events',
+          'user_events',
+          'user_events.event_id = events.id'
+        )
+        .where(
+          'user_events.user_id = :userId and user_events.deletedAt is null',
+          { userId }
+        )
+        .getMany()
     } catch (err) {
       throw new InternalServerErrorException('database server error')
     }
