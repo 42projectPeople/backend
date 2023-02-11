@@ -28,7 +28,9 @@ import { HealthModule } from './health/health.module'
       password: process.env.PASSWORD,
       database: process.env.DATABASE,
       entities: [Event, Hashtag, Review, User, User_Events],
-      // synchronize: true, //특정 조건하에서 모든 데이터를 삭제하는 것 같습니다. 프로덕션에서는 사용하지 않는게 좋습니다.
+      // NOTE: user_event의 drop 관련 문제 때문에 꺼뒀습니다.
+      // https://github.com/42projectPeople/backend/discussions/39
+      synchronize: false, //특정 조건하에서 모든 데이터를 삭제하는 것 같습니다. 프로덕션에서는 사용하지 않는게 좋습니다.
       logging: true,
     }),
     UserModule,
