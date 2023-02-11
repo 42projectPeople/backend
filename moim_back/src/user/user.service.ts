@@ -1,9 +1,7 @@
 import {
-  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
-  NotAcceptableException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../entity/User.entity'
@@ -22,26 +20,25 @@ export class UserService {
     @InjectRepository(User_Events)
     private readonly userEventsRepository: Repository<User_Events>,
     @InjectRepository(Event)
-    private readonly eventsRepository: Repository<Event>,
+    private readonly eventRepository: Repository<Event>,
     private readonly dataSource: DataSource
   ) {}
 
-  async findUserByUserId(userId: number): Promise<User[]> {
-    return await this.userRepository.find({
+  async findUserByUserId(userId: number): Promise<User> {
+    return await this.userRepository.findOne({
       where: { userId: userId },
     })
   }
 
   async findUsersByPage(page: number): Promise<User[]> {
-    console.log(typeof page)
     return await this.userRepository.find({
       skip: +page * 10,
       take: 10,
     })
   }
 
-  async findUserByNickName(userNickName: string): Promise<User[]> {
-    return await this.userRepository.find({
+  async findUserByNickName(userNickName: string): Promise<User> {
+    return await this.userRepository.findOne({
       where: { userNickName: userNickName },
     })
   }
@@ -87,9 +84,9 @@ export class UserService {
     return info.length === 0
   }
 
-  async findAllUserHostEvent(userId: number) {
+  async findAllUserHostEvent(userId: number): Promise<Event[]> {
     try {
-      return await this.eventsRepository.find({
+      return await this.eventRepository.find({
         where: { host: userId },
       })
     } catch (err) {
