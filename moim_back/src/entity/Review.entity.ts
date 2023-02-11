@@ -7,6 +7,7 @@ import {
   Unique,
   UpdateDateColumn,
   CreateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm'
 import { Event } from './Event.entity'
 import { User } from './User.entity'
@@ -18,10 +19,13 @@ export class Review {
   reviewId: number
 
   @CreateDateColumn()
-  createdAt: string
+  createdAt: Date
 
   @UpdateDateColumn()
-  modifiedAt: string
+  modifiedAt: Date
+
+  @DeleteDateColumn()
+  deletedAt: Date
 
   @Column({
     type: 'int',
