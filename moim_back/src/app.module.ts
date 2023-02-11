@@ -13,6 +13,7 @@ import { ReviewModule } from './review/review.module'
 import { UserModule } from './user/user.module'
 import { UserEventsModule } from './user-events/user-events.module'
 import { HashtagModule } from './hashtag/hashtag.module'
+import { HealthModule } from './health/health.module'
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { HashtagModule } from './hashtag/hashtag.module'
     EventModule,
     UserEventsModule,
     HashtagModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
