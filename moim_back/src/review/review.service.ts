@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Review } from 'src/entity/Review.entity'
-import { Repository } from 'typeorm'
+import { DataSource, Repository } from 'typeorm'
 import CreateReviewDto from './dto/createReviewDto'
 import { UpdateReviewDto } from './dto/updateReviewDto'
 
@@ -9,7 +9,8 @@ import { UpdateReviewDto } from './dto/updateReviewDto'
 export class ReviewService {
   constructor(
     @InjectRepository(Review)
-    private readonly reviewRepository: Repository<Review>
+    private readonly reviewRepository: Repository<Review>,
+    private datasource: DataSource
   ) {}
 
   async findReviewByEventID(eventId: number) {
@@ -40,16 +41,31 @@ export class ReviewService {
     }
   }
 
-  async update(reviewId: number, updateReviewDto: UpdateReviewDto) {
-    await this.reviewRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        content: updateReviewDto.content,
-        modifiedAt: () => 'CURRENT_TIMESTAMP',
-      })
-      .where('reviewId = :id', { id: reviewId })
-      .execute()
+  /*
+   * @param reviewId
+   * @param userId
+   * @param updateReviewDto
+   * */
+  async update(
+    reviewId: number,
+    userId: number,
+    updateReviewDto: UpdateReviewDto
+  ) {
+    const queryRunner = this.datasource.createQueryRunner()
+    await queryRunner.connect() //connection pool에서 connection을 가져옵니다.
+    await queryRunner.startTransaction()
+    try {
+      await queryRunner.manager.update(
+        Review, //업데이트할 테이블
+        { reviewId: reviewId, reviewerId: userId }, //조건
+        updateReviewDto //업데이트할 partial 객체
+      )
+      await queryRunner.commitTransaction() //성공시 commit
+    } catch (err) {
+      await queryRunner.rollbackTransaction() //실패시 rollback
+    } finally {
+      await queryRunner.release() //connection pool에 반환
+    }
   }
 
   async remove(reviewId: number, userId: number) {
