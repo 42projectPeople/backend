@@ -48,10 +48,6 @@ export class UserService {
     userInfo: UpdateUserRequestDto
   ): Promise<void> {
     try {
-      const data = {}
-      Object.keys(userInfo).forEach((key) => {
-        data[key] = userInfo[key]
-      })
       await this.userRepository
         .createQueryBuilder()
         .update()
