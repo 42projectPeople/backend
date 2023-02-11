@@ -43,7 +43,10 @@ export class UserService {
     })
   }
 
-  async updateUser(userId: number, userInfo: UpdateUserRequestDto) {
+  async updateUser(
+    userId: number,
+    userInfo: UpdateUserRequestDto
+  ): Promise<void> {
     try {
       const data = {}
       Object.keys(userInfo).forEach((key) => {
@@ -52,7 +55,7 @@ export class UserService {
       await this.userRepository
         .createQueryBuilder()
         .update()
-        .set(data)
+        .set(userInfo)
         .where('userId = :id', { id: userId })
         .execute()
     } catch (err) {
@@ -60,7 +63,7 @@ export class UserService {
     }
   }
 
-  async createUser(userInfo: CreateUserRequestDto) {
+  async createUser(userInfo: CreateUserRequestDto): Promise<void> {
     try {
       await this.userRepository
         .createQueryBuilder()
@@ -122,7 +125,7 @@ export class UserService {
   async registerEvent(
     userId: number,
     registerEventDto: RegisterEventRequestDto
-  ) {
+  ): Promise<void> {
     // register event
     const userEvents = new User_Events()
 
@@ -142,7 +145,7 @@ export class UserService {
   async unregisterEvent(
     userId: number,
     unregisterEventDto: UnregisterEventRequestDto
-  ) {
+  ): Promise<void> {
     await this.dataSource.manager.transaction(async (entityManager) => {
       await entityManager.softDelete(User_Events, {
         userId: userId,
