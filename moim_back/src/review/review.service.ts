@@ -52,7 +52,7 @@ export class ReviewService {
       .execute()
   }
 
-  async remove(reviewId: number, userId) {
+  async remove(reviewId: number, userId: number) {
     await this.reviewRepository
       .createQueryBuilder()
       .update()
