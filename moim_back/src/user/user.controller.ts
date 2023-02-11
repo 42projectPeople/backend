@@ -14,19 +14,30 @@ import {
   BadRequestException,
 } from '@nestjs/common'
 import { UserService } from './user.service'
-import { UpdateUserDto } from './dto/updateUserDto'
-import { CreateUserDto } from './dto/createUserDto'
+import { UpdateUserRequestDto } from './dto/updateUserRequestDto'
+import { CreateUserRequestDto } from './dto/createUserRequestDto'
 import { User } from '../entity/User.entity'
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 import { Response } from 'express'
 import { Users } from './utils/Users.type'
-import { RegisterEventDto } from './dto/registerEventDto'
-import { UnregisterEventDto } from './dto/unregisterEventDto'
+import { RegisterEventRequestDto } from './dto/registerEventRequestDto'
+import { UnregisterEventRequestDto } from './dto/unregisterEventRequestDto'
+import { CheckNickNameResponseDto } from './dto/checkNickNameResponseDto'
 
 @Controller('user')
 @ApiTags('user api')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  private setResponseStatus(res: Response, status: number) {
+    res.status(status)
+  }
 
   /**
    * RESTRICTED: any user
@@ -45,15 +56,24 @@ export class UserController {
   )
   @ApiOperation({ summary: 'user creation api', description: 'create user' })
   @ApiResponse({
-    description: 'create user',
-    type: null,
+    status: HttpStatus.CREATED,
+    description: 'create user operation success',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'create user operation is failed',
+  })
+  @ApiBody({
+    type: CreateUserRequestDto,
+    description: 'Create user data',
   })
   async createUser(
-    @Body() createUserDto: CreateUserDto,
+    @Body()
+    createUserDto: CreateUserRequestDto,
     @Res({ passthrough: true }) res: Response
-  ) {
+  ): Promise<void> {
     await this.userService.createUser(createUserDto)
-    res.status(HttpStatus.CREATED)
+    this.setResponseStatus(res, HttpStatus.CREATED)
   }
 
   /**
@@ -155,11 +175,11 @@ export class UserController {
   })
   async updateUser(
     @Param('userID') userID: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updateUserDto: UpdateUserRequestDto,
     @Res({ passthrough: true }) res: Response
   ) {
     await this.userService.updateUser(+userID, updateUserDto)
-    res.status(HttpStatus.ACCEPTED)
+    this.setResponseStatus(res, HttpStatus.ACCEPTED)
   }
 
   /**
@@ -199,7 +219,7 @@ export class UserController {
   )
   async registerEvent(
     @Param('userID') userId: string,
-    @Body() registerEventDto: RegisterEventDto
+    @Body() registerEventDto: RegisterEventRequestDto
   ) {
     await this.userService.registerEvent(+userId, registerEventDto)
   }
@@ -220,7 +240,7 @@ export class UserController {
   )
   async unregisterEvent(
     @Param('userID') userId: string,
-    @Body() unregisterEventDto: UnregisterEventDto
+    @Body() unregisterEventDto: UnregisterEventRequestDto
   ) {
     await this.userService.unregisterEvent(+userId, unregisterEventDto)
   }

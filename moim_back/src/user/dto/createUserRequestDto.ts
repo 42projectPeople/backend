@@ -2,7 +2,7 @@ import { IsByteLength, IsString, IsUrl } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { User } from '../../entity/User.entity'
 
-export class CreateUserDto {
+export class CreateUserRequestDto {
   @ApiProperty({
     description: 'user의 고유한 name',
   })
@@ -34,7 +34,7 @@ export class CreateUserDto {
    * DTO to entity
    * @param createReviewDto
    */
-  static toEntity(createReviewDto: CreateUserDto): User {
+  static toEntity(createReviewDto: CreateUserRequestDto): User {
     const user = new User()
     user.userName = createReviewDto.userName
     user.userNickName = createReviewDto.userNickName

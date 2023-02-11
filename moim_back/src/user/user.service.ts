@@ -8,11 +8,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../entity/User.entity'
 import { DataSource, IsNull, Repository } from 'typeorm'
-import { UpdateUserDto } from './dto/updateUserDto'
-import { CreateUserDto } from './dto/createUserDto'
-import { RegisterEventDto } from './dto/registerEventDto'
+import { UpdateUserRequestDto } from './dto/updateUserRequestDto'
+import { CreateUserRequestDto } from './dto/createUserRequestDto'
+import { RegisterEventRequestDto } from './dto/registerEventRequestDto'
 import { User_Events } from '../entity/User_Events.entity'
-import { UnregisterEventDto } from './dto/unregisterEventDto'
+import { UnregisterEventRequestDto } from './dto/unregisterEventRequestDto'
 import { Event } from '../entity/Event.entity'
 
 @Injectable()
@@ -46,7 +46,7 @@ export class UserService {
     })
   }
 
-  async updateUser(userId: number, userInfo: UpdateUserDto) {
+  async updateUser(userId: number, userInfo: UpdateUserRequestDto) {
     try {
       const data = {}
       Object.keys(userInfo).forEach((key) => {
@@ -63,13 +63,13 @@ export class UserService {
     }
   }
 
-  async createUser(userInfo: CreateUserDto) {
+  async createUser(userInfo: CreateUserRequestDto) {
     try {
       await this.userRepository
         .createQueryBuilder()
         .insert()
         .into(User)
-        .values(CreateUserDto.toEntity(userInfo))
+        .values(CreateUserRequestDto.toEntity(userInfo))
         .execute()
     } catch (err) {
       if (err.code === 'ER_DUP_ENTRY') {
@@ -113,7 +113,10 @@ export class UserService {
    * @param userId
    * @param registerEventDto
    */
-  async registerEvent(userId: number, registerEventDto: RegisterEventDto) {
+  async registerEvent(
+    userId: number,
+    registerEventDto: RegisterEventRequestDto
+  ) {
     // register event
     const userEvents = new User_Events()
 
@@ -132,7 +135,7 @@ export class UserService {
 
   async unregisterEvent(
     userId: number,
-    unregisterEventDto: UnregisterEventDto
+    unregisterEventDto: UnregisterEventRequestDto
   ) {
     await this.dataSource.manager.transaction(async (entityManager) => {
       await entityManager.softDelete(User_Events, {
