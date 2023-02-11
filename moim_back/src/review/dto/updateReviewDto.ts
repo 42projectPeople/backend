@@ -1,7 +1,14 @@
-import { PartialType, PickType } from '@nestjs/swagger'
-import CreateReviewDto from './createReviewDto'
+import { PickType } from '@nestjs/swagger'
+import { RequestUpdateReviewDto } from './requestUpdateUserDto'
 
-export class UpdateReviewDto extends PickType(CreateReviewDto, [
+/*
+ * used in service layer
+ * */
+export class UpdateReviewDto extends PickType(RequestUpdateReviewDto, [
   'content',
-  'reviewerId',
-] as const) {}
+]) {
+  constructor(requestUpdateReviewDto: RequestUpdateReviewDto) {
+    super()
+    this.content = requestUpdateReviewDto.content
+  }
+}

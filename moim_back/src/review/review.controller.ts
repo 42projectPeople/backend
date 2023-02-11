@@ -12,6 +12,7 @@ import {
 import { ReviewService } from './review.service'
 import CreateReviewDto from './dto/createReviewDto'
 import { UpdateReviewDto } from './dto/updateReviewDto'
+import { RequestUpdateReviewDto } from './dto/requestUpdateUserDto'
 
 @Controller('review')
 export class ReviewController {
@@ -57,13 +58,18 @@ export class ReviewController {
   )
   async patchReview(
     @Param('reviewId') reviewId: string,
-    @Body() updateReviewDto: UpdateReviewDto
+    @Body() requestUpdateReviewDto: RequestUpdateReviewDto
   ) {
     /*
-     * if (req.user.userId != updateReviewDto.reviewerId)
-     *	throw new ForbiddenException('FOrbidden access')
+     * if (req.session.userId != requestUpdateReviewDto.reviewerId)
+     * 	throw new ForbiddenException()
      * */
-    return this.reviewService.update(+reviewId, updateReviewDto)
+    const userId = 1 //req.session.userId
+    return this.reviewService.update(
+      +reviewId,
+      userId, //조건문에서 사용할 userId
+      new UpdateReviewDto(requestUpdateReviewDto) //서비스 레이어 dto 생성
+    )
   }
 
   @Delete(':reviewId')
