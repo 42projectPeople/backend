@@ -15,13 +15,13 @@ export class ReviewService {
 
   async findReviewByEventID(eventId: number) {
     return await this.reviewRepository.find({
-      where: { eventId: eventId, deleted: false },
+      where: { eventId: eventId, isDeleted: 'N' },
     })
   }
 
   async findReviewByUserId(userId: number) {
     return await this.reviewRepository.find({
-      where: { reviewId: userId, deleted: false },
+      where: { reviewerId: userId, isDeleted: 'N' },
     })
   }
 
@@ -69,17 +69,24 @@ export class ReviewService {
   }
 
   async remove(reviewId: number, userId: number) {
-    await this.reviewRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        deleted: true,
-        modifiedAt: () => 'CURRENT_TIMESTAMP',
+    const queryRunner = this.datasource.createQueryRunner()
+    await queryRunner.connect() //connection pool에서 connection을 가져옵니다.
+    await queryRunner.startTransaction()
+    try {
+      await queryRunner.manager.softDelete(Review, {
+        reviewId: reviewId,
+        reviewerId: userId,
       })
-      .where('reviewId = :id AND reviewerId :userId', {
-        id: reviewId,
-        userId: userId,
-      })
-      .execute()
+      await queryRunner.manager.update(
+        Review,
+        { reviewId: reviewId },
+        { isDeleted: 'Y' }
+      )
+      await queryRunner.commitTransaction() //성공시 commit
+    } catch (err) {
+      await queryRunner.rollbackTransaction() //실패시 rollback
+    } finally {
+      await queryRunner.release() //connection pool에 반환
+    }
   }
 }

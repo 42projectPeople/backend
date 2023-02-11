@@ -75,7 +75,7 @@ export class ReviewController {
   @Delete(':reviewId')
   //need session guard
   deleteReview(@Param('reviewId') reviewId: string) {
-    const userId = 54 //req.session.userId
-    return this.reviewService.remove(+reviewId, 54)
+    const userId = 1 //req.session.userId
+    return this.reviewService.remove(+reviewId, userId)
   }
 }

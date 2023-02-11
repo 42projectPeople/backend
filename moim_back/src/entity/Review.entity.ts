@@ -28,6 +28,13 @@ export class Review {
   deletedAt: Date
 
   @Column({
+    type: 'enum',
+    enum: ['Y', 'N'],
+    default: 'N',
+  })
+  isDeleted: 'Y' | 'N'
+
+  @Column({
     type: 'int',
     default: 0,
   })
@@ -39,13 +46,6 @@ export class Review {
     nullable: false,
   })
   content: string
-
-  @Column({
-    type: 'boolean',
-    nullable: false,
-    default: false,
-  })
-  deleted: boolean
 
   /*
    * userId
