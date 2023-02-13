@@ -6,11 +6,11 @@ export class UnregisterEventRequestDto {
   @ApiProperty({
     description: 'event id',
   })
-  eventId: number
+  readonly eventId: number
 
   @IsNumber()
   @ApiProperty({
     description: 'participation id',
   })
-  participationId: number
+  readonly participationId: number
 }
