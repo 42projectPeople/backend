@@ -75,7 +75,6 @@ export class UserController {
     @Res({ passthrough: true }) res: Response
   ): Promise<void> {
     await this.userService.createUser(createUserDto)
-    this.setResponseStatus(res, HttpStatus.CREATED)
   }
 
   /**
@@ -291,7 +290,6 @@ export class UserController {
     @Res({ passthrough: true }) res: Response
   ): Promise<void> {
     await this.userService.registerEvent(+userId, registerEventDto)
-    this.setResponseStatus(res, HttpStatus.CREATED)
   }
 
   /**
