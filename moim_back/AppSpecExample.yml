@@ -11,6 +11,8 @@ files:
 
 #배포시 발생하는 생명주기마다 원하는 스크립트 실행 후크 제공
 #실행할 스크립트들은 scripts폴더 내에 두고 보관한다.
+#실행권한을 추가해야한다.
+#git update-index --chmod=+x <스크립트 파일 이름>
 hooks:
   #프로젝트 다운 뒤 배포 원하는 경로에 파일을 옮기기 전.
   BeforeInstall:
@@ -22,4 +24,17 @@ hooks:
   AfterInstall:
     - location: scripts/RestartServer.sh
       timeout: 190
+
+  #어플리케이션 시작할 때 사용하는 스크립트
+  #서버 재시작하고 최대 240초 기다린다.
+  ApplicationStart:
+    - location: scripts/RestartServer.sh
+      timeout: 240
+
+  #서비스 재시작하고 서비스 올바르게 실행되는지 확인.
+  #runas 옵션으로 사용자가 ec2-user가 아닌 codedeployer라는 유저로 실행되게한다.
+validateService:
+  - location: scripts/validateService.sh
+    timeout: 30
+    runas: codedeployer
 
