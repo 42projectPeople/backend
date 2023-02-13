@@ -200,16 +200,14 @@ export class UserController {
     description: 'data that user want to update',
   })
   @ApiResponse({
-    status: HttpStatus.ACCEPTED,
-    description: 'update user accepted',
+    status: HttpStatus.OK,
+    description: 'success update user',
   })
   async updateUser(
     @Param('userID') userID: string,
-    @Body() updateUserDto: UpdateUserRequestDto,
-    @Res({ passthrough: true }) res: Response
+    @Body() updateUserDto: UpdateUserRequestDto
   ): Promise<void> {
     await this.userService.updateUser(+userID, updateUserDto)
-    this.setResponseStatus(res, HttpStatus.ACCEPTED)
   }
 
   /**
@@ -316,7 +314,7 @@ export class UserController {
     description: 'user id',
   })
   @ApiResponse({
-    status: HttpStatus.ACCEPTED,
+    status: HttpStatus.OK,
     description: 'success unregister event',
   })
   @UsePipes(
@@ -329,10 +327,8 @@ export class UserController {
   )
   async unregisterEvent(
     @Param('userID') userId: string,
-    @Body() unregisterEventDto: UnregisterEventRequestDto,
-    @Res({ passthrough: true }) res: Response
+    @Body() unregisterEventDto: UnregisterEventRequestDto
   ) {
     await this.userService.unregisterEvent(+userId, unregisterEventDto)
-    this.setResponseStatus(res, HttpStatus.ACCEPTED)
   }
 }
