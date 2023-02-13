@@ -1,20 +1,33 @@
-import { IsByteLength, IsOptional, IsString, IsUrl } from 'class-validator'
+import {
+  IsByteLength,
+  IsEmail,
+  IsOptional,
+  IsString,
+  IsUrl,
+  Matches,
+} from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { User } from '../../entity/User.entity'
 
+/**
+ * user name 제약 조건을 만들기 위해서 일정한 양식을 만들어야함
+ * email 이 아마 적당할듯.
+ */
 export class CreateUserRequestDto {
   @ApiProperty({
-    description: 'user의 고유한 name',
+    description: 'user의 고유한 name (email)',
   })
   @IsString()
+  @IsEmail()
   @IsByteLength(2, 35)
   readonly userName: string
 
   @ApiProperty({
-    description: 'user nickname',
+    description: 'user nickname [A-Za-z0-9_가-힣]{2,35}',
   })
   @IsString()
   @IsByteLength(2, 35)
+  @Matches(/^[A-Za-z0-9_가-힣]{2,35}$/) // alphanumeric + Korean only accepted
   readonly userNickName: string
 
   @ApiProperty({
