@@ -26,7 +26,7 @@ export class UserService {
   ) {}
 
   async findUserByUserId(userId: number): Promise<User> {
-    if (userId < 1 || Number.isNaN(userId))
+    if (userId < 1)
       throw new BadRequestException('user id must be larger than 1')
     return await this.userRepository.findOne({
       where: { userId: userId },
@@ -35,7 +35,7 @@ export class UserService {
 
   async findUsersByPage(page: number): Promise<User[]> {
     if (page < 1)
-      throw new BadRequestException("page number must be larger than 1")
+      throw new BadRequestException('page number must be larger than 1')
     return await this.userRepository.find({
       skip: (page === undefined ? 1 : +page) * 10,
       take: 10,

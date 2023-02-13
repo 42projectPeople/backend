@@ -1,17 +1,18 @@
 import {
-  Controller,
-  Get,
-  Param,
+  BadRequestException,
   Body,
-  Post,
-  Res,
-  HttpStatus,
-  Query,
-  Put,
+  Controller,
   Delete,
+  Get,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  Query,
+  Res,
   UsePipes,
   ValidationPipe,
-  BadRequestException,
 } from '@nestjs/common'
 import { UserService } from './user.service'
 import { UpdateUserRequestDto } from './dto/updateUserRequestDto'
@@ -31,6 +32,7 @@ import { Users } from './utils/Users.type'
 import { RegisterEventRequestDto } from './dto/registerEventRequestDto'
 import { UnregisterEventRequestDto } from './dto/unregisterEventRequestDto'
 import { CheckNickNameResponseDto } from './dto/checkNickNameResponseDto'
+import { UserEventRoleType } from './utils/UserEventRoleType'
 
 @Controller('user')
 @ApiTags('user api')
@@ -127,8 +129,8 @@ export class UserController {
     description: 'there are no matched content',
   })
   async getUserByUserId(
-    @Param('userID') userID: string,
-    @Res() res: Response
+    @Param('userID', ParseIntPipe) userID: number,
+    @Res({ passthrough: true }) res: Response
   ): Promise<User> {
     const user = await this.userService.findUserByUserId(+userID)
     if (user === null) {
@@ -156,7 +158,9 @@ export class UserController {
     description: '10 User list by page',
     type: Users,
   })
-  async getUsersByPage(@Query('page') page: number): Promise<Users> {
+  async getUsersByPage(
+    @Query('page', ParseIntPipe) page: number
+  ): Promise<Users> {
     return { Users: await this.userService.findUsersByPage(page) }
   }
 
@@ -187,7 +191,7 @@ export class UserController {
   })
   async getUserByNickName(
     @Param('userNickName') userNickName: string,
-    @Res() res: Response
+    @Res({ passthrough: true }) res: Response
   ): Promise<User> {
     const user = await this.userService.findUserByNickName(userNickName)
     if (user === null) {
@@ -228,7 +232,7 @@ export class UserController {
     description: 'success update user',
   })
   async updateUser(
-    @Param('userID') userID: string,
+    @Param('userID', ParseIntPipe) userID: number,
     @Body() updateUserDto: UpdateUserRequestDto
   ): Promise<void> {
     await this.userService.updateUser(+userID, updateUserDto)
@@ -262,14 +266,14 @@ export class UserController {
     description: 'bad request query',
   })
   async getUserEvents(
-    @Param('userID') userId: string,
-    @Query('role') role: string
+    @Param('userID', ParseIntPipe) userId: number,
+    @Query('role') role: UserEventRoleType
   ): Promise<EventData> {
-    if (role === 'host') {
+    if (role === UserEventRoleType.HOST) {
       return {
         events: await this.userService.findAllUserHostEvent(+userId),
       }
-    } else if (role === undefined || role === 'guest') {
+    } else if (role === undefined || role === UserEventRoleType.GUEST) {
       return {
         events: await this.userService.findAllUserGuestEvent(+userId),
       }
@@ -282,7 +286,6 @@ export class UserController {
    * RESTRICTED: login user || admin user
    * @param userId
    * @param registerEventDto
-   * @param res
    */
   @Post(':userID/event')
   @ApiOperation({
@@ -310,7 +313,7 @@ export class UserController {
     })
   )
   async registerEvent(
-    @Param('userID') userId: string,
+    @Param('userID', ParseIntPipe) userId: number,
     @Body() registerEventDto: RegisterEventRequestDto
   ): Promise<void> {
     await this.userService.registerEvent(+userId, registerEventDto)
@@ -347,7 +350,7 @@ export class UserController {
     })
   )
   async unregisterEvent(
-    @Param('userID') userId: string,
+    @Param('userID', ParseIntPipe) userId: number,
     @Body() unregisterEventDto: UnregisterEventRequestDto
   ) {
     await this.userService.unregisterEvent(+userId, unregisterEventDto)
