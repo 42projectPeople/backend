@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpStatus,
@@ -159,7 +160,7 @@ export class UserController {
     type: Users,
   })
   async getUsersByPage(
-    @Query('page', ParseIntPipe) page: number
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number
   ): Promise<Users> {
     return { Users: await this.userService.findUsersByPage(page) }
   }
