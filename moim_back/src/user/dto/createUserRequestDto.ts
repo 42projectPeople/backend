@@ -1,4 +1,4 @@
-import { IsByteLength, IsString, IsUrl } from 'class-validator'
+import {IsByteLength, IsOptional, IsString, IsUrl} from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { User } from '../../entity/User.entity'
 
@@ -22,6 +22,7 @@ export class CreateUserRequestDto {
   })
   @IsUrl()
   @IsByteLength(10, 100)
+  @IsOptional()
   userProfilePhoto: string
   @ApiProperty({
     description: 'user 가 자신을 소개하는 짧은 글',
@@ -39,6 +40,7 @@ export class CreateUserRequestDto {
     user.userName = createReviewDto.userName
     user.userNickName = createReviewDto.userNickName
     user.userTitle = createReviewDto.userTitle
+    user.userProfilePhoto = createReviewDto.userProfilePhoto
     return user
   }
 }
