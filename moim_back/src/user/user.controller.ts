@@ -102,6 +102,7 @@ export class UserController {
    * RESTRICTED: login user
    * get user information from db
    * @param userID
+   * @param res
    */
   @Get(':userID')
   @ApiOperation({
@@ -117,8 +118,23 @@ export class UserController {
     description: 'User information',
     type: User,
   })
-  async getUserByUserId(@Param('userID') userID: string): Promise<User> {
-    return await this.userService.findUserByUserId(+userID)
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'bad parameter',
+  })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'there are no matched content',
+  })
+  async getUserByUserId(
+    @Param('userID') userID: string,
+    @Res() res: Response
+  ): Promise<User> {
+    const user = await this.userService.findUserByUserId(+userID)
+    if (user === null) {
+      this.setResponseStatus(res, HttpStatus.NO_CONTENT)
+    }
+    return user
   }
 
   /**
@@ -149,6 +165,7 @@ export class UserController {
    * find user by nickname
    * TODO: make service
    * @param userNickName
+   * @param res
    */
   @Get('/nickname/:userNickName')
   @ApiOperation({
@@ -164,18 +181,26 @@ export class UserController {
     description: 'get user by nickname',
     type: User,
   })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'there are no user matched',
+  })
   async getUserByNickName(
-    @Param('userNickName') userNickName: string
+    @Param('userNickName') userNickName: string,
+    @Res() res: Response
   ): Promise<User> {
-    return await this.userService.findUserByNickName(userNickName)
+    const user = await this.userService.findUserByNickName(userNickName)
+    if (user === null) {
+      this.setResponseStatus(res, HttpStatus.NO_CONTENT)
+    }
+    return user
   }
 
   /**
-   * RESTRICTED: login user && userid == login user
+   * RESTRICTED: (login user && userid == login user) || (user.role === admin)
    * update user information in db
    * @param userID
    * @param updateUserDto
-   * @param res
    */
   @Put(':userID')
   @UsePipes(
@@ -254,7 +279,7 @@ export class UserController {
   }
 
   /**
-   * RESTRICTED: login user
+   * RESTRICTED: login user || admin user
    * @param userId
    * @param registerEventDto
    * @param res
@@ -286,8 +311,7 @@ export class UserController {
   )
   async registerEvent(
     @Param('userID') userId: string,
-    @Body() registerEventDto: RegisterEventRequestDto,
-    @Res({ passthrough: true }) res: Response
+    @Body() registerEventDto: RegisterEventRequestDto
   ): Promise<void> {
     await this.userService.registerEvent(+userId, registerEventDto)
   }
@@ -296,7 +320,6 @@ export class UserController {
    * RESTRICTED: login user
    * @param userId
    * @param unregisterEventDto
-   * @param res
    */
   @Delete(':userID/event')
   @ApiOperation({
