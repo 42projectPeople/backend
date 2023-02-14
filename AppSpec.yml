@@ -16,7 +16,6 @@ files:
 hooks:
   #프로젝트 다운 뒤 배포 원하는 경로에 파일을 옮기기 전.
   BeforeInstall:
-    - location: moim_back/scripts/UnzipResourceBundle.sh
     - location: moim_back/scripts/UnzipDataBundle.sh
 
   #파일을 모두 이동한 후 실행되는 스크립트들
