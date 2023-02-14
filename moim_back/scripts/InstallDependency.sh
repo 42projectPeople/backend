@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd /home/ubuntu/backend/moim_back
+cd /home/ubuntu/moim_back
 npm i --f
