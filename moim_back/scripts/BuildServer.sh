@@ -8,7 +8,7 @@ NPM_ARG=run
 BUILD_OPTION=build
 
 #change dir
-cd moim_back
+cd /home/ubuntu/backend/moim_back
 
 #build
 $NPM $NPM_ARG $BUILD_OPTION
