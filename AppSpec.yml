@@ -16,25 +16,25 @@ files:
 hooks:
   #프로젝트 다운 뒤 배포 원하는 경로에 파일을 옮기기 전.
   BeforeInstall:
-    - location: scripts/UnzipResourceBundle.sh
-    - location: scripts/UnzipDataBundle.sh
+    - location: moim_back/scripts/UnzipResourceBundle.sh
+    - location: moim_back/scripts/UnzipDataBundle.sh
 
   #파일을 모두 이동한 후 실행되는 스크립트들
   #Timeout 옵션은 190초 내에 스크립트 실행이 완료되지 않으면 실패로 간주한다.
   AfterInstall:
-    - location: scripts/RestartServer.sh
+    - location: moim_back/scripts/RestartServer.sh
       timeout: 190
 
   #어플리케이션 시작할 때 사용하는 스크립트
   #서버 재시작하고 최대 240초 기다린다.
   ApplicationStart:
-    - location: scripts/RestartServer.sh
+    - location: moim_back/scripts/startServer.sh
       timeout: 240
 
   #서비스 재시작하고 서비스 올바르게 실행되는지 확인.
   #runas 옵션으로 사용자가 ec2-user가 아닌 codedeployer라는 유저로 실행되게한다.
 validateService:
-  - location: scripts/validateService.sh
+  - location: moim_back/scripts/validateService.sh
     timeout: 30
     runas: codedeployer
 
