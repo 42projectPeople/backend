@@ -126,37 +126,56 @@ export class UserService {
     userId: number,
     registerEventDto: RegisterEventRequestDto
   ): Promise<void> {
-    const userEvents = new User_Events()
+    const queryRunner = await this.dataSource.createQueryRunner()
+    await queryRunner.connect()
+    await queryRunner.startTransaction()
 
-    userEvents.userId = userId
-    userEvents.eventId = registerEventDto.eventId
-    await this.dataSource.manager.transaction(async (entityManager) => {
-      await entityManager.save(userEvents)
-      await entityManager.increment(
+    try {
+      const userEvents = new User_Events()
+      userEvents.userId = userId
+      userEvents.eventId = registerEventDto.eventId
+      await queryRunner.manager.save(userEvents)
+      await queryRunner.manager.increment(
         Event,
         { eventId: registerEventDto.eventId },
         'curParticipant',
         1
       )
-    })
+      await queryRunner.commitTransaction()
+    } catch (err) {
+      await queryRunner.rollbackTransaction()
+      throw new InternalServerErrorException('database server error')
+    } finally {
+      await queryRunner.release()
+    }
   }
 
   async unregisterEvent(
     userId: number,
     unregisterEventDto: UnregisterEventRequestDto
   ): Promise<void> {
-    await this.dataSource.manager.transaction(async (entityManager) => {
-      await entityManager.softDelete(User_Events, {
+    const queryRunner = await this.dataSource.createQueryRunner()
+    await queryRunner.connect()
+    await queryRunner.startTransaction()
+
+    try {
+      await queryRunner.manager.softDelete(User_Events, {
         userId: userId,
         eventId: unregisterEventDto.eventId,
         deletedAt: IsNull(),
       })
-      await entityManager.decrement(
+      await queryRunner.manager.decrement(
         Event,
         { eventId: unregisterEventDto.eventId },
         'curParticipant',
         1
       )
-    })
+      await queryRunner.commitTransaction()
+    } catch (err) {
+      await queryRunner.rollbackTransaction()
+      throw new InternalServerErrorException('database server error')
+    } finally {
+      await queryRunner.release()
+    }
   }
 }
