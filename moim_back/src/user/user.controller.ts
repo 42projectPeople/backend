@@ -34,6 +34,7 @@ import { RegisterEventRequestDto } from './dto/registerEventRequestDto'
 import { UnregisterEventRequestDto } from './dto/unregisterEventRequestDto'
 import { CheckNickNameResponseDto } from './dto/checkNickNameResponseDto'
 import { UserEventRoleType } from './utils/UserEventRoleType'
+import { UserRole } from './utils/UserRole.decorator'
 
 @Controller('user')
 @ApiTags('user api')
@@ -142,10 +143,11 @@ export class UserController {
 
   /**
    * RESTRICTED: admin user
-   * TODO: Check user role
    * to show exist user on db. it will send you by 10 users per page
    */
   @Get()
+  @UserRole('admin')
+  // TODO: auth needed, auth checks user is admin user
   @ApiOperation({
     summary: 'get users by page',
     description: 'get users by userID. 10 users returned by 1 page',
@@ -167,8 +169,6 @@ export class UserController {
 
   /**
    * RESTRICTED: any user
-   * find user by nickname
-   * TODO: make service
    * @param userNickName
    * @param res
    */
@@ -216,6 +216,7 @@ export class UserController {
       forbidUnknownValues: true,
     })
   )
+  // TODO: auth needed
   @ApiOperation({
     summary: 'update user',
     description: 'update user',
@@ -245,6 +246,7 @@ export class UserController {
    * @param role
    */
   @Get(':userID/event')
+  // TODO: auth needed
   @ApiOperation({
     summary: 'get user events',
     description: 'get user register or hosted events.',
@@ -289,6 +291,7 @@ export class UserController {
    * @param registerEventDto
    */
   @Post(':userID/event')
+  // TODO: auth needed
   @ApiOperation({
     summary: 'register event',
     description: 'register event',
@@ -321,7 +324,7 @@ export class UserController {
   }
 
   /**
-   * RESTRICTED: login user
+   * RESTRICTED: login user || admin user
    * @param userId
    * @param unregisterEventDto
    */
