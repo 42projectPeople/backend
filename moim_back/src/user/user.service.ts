@@ -164,6 +164,7 @@ export class UserService {
         eventId: unregisterEventDto.eventId,
         deletedAt: IsNull(),
       })
+      // FIXME: if user not registered
       await queryRunner.manager.decrement(
         Event,
         { eventId: unregisterEventDto.eventId },
