@@ -1,4 +1,4 @@
-version: 0.1
+version: 0.0
 
 #어떤 OS위한 배포파일인가?
 os: linux
