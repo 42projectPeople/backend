@@ -5,7 +5,7 @@
 #실행인자
 NPM=npm
 NPM_ARG=run
-PROD_OPTION=start:prod
+PROD_OPTION=start:prod &
 
 #change dir
 cd /home/ubuntu/moim_back
