@@ -161,6 +161,10 @@ export class UserController {
     description: '10 User list by page',
     type: Users,
   })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'bad query',
+  })
   async getUsersByPage(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number
   ): Promise<Users> {
@@ -232,6 +236,10 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'success update user',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'invalid parameter',
   })
   async updateUser(
     @Param('userID', ParseIntPipe) userID: number,
