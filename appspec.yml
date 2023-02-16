@@ -22,6 +22,7 @@ hooks:
   #Timeout 옵션은 시간 내에 스크립트 실행이 완료되지 않으면 실패로 간주한다.
   AfterInstall:
     - location: moim_back/scripts/InstallDependency.sh
+    - location: moim_back/scripts/InstallEnv.sh
     - location: moim_back/scripts/BuildServer.sh
 
   #어플리케이션 시작할 때 사용하는 스크립트
