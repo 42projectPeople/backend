@@ -29,6 +29,7 @@ hooks:
   #서버 시작하고 최대 20초 기다린다.
   ApplicationStart:
     - location: moim_back/scripts/StartServer.sh
+      timeout: 120 #완전하게 실행될때까지 대기 
 
   #서비스 재시작하고 서비스 올바르게 실행되는지 확인.
   #runas 옵션으로 사용자가 ec2-user가 아닌 codedeployer라는 유저로 실행되게한다.
