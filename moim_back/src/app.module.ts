@@ -18,7 +18,7 @@ import { HealthModule } from './health/health.module'
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env.dev.local'],
+      envFilePath: ['.env.prod'],
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
