@@ -20,7 +20,7 @@ import { SearchModule } from './search/search.module'
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env.dev.local'],
+      envFilePath: ['.env.prod'],
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
