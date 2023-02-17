@@ -18,56 +18,25 @@ import { EventService } from './event.service'
 export class EventController {
   constructor(private readonly eventService: EventService) {}
   @Get('/:id')
-  async eventGet(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
-    const ret = await this.eventService.eventGet(id)
-    if (!ret) {
-      // 못 찾은 경우
-      return res.status(HttpStatus.NOT_FOUND).send()
-    } else {
-      return res.status(HttpStatus.OK).json(ret).send()
-    }
+  async eventGet(@Param('id', ParseIntPipe) id: number) {
+    return await this.eventService.eventGet(id)
   }
 
   @Post('')
-  async eventCreate(@Body() body: EventDefaultDto, @Res() res: Response) {
-    const ret = await this.eventService.eventCreate(body)
-    if (ret) {
-      //생성성공
-      const event = await this.eventService.eventGet(body.host)
-      if (!event) {
-        return res.status(HttpStatus.NOT_FOUND)
-      }
-      return res.status(HttpStatus.CREATED).json(ret)
-    } else {
-      //생성 실패
-      return res.status(HttpStatus.CONFLICT).json({ msg: '생성실패' })
-    }
+  async eventCreate(@Body() body: EventDefaultDto) {
+    return await this.eventService.eventCreate(body)
   }
 
   @Patch('/:id')
   async eventUpdate(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: EventDefaultDto,
-    @Res() res: Response
+    @Body() body: EventDefaultDto
   ) {
-    const ret = await this.eventService.eventUpdate(id, body)
-    if (ret) {
-      const event = await this.eventService.eventGet(id)
-      if (!event) {
-        return res.status(HttpStatus.NOT_FOUND)
-      }
-      return res.status(HttpStatus.CREATED).json(event)
-    } else {
-      return res.status(HttpStatus.CONFLICT).json({ msg: 'db error' })
-    }
+    return await this.eventService.eventUpdate(id, body)
   }
 
   @Delete('/:id')
-  async eventDelete(
-    @Param('id', ParseIntPipe) id: number,
-    @Res() res: Response
-  ) {
+  async eventDelete(@Param('id', ParseIntPipe) id: number) {
     await this.eventService.eventDelete(id)
-    return res.status(HttpStatus.CREATED).json({ msg: 'delete finished!' })
   }
 }
