@@ -1,47 +1,58 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common'
+import { ConflictException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Event } from 'src/entity/Event.entity'
-import { Repository } from 'typeorm'
+import { DataSource, EntityNotFoundError, Repository } from 'typeorm'
 import { EventDefaultDto } from './dto/event.default.dto'
 
 @Injectable()
 export class EventService {
   constructor(
-    @InjectRepository(Event) private eventRepository: Repository<Event>
+    @InjectRepository(Event) private eventRepository: Repository<Event>,
+    private dataSource: DataSource
   ) {}
 
   async eventGet(eventId: number) {
-    return await this.eventRepository
-      .createQueryBuilder('event')
-      .innerJoinAndSelect('user', 'user', 'user.userId = event.hostId')
-      .innerJoinAndSelect(
-        'hashtag',
-        'hashtag',
-        'hashtag.hashtagId = event.hashtagId'
-      )
-      .where('event.eventId=:id AND event.deletedAt IS NULL', { id: eventId })
-      .execute()
+    let event = null
+    try {
+      event = await this.eventRepository
+        .createQueryBuilder('event')
+        .innerJoinAndSelect('user', 'user', 'user.userId = event.hostId')
+        .innerJoinAndSelect(
+          'hashtag',
+          'hashtag',
+          'hashtag.hashtagId = event.hashtagId'
+        )
+        .where('event.eventId=:id AND event.deletedAt IS NULL', { id: eventId })
+        .execute()
+    } catch (e) {
+      return new EntityNotFoundError('이벤트가 존재하지 않습니다.', 404)
+    } finally {
+      return event
+    }
   }
 
   async eventCreate(newEvent: EventDefaultDto) {
+    const queryRunner = this.dataSource.createQueryRunner()
+    await queryRunner.connect()
+    await queryRunner.startTransaction()
+    let event = null
     try {
-      const event = await this.eventRepository.save(
+      event = await queryRunner.manager.save(
         EventDefaultDto.transEventDto(newEvent)
       )
-
-      return event
+      await queryRunner.commitTransaction()
     } catch (e) {
-      throw new ConflictException('db error')
+      await queryRunner.rollbackTransaction()
+      return new ConflictException('생성에 실패했습니다.')
+    } finally {
+      await queryRunner.release()
+      return event
     }
   }
 
   async eventUpdate(eventId: number, update: EventDefaultDto) {
     try {
-      const event = await this.eventRepository
+      await this.eventRepository
         .createQueryBuilder('event')
         .update()
         .set({
@@ -59,10 +70,10 @@ export class EventService {
           id: eventId,
         })
         .execute()
-
-      return event
     } catch (e) {
-      throw new ConflictException('db error')
+      throw new ConflictException('이벤트 업데이트를 실패했습니다.')
+    } finally {
+      return await this.eventGet(eventId)
     }
   }
 
@@ -77,7 +88,7 @@ export class EventService {
         .execute()
       return deleteEvent
     } catch (e) {
-      throw new NotFoundException('db injection')
+      throw new ConflictException('이벤트 삭제에 실패했습니다.')
     }
   }
 }
