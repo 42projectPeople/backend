@@ -3,14 +3,11 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
   Post,
-  Res,
 } from '@nestjs/common'
-import { Response } from 'express'
 import { EventDefaultDto } from './dto/event.default.dto'
 import { EventService } from './event.service'
 
