@@ -24,10 +24,9 @@ export class EventService {
         )
         .where('event.eventId=:id AND event.deletedAt IS NULL', { id: eventId })
         .execute()
-    } catch (e) {
-      return new EntityNotFoundError('이벤트가 존재하지 않습니다.', 404)
-    } finally {
       return event
+    } catch (e) {
+      throw new EntityNotFoundError('이벤트가 존재하지 않습니다.', 404)
     }
   }
 
@@ -35,18 +34,16 @@ export class EventService {
     const queryRunner = this.dataSource.createQueryRunner()
     await queryRunner.connect()
     await queryRunner.startTransaction()
-    let event = null
     try {
-      event = await queryRunner.manager.save(
+      const event = await queryRunner.manager.save(
         EventDefaultDto.transEventDto(newEvent)
       )
       await queryRunner.commitTransaction()
-    } catch (e) {
-      await queryRunner.rollbackTransaction()
-      return new ConflictException('생성에 실패했습니다.')
-    } finally {
       await queryRunner.release()
       return event
+    } catch (e) {
+      await queryRunner.rollbackTransaction()
+      throw new ConflictException('생성에 실패했습니다.')
     }
   }
 
@@ -70,10 +67,9 @@ export class EventService {
           id: eventId,
         })
         .execute()
+      return await this.eventGet(eventId)
     } catch (e) {
       throw new ConflictException('이벤트 업데이트를 실패했습니다.')
-    } finally {
-      return await this.eventGet(eventId)
     }
   }
 
