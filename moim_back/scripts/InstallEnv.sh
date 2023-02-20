@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd /home/ubuntu/
-cp .env.prod ./moim_back
+cp .env.dev ./moim_back
