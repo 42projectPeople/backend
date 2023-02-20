@@ -21,7 +21,7 @@ import { SearchModule } from './search/search.module'
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env.prod'],
+      envFilePath: ['.env.dev'],
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
