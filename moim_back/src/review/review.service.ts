@@ -37,11 +37,12 @@ export class ReviewService {
       if (e.errno == 1062)
         //createdAt + reviewerId is duplicated because of too many request
         throw new ConflictException('too fast')
-      else throw e
+      else throw e //internal server error
     }
   }
 
   /*
+   * udpate review comment
    * @param reviewId
    * @param userId
    * @param updateReviewDto
@@ -74,13 +75,13 @@ export class ReviewService {
     await queryRunner.startTransaction()
     try {
       await queryRunner.manager.softDelete(Review, {
-        reviewId: reviewId,
+        reviewId: reviewId, //reviewId와 userId가 조건
         reviewerId: userId,
       })
       await queryRunner.manager.update(
         Review,
         { reviewId: reviewId },
-        { isDeleted: 'Y' }
+        { isDeleted: 'Y' } //isDeleted
       )
       await queryRunner.commitTransaction() //성공시 commit
     } catch (err) {
