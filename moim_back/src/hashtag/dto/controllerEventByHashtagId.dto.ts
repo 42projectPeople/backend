@@ -1,6 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Transform, Type } from 'class-transformer'
-import { IsBoolean, IsNumber, IsOptional } from 'class-validator'
+import {
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  ValidationError,
+} from 'class-validator'
 
 export class controllerEventByHashtagIdDto {
   @ApiProperty({
@@ -23,6 +28,7 @@ export class controllerEventByHashtagIdDto {
   @Transform(({ value }) => {
     if (value === 'true') return true
     if (value === 'false') return false
+    return new ValidationError()
   })
   readonly recommendation?: boolean
 
