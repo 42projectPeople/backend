@@ -19,7 +19,7 @@ export class controllerEventByHashtagIdDto {
   readonly page: number
 
   @ApiProperty({
-    description: 'view에따른 추천 여부',
+    description: 'view 수에따른 추천 여부, true면 view 순서대로',
     required: false,
     default: false,
   })
