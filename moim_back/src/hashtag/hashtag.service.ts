@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Event } from 'src/entity/Event.entity'
 import { Hashtag } from 'src/entity/Hashtag.entity'
 import { Repository } from 'typeorm'
+import { ResponseEventsDto } from './dto/ResponseEvents.dto'
 import { serviceEventByHashtagDto } from './dto/serviceEventByHashtag.dto'
 
 @Injectable()
@@ -20,7 +21,9 @@ export class HashtagService {
     return await this.hashtagRepository.find()
   }
 
-  async findEventsByHashtagId(dto: serviceEventByHashtagDto) {
+  async findEventsByHashtagId(
+    dto: serviceEventByHashtagDto
+  ): Promise<ResponseEventsDto> {
     console.log(dto)
     const qb = this.eventRepository.createQueryBuilder()
     try {
@@ -31,7 +34,8 @@ export class HashtagService {
       query
         .offset(dto.getStartIndex()) //
         .limit(dto.getPageSize())
-      return await query.getMany()
+
+      return new ResponseEventsDto(await query.getMany())
     } catch (e) {
       throw new InternalServerErrorException()
     }
