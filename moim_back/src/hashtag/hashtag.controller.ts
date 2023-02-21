@@ -13,10 +13,14 @@ import { serviceEventByHashtagDto } from './dto/serviceEventByHashtag.dto'
 import { HashtagService } from './hashtag.service'
 
 @Controller('hashtag')
+@ApiTags('hashtag api')
 export class HashtagController {
   constructor(private readonly hashtagService: HashtagService) {}
 
   @Get('/')
+  @ApiOkResponse({
+    description: 'Returns all of hashtags',
+  })
   async getHashtags() {
     return await this.hashtagService.findAll()
   }
