@@ -1,13 +1,18 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
+import { Event } from 'src/entity/Event.entity'
 import { Hashtag } from 'src/entity/Hashtag.entity'
 import { Repository } from 'typeorm'
+import { serviceEventByHashtagDto } from './dto/serviceEventByHashtag.dto'
 
 @Injectable()
 export class HashtagService {
   constructor(
     @InjectRepository(Hashtag)
-    private hashtagRepository: Repository<Hashtag>
+    private hashtagRepository: Repository<Hashtag>,
+
+    @InjectRepository(Event)
+    private eventRepository: Repository<Event>
   ) {}
 
   //get all hashtags
@@ -15,15 +20,23 @@ export class HashtagService {
     return await this.hashtagRepository.find()
   }
 
-  async findEventsByHashtagId(hashtagId: number): Promise<Hashtag[]> {
-    return await this.hashtagRepository
-      .createQueryBuilder('hashtag')
-      .innerJoinAndSelect(
-        'event',
-        'event',
-        'event.hashtagId = hashtag.hashtagId'
-      )
-      .where('event.hashtagId = :id', { id: hashtagId })
-      .execute()
+  async findEventsByHashtagId(dto: serviceEventByHashtagDto) {
+    console.log(dto)
+    const qb = this.eventRepository.createQueryBuilder()
+    try {
+      const query = qb.where('hashtagId = :id', { id: dto.getHashtagId() })
+
+      if (dto.getRecommendation() === true) query.orderBy('views', 'DESC')
+
+      query
+        .offset(dto.getStartIndex()) //
+        .limit(dto.getPageSize())
+      return await query.getMany()
+    } catch (e) {
+      throw new InternalServerErrorException()
+    }
   }
+
+  //
+  //
 }
