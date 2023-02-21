@@ -1,4 +1,15 @@
-import { Controller, Get, Param } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { controllerEventByHashtagIdDto } from './dto/controllerEventByHashtagId.dto'
+import { ResponseEventsDto } from './dto/ResponseEvents.dto'
+import { serviceEventByHashtagDto } from './dto/serviceEventByHashtag.dto'
 import { HashtagService } from './hashtag.service'
 
 @Controller('hashtag')
