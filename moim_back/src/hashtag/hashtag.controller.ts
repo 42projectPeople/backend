@@ -26,7 +26,25 @@ export class HashtagController {
   }
 
   @Get('/events/:hashtagId')
-  async getEventsByHashtag(@Param('hashtagId') hashtagId: string) {
-    return await this.hashtagService.findEventsByHashtagId(+hashtagId)
+  @ApiOkResponse({
+    description: 'Returns a list of events',
+    type: ResponseEventsDto,
+  })
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+      always: true,
+    })
+  )
+  async getEventsByHashtag(
+    @Param('hashtagId') hashtagId: string,
+    @Query() queryDto: controllerEventByHashtagIdDto
+  ): Promise<ResponseEventsDto> {
+    return await this.hashtagService.findEventsByHashtagId(
+      new serviceEventByHashtagDto(queryDto, +hashtagId)
+    )
   }
 }
