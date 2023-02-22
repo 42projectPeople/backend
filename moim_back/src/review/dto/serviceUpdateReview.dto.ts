@@ -1,5 +1,5 @@
 import { Review } from 'src/entity/Review.entity'
-import { ControllerUpdateReviewDto } from './controllerUpdateUserDto'
+import { ControllerUpdateReviewDto } from './controllerUpdateReview.Dto'
 
 /*
  * used in service layer
