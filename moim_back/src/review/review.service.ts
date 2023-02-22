@@ -1,9 +1,15 @@
-import { ConflictException, Injectable } from '@nestjs/common'
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Review } from 'src/entity/Review.entity'
 import { DataSource, Repository } from 'typeorm'
-import CreateReviewDto from './dto/createReviewDto'
-import { UpdateReviewDto } from './dto/updateReviewDto'
+import CreateReviewDto from './dto/createReview.dto'
+import { ServiceDeleteReviewDto } from './dto/serviceDeleteReview.dto'
+import { ServiceUpdateReviewDto } from './dto/serviceUpdateReview.dto'
 
 @Injectable()
 export class ReviewService {
@@ -13,19 +19,27 @@ export class ReviewService {
     private datasource: DataSource
   ) {}
 
-  async findReviewByEventID(eventId: number) {
-    return await this.reviewRepository.find({
-      where: { eventId: eventId, isDeleted: 'N' },
-    })
+  async findReviewByEventID(eventId: number): Promise<Review[]> {
+    try {
+      return await this.reviewRepository.find({
+        where: { eventId: eventId, isDeleted: 'N' },
+      })
+    } catch (e) {
+      throw new InternalServerErrorException()
+    }
   }
 
-  async findReviewByUserId(userId: number) {
-    return await this.reviewRepository.find({
-      where: { reviewerId: userId, isDeleted: 'N' },
-    })
+  async findReviewByUserId(userId: number): Promise<Review[]> {
+    try {
+      return await this.reviewRepository.find({
+        where: { reviewerId: userId, isDeleted: 'N' },
+      })
+    } catch (e) {
+      throw new InternalServerErrorException()
+    }
   }
 
-  async create(createReviewDto: CreateReviewDto) {
+  async create(createReviewDto: CreateReviewDto): Promise<void> {
     try {
       await this.reviewRepository
         .createQueryBuilder()
@@ -37,52 +51,60 @@ export class ReviewService {
       if (e.errno == 1062)
         //createdAt + reviewerId is duplicated because of too many request
         throw new ConflictException('too fast')
-      else throw e //internal server error
+      throw new InternalServerErrorException() //internal server error
     }
   }
 
   /*
    * udpate review comment
-   * @param reviewId
-   * @param userId
    * @param updateReviewDto
    * */
-  async update(
-    reviewId: number,
-    userId: number,
-    updateReviewDto: UpdateReviewDto
-  ) {
+  async update(serviceUpdateReviewDto: ServiceUpdateReviewDto): Promise<void> {
     const queryRunner = this.datasource.createQueryRunner()
-    await queryRunner.connect() //connection pool에서 connection을 가져옵니다.
-    await queryRunner.startTransaction()
     try {
-      await queryRunner.manager.update(
+      await queryRunner.connect() //connection pool에서 connection을 가져옵니다.
+      await queryRunner.startTransaction()
+      const queryResult = await queryRunner.manager.update(
         Review, //업데이트할 테이블
-        { reviewId: reviewId, reviewerId: userId }, //조건
-        updateReviewDto //업데이트할 partial 객체
+        {
+          reviewId: serviceUpdateReviewDto.getReviewId(),
+          reviewerId: serviceUpdateReviewDto.getUserId(),
+        }, //조건
+        serviceUpdateReviewDto.getPartial()
+        //업데이트할 partial 객체
       )
+
+      //check if not affected
+      if (queryResult.affected == 0) throw new NotFoundException()
+
       await queryRunner.commitTransaction() //성공시 commit
     } catch (err) {
       await queryRunner.rollbackTransaction() //실패시 rollback
+      if (err.status === 404) throw new NotFoundException()
+      if (err.status === 500) throw new InternalServerErrorException()
     } finally {
       await queryRunner.release() //connection pool에 반환
     }
   }
 
-  async remove(reviewId: number, userId: number) {
+  async remove(serviceDeleteReviewDto: ServiceDeleteReviewDto): Promise<void> {
     const queryRunner = this.datasource.createQueryRunner()
-    await queryRunner.connect() //connection pool에서 connection을 가져옵니다.
-    await queryRunner.startTransaction()
     try {
-      await queryRunner.manager.softDelete(Review, {
-        reviewId: reviewId, //reviewId와 userId가 조건
-        reviewerId: userId,
-      })
-      await queryRunner.manager.update(
+      await queryRunner.connect() //connection pool에서 connection을 가져옵니다.
+      await queryRunner.startTransaction()
+
+      const queryResult = await queryRunner.manager.update(
         Review,
-        { reviewId: reviewId },
-        { isDeleted: 'Y' } //isDeleted
+        {
+          reviewId: serviceDeleteReviewDto.getReviewId(),
+          reviewerId: serviceDeleteReviewDto.getUserId(),
+        },
+        { isDeleted: 'Y', deletedAt: 'Date.now()' } //isDeleted
       )
+
+      //check if not affected
+      if (queryResult.affected == 0) throw new NotFoundException()
+
       await queryRunner.commitTransaction() //성공시 commit
     } catch (err) {
       await queryRunner.rollbackTransaction() //실패시 rollback
