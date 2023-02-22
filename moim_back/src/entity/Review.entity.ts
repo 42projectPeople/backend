@@ -1,3 +1,4 @@
+import { ApiTags } from '@nestjs/swagger'
 import {
   Entity,
   Column,
@@ -13,6 +14,7 @@ import { Event } from './Event.entity'
 import { User } from './User.entity'
 
 @Entity()
+@ApiTags('review api')
 @Unique('unique_Review_createdAt_reviewerId', ['createdAt', 'reviewerId'])
 export class Review {
   @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_Review' })
