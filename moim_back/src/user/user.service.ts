@@ -117,11 +117,6 @@ export class UserService {
     }
   }
 
-  /**
-   * NOTE: query runner 를 사용할 경우 개발자에게 권한이 더 주어질 수 있음. (우선은 entityManager 활용함)
-   * @param userId
-   * @param registerEventDto
-   */
   async registerEvent(
     userId: number,
     registerEventDto: RegisterEventRequestDto
@@ -131,16 +126,19 @@ export class UserService {
     await queryRunner.startTransaction()
 
     try {
-      const userEvents = new User_Events()
-      userEvents.userId = userId
-      userEvents.eventId = registerEventDto.eventId
-      await queryRunner.manager.save(userEvents)
-      await queryRunner.manager.increment(
-        Event,
-        { eventId: registerEventDto.eventId },
-        'curParticipant',
-        1
-      )
+      await queryRunner.manager
+        .createQueryBuilder()
+        .setLock('pessimistic_write')
+        .update(Event)
+        .set({ curParticipant: () => `"curParticipant" + 1` })
+        .where('eventId = :eventId', { eventId: registerEventDto.eventId })
+        .execute()
+      await queryRunner.manager
+        .createQueryBuilder()
+        .insert()
+        .into(User_Events)
+        .values(registerEventDto) // TODO: CHECK THIS CODE IS VALID OR NOT
+        .execute()
       await queryRunner.commitTransaction()
     } catch (err) {
       await queryRunner.rollbackTransaction()
@@ -157,20 +155,29 @@ export class UserService {
     const queryRunner = await this.dataSource.createQueryRunner()
     await queryRunner.connect()
     await queryRunner.startTransaction()
-
+    queryRunner.manager
     try {
-      await queryRunner.manager.softDelete(User_Events, {
-        userId: userId,
-        eventId: unregisterEventDto.eventId,
-        deletedAt: IsNull(),
-      })
-      // FIXME: if user not registered
-      await queryRunner.manager.decrement(
-        Event,
-        { eventId: unregisterEventDto.eventId },
-        'curParticipant',
-        1
-      )
+      await queryRunner.manager
+        .createQueryBuilder()
+        .setLock('pessimistic_write')
+        .update(Event)
+        .set({ curParticipant: () => `"curParticipant" - 1` })
+        .where('eventId = :eventId', { eventId: unregisterEventDto.eventId })
+        .execute()
+      await queryRunner.manager
+        .createQueryBuilder()
+        .setLock('pessimistic_write')
+        .from(User_Events, 'user_events')
+        .softDelete()
+        .where(
+          'user_events.eventId = :eventId AND user_events.userId = :userId AND user_events.deletedAt is NULL',
+          {
+            userId: userId,
+            eventId: unregisterEventDto.eventId,
+          }
+        )
+        .execute()
+
       await queryRunner.commitTransaction()
     } catch (err) {
       await queryRunner.rollbackTransaction()

@@ -19,6 +19,15 @@ import { ApiProperty, ApiTags } from '@nestjs/swagger'
 @Unique('unique_User_userName', ['userName'])
 @Unique('unique_User_userNickName', ['userNickName'])
 export class User {
+  constructor(...info: any) {
+    this.userId = info.userId
+    this.userName = info.userName
+    this.userNickName = info.userNickName
+    this.userRole = info.userRole
+    this.userProfilePhoto = info.userProfilePhoto
+    this.userLevel = info.userLevel
+    this.userTitle = info.userTitle
+  }
   @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_User' })
   @ApiProperty({
     description: 'user id',
