@@ -33,10 +33,10 @@ export class globalExceptionFilter implements ExceptionFilter {
         status = HttpStatus.FORBIDDEN
         break
       case 'ConflictException':
-        status = HttpStatus.UNPROCESSABLE_ENTITY
+        status = HttpStatus.CONFLICT
         break
-      case 'EntityNotFoundError':
-        status = HttpStatus.UNPROCESSABLE_ENTITY
+      case 'EntityNotFoundError' || 'NotFoundException':
+        status = HttpStatus.NOT_FOUND
         break
       default:
         status = HttpStatus.INTERNAL_SERVER_ERROR

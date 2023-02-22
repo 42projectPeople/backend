@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common'
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Event } from 'src/entity/Event.entity'
 import { DataSource, EntityNotFoundError, Repository } from 'typeorm'
@@ -49,7 +53,7 @@ export class EventService {
 
   async eventUpdate(eventId: number, update: EventDefaultDto) {
     try {
-      await this.eventRepository
+      const ret = await this.eventRepository
         .createQueryBuilder('event')
         .update()
         .set({
@@ -67,6 +71,9 @@ export class EventService {
           id: eventId,
         })
         .execute()
+
+      if (!ret)
+        return new EntityNotFoundError('잘못된 업데이트 요청입니다.', 404)
       return await this.eventGet(eventId)
     } catch (e) {
       throw new ConflictException('이벤트 업데이트를 실패했습니다.')
@@ -82,6 +89,8 @@ export class EventService {
           id: eventId,
         })
         .execute()
+      if (!deleteEvent)
+        throw new EntityNotFoundError('잘못된 삭제 요청입니다.', 404)
       return deleteEvent
     } catch (e) {
       throw new ConflictException('이벤트 삭제에 실패했습니다.')
