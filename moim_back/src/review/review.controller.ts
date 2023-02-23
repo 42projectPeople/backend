@@ -6,26 +6,25 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
   ValidationPipe,
   UsePipes,
-  HttpCode,
 } from '@nestjs/common'
 import { ReviewService } from './review.service'
-import { ControllerUpdateReviewDto } from './dto/controllerUpdateReview.Dto'
+import { UpdateReviewDto } from './dto/UpdateReview.Dto'
+import { ApiTags } from '@nestjs/swagger'
 import CreateReviewDto from './dto/createReview.dto'
-import { ServiceUpdateReviewDto } from './dto/serviceUpdateReview.dto'
-import {
-  ApiOkResponse,
-  ApiOperation,
-  ApiConflictResponse,
-  ApiInternalServerErrorResponse,
-  ApiTags,
-  ApiBody,
-  ApiNotFoundResponse,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger'
 import { Review } from 'src/entity/Review.entity'
-import { ServiceDeleteReviewDto } from './dto/serviceDeleteReview.dto'
+import { PaginationDto } from './dto/Pagination.dto'
+import { DocsPatchReview } from './swagger/DocsPatchReview.docs'
+import { DocsPostReview } from './swagger/DocsPostReview.docs'
+import { DocsGetReviewByUserId } from './swagger/DocsGetReviewByUserId.docs'
+import { DocsGetReviewByEventId } from './swagger/DocsGetReviewByEventId.docs'
+import { DocsDeleteReview } from './swagger/DocsDeleteReview.dto'
+import {
+  ServiceGetReviewByEventId,
+  ServiceGetReviewByUserId,
+} from './dto/ServiceGetReview.dto'
 
 @Controller('review')
 @ApiTags('review api')
@@ -33,54 +32,50 @@ export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @Get('/event/:eventId')
-  @ApiOperation({
-    summary: 'get reviews by eventId',
-    description: 'get reviews by event',
-  })
-  @ApiOkResponse({
-    description: 'Get Success',
-  })
+  @DocsGetReviewByEventId()
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
   async getReviewByEventId(
-    @Param('eventId') eventId: string
-  ): Promise<Review[]> {
-    return await this.reviewService.findReviewByEventID(+eventId)
+    @Param('eventId') eventId: string,
+    @Query() paginationDto: PaginationDto
+  ) {
+    return await this.reviewService.findReviewByEventID(
+      new ServiceGetReviewByEventId(paginationDto, +eventId)
+    )
   }
 
-  @Get('/userId/:user')
-  @ApiOperation({
-    summary: 'get reviews by userId',
-    description: 'get reviews by user',
-  })
-  @ApiOkResponse({
-    description: 'Get Success',
-  })
-  async getReviewByUserId(@Param('userId') userId: string) {
-    return await this.reviewService.findReviewByUserId(+userId)
+  @Get('/user/:userId')
+  @DocsGetReviewByUserId()
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
+  async getReviewByUserId(
+    @Param('userId') userId: string,
+    @Query() paginationDto: PaginationDto
+  ): Promise<Review[]> {
+    return await this.reviewService.findReviewByUserId(
+      new ServiceGetReviewByUserId(paginationDto, +userId)
+    )
   }
 
   @Post('/')
-  @ApiOperation({
-    summary: 'create new review',
-    description: 'create review',
-  })
-  @ApiOkResponse({
-    description: 'created',
-  })
-  @ApiConflictResponse({
-    description: 'too fast',
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'internal server error',
-  })
-  @ApiBody({
-    type: CreateReviewDto,
-  })
-  @HttpCode(200)
+  @DocsPostReview()
   //need session guard
   @UsePipes(
     new ValidationPipe({
       transform: true,
-      whitelist: true, //수신돼선 안되는 속성 필터링
+      whitelist: true,
       forbidNonWhitelisted: true,
       forbidUnknownValues: true,
     })
@@ -94,66 +89,33 @@ export class ReviewController {
   }
 
   @Patch(':reviewId')
-  @ApiOperation({
-    summary: 'update review',
-    description: 'update review',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'unauthorized',
-  })
-  @ApiOkResponse({
-    description: 'updated',
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'database server error',
-  })
-  @HttpCode(200)
+  @DocsPatchReview()
   //need session guard
   @UsePipes(
     new ValidationPipe({
-      transform: true, //지정된 객체로 자동변환
-      whitelist: true, //수신돼선 안되는 속성 필터링
+      transform: true,
+      whitelist: true,
       forbidNonWhitelisted: true,
       forbidUnknownValues: true,
     })
   )
   async patchReview(
     @Param('reviewId') reviewId: string,
-    @Body() controllerUpdateReviewDto: ControllerUpdateReviewDto
+    @Body() updateReviewDto: UpdateReviewDto
   ) {
     /*
-     * if (req.session.userId != controllerUpdateReviewDto.reviewerId)
+     * if (req.session.userId != UpdateReviewDto.reviewerId)
      * 	throw new ForbiddenException()
      * */
-    const userId = 1 //req.session.userId
-    return this.reviewService.update(
-      new ServiceUpdateReviewDto(controllerUpdateReviewDto, +reviewId, userId) //서비스 레이어 dto 생성
-    )
+    const userId = 1 //jwt user id
+    return await this.reviewService.update(updateReviewDto, +reviewId, userId)
   }
 
   @Delete(':reviewId')
-  @ApiOperation({
-    summary: 'delete review',
-    description: 'delete review',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'unauthorized',
-  })
-  @ApiOkResponse({
-    description: 'delete success',
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'internal server error',
-  })
-  @ApiNotFoundResponse({
-    description: 'requested review not found',
-  })
-  @HttpCode(200)
+  @DocsDeleteReview()
   //need session guard
-  deleteReview(@Param('reviewId') reviewId: string) {
-    const userId = 1 //req.session.userId, or jwt
-    return this.reviewService.remove(
-      new ServiceDeleteReviewDto(+reviewId, userId)
-    )
+  async deleteReview(@Param('reviewId') reviewId: string) {
+    const userId = 1 //jwt
+    return await this.reviewService.remove(+reviewId, userId)
   }
 }
