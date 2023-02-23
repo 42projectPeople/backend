@@ -1,7 +1,13 @@
 import { applyDecorators } from '@nestjs/common'
-import { ApiOperation, ApiOkResponse } from '@nestjs/swagger'
+import {
+  ApiOperation,
+  ApiOkResponse,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger'
+import ReturnReviews from '../dto/ReturnReview.dto'
 
-export function DocsPGetReviewByEventId() {
+export function DocsGetReviewByEventId() {
   return applyDecorators(
     ApiOperation({
       summary: 'get reviews by eventId',
@@ -9,6 +15,14 @@ export function DocsPGetReviewByEventId() {
     }),
     ApiOkResponse({
       description: 'Get Success',
+      isArray: true,
+      type: ReturnReviews,
+    }),
+    ApiParam({
+      name: '작성된 리뷰를 요청할 이벤트 아이디',
+    }),
+    ApiQuery({
+      name: 'pagination 정보',
     })
   )
 }
