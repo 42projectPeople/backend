@@ -6,4 +6,8 @@ import CreateReviewDto from './createReview.dto'
  * */
 export class UpdateReviewDto extends PickType(CreateReviewDto, [
   'content',
-] as const) {}
+] as const) {
+  getContent(): string {
+    return this.content
+  }
+}
