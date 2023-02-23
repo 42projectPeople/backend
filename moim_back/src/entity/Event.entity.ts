@@ -179,6 +179,11 @@ export class Event {
   })
   host: User | number
 
+  @Column({
+    type: 'int',
+  })
+  host_Id: number
+
   @ApiProperty({
     description: '이벤트에 참가중인 유저(?)',
   })
@@ -196,6 +201,11 @@ export class Event {
     name: 'hashtagId',
   })
   hashtag: Hashtag | number
+
+  @Column({
+    type: 'int',
+  })
+  hashtag_Id: number
 
   @OneToMany(() => Review, (review) => review.reviewId)
   reviewIds: Review[]
