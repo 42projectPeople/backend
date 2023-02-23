@@ -34,7 +34,9 @@ export class EventDefaultDto {
     event.longitude = newEvent.longitude
     event.header = newEvent.header
     event.hashtag = newEvent.hashtag
+    event.hashtag_Id = newEvent.hashtag
     event.host = newEvent.host
+    event.host_Id = newEvent.host
     event.maxParticipant = newEvent.maxParticipant
     event.curParticipant = 0
     event.rating = 0

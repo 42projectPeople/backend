@@ -1,71 +1,69 @@
 import {
   IsBoolean,
   IsNotEmpty,
+  IsNumber,
   IsNumberString,
   IsString,
   ValidateNested,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 
-export class EventUserToReturnDto {
-  @IsNumberString()
-  @IsNotEmpty()
-  userId: number
+export class EventHostToReturnDto {
+  @IsNumber()
+  hostId: number
 
   @IsString()
-  userNickName: string | '닉네임읆 만들어주세요.'
+  hostNickName: string | '닉네임읆 만들어주세요.'
 
-  @IsBoolean()
-  @IsNotEmpty()
-  userRole: boolean
+  hostRole: boolean | string
 
   @IsString()
-  userProfilePhoto: string | null
+  hostProfilePhoto: string | null
 
   @IsString()
-  userTitle: string | '소개글을 작성해주세요.'
+  hostTitle: string | '소개글을 작성해주세요.'
 }
 
-export class EventHashtagToReturnDto {
-  @IsNumberString()
+export class EventReturnDto {
+  @IsNumber()
+  eventId: number
+  @IsString()
+  eventDate: string
+  @IsString()
+  event_modifiedAt: string | Date
+  @IsString()
+  event_main_image: string
+  @IsString()
+  event_content: string
+  @IsNumber()
+  event_views: number
+  @IsString()
+  event_location: string
+  @IsNumber()
+  event_latitude: number
+  @IsNumber()
+  event_longitude: number
+  @IsString()
+  event_header: string
+  @IsNumber()
+  event_rating: number
+  @IsNumber()
+  event_maxParticipant: number
+  @IsNumber()
+  event_curParticipant: number
+  @IsNumber()
   @IsNotEmpty()
   hashtagId: number
   @IsString()
   @IsNotEmpty()
   hashtagName: string
-}
-
-export class EventReturnDto {
-  @IsNumberString()
-  eventId: number
+  @IsNumber()
+  hostId: number
   @IsString()
-  eventDate: string
+  hostNickName: string | '닉네임읆 만들어주세요.'
+  hostRole: boolean | string
   @IsString()
-  modifiedAt: string
+  hostProfilePhoto: string | null
   @IsString()
-  main_image: string
-  @IsString()
-  content: string
-  @IsNumberString()
-  views: number
-  @IsString()
-  location: string
-  @IsNumberString()
-  latitude: number
-  @IsNumberString()
-  longitude: number
-  @IsString()
-  header: string
-  @IsNumberString()
-  rating: number
-  @IsNumberString()
-  maxParticipant: number
-  @IsNumberString()
-  curParticipant: number
-  @ValidateNested()
-  @Type(() => EventUserToReturnDto)
-  user: EventUserToReturnDto
-  @ValidateNested()
-  @Type(() => EventHashtagToReturnDto)
-  hashtag: EventHashtagToReturnDto
+  hostTitle: string | '소개글을 작성해주세요.'
 }

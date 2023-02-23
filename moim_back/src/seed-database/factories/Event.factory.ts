@@ -40,13 +40,17 @@ export default setSeederFactory(Event, (faker) => {
     min: 0,
     max: 5,
   })
-  fakeEvent.host = faker.datatype.number({
+  const host = faker.datatype.number({
     min: 0,
     max: 10,
   })
-  fakeEvent.hashtag = faker.datatype.number({
+  fakeEvent.host = host
+  fakeEvent.host_Id = host
+  const hashtag = faker.datatype.number({
     min: 0,
     max: 10,
   })
+  fakeEvent.hashtag = hashtag
+  fakeEvent.hashtag_Id = hashtag
   return fakeEvent
 })
