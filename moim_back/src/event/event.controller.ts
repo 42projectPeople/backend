@@ -9,21 +9,18 @@ import {
   Post,
 } from '@nestjs/common'
 import { EventDefaultDto } from './dto/event.default.dto'
-import { EventReturnDto } from './dto/event.return.dto'
 import { EventService } from './event.service'
 
 @Controller('event')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
   @Get('/:id')
-  async eventGet(
-    @Param('id', ParseIntPipe) id: number
-  ): Promise<EventReturnDto> {
+  async eventGet(@Param('id', ParseIntPipe) id: number) {
     return await this.eventService.eventGet(id)
   }
 
   @Post('')
-  async eventCreate(@Body() body: EventDefaultDto): Promise<EventReturnDto> {
+  async eventCreate(@Body() body: EventDefaultDto) {
     return await this.eventService.eventCreate(body)
   }
 
@@ -31,7 +28,7 @@ export class EventController {
   async eventUpdate(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: EventDefaultDto
-  ): Promise<EventReturnDto> {
+  ) {
     return await this.eventService.eventUpdate(id, body)
   }
 
