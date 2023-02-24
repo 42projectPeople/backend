@@ -56,7 +56,7 @@ export class UserService {
       await this.userRepository
         .createQueryBuilder()
         .update()
-        .set(userInfo)
+        .set(new User(userInfo))
         .where('userId = :id', { id: userId })
         .execute()
     } catch (err) {
