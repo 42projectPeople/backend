@@ -1,36 +1,45 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Req,
+  Res,
+  UseGuards,
+  Response,
+  Request,
+} from '@nestjs/common'
 import { AuthService } from './auth.service'
-import { GoogleGuard } from './google-auth/google.guard'
-import { JwtAuthGuardGuard } from './jwt-auth/jwt-auth.guard'
-import { Request } from 'supertest'
+import { GoogleSignUpGuard, GoogleLoginGuard } from './google-auth/google.guard'
+import { JWTAuthGuard } from './jwt-auth/jwt-auth.guard'
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get('logout')
-  @UseGuards(JwtAuthGuardGuard)
-  async logout() {}
+  @UseGuards(JWTAuthGuard)
+  async logout() {} // clear cookie
 
   /*****************************
    * Authentication via Google *
    *****************************/
   @Get('signup/google')
-  @UseGuards(GoogleGuard)
-  async signupGoogle() {} // it will  be redirected to redirect/google
+  @UseGuards(GoogleSignUpGuard)
+  async signupGoogle() {}
 
-  @Get('login/google')
-  @UseGuards(GoogleGuard)
-  async loginGoogle(
-    @Req() request: Request,
-    @Res({ passthrough: true }) response: Response
-  ) {
-    // return await this.authService.logIn(request.user, response)
+  @Get('redirect/google-signup')
+  @UseGuards(GoogleSignUpGuard)
+  async redirectGoogleSignup(@Req() request: any) {
+    return await this.authService.signup(request.user)
   }
 
-  @Get('redirect/google')
-  @UseGuards(GoogleGuard)
-  async redirectGoogle(@Req() request: Request) {
-    // return await this.authService.signUp(request.user)
+  @Get('login/google')
+  @UseGuards(GoogleLoginGuard)
+  async loginGoogle() {}
+
+  @Get('redirect/google-login')
+  @UseGuards(GoogleLoginGuard)
+  async redirectGoogleLogin(@Req() request: any, @Res() response: Response) {
+    const userEmail: string = request.user?.email[0]
+    return await this.authService.login(userEmail, response)
   }
 }
