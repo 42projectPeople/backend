@@ -6,5 +6,5 @@ export class RegisterEventRequestDto {
   @ApiProperty({
     description: 'event id',
   })
-  eventId: number
+  readonly eventId: number
 }
