@@ -10,11 +10,11 @@ export class AuthService {
     private readonly userRepository: Repository<User>
   ) {}
 
-  async logIn(email: string, response: Response) {
+  async login(userEmail: string, response: Response) {
     // find matched email from User table
     const user: User = await this.userRepository.findOne({
       where: {
-        userName: email,
+        userName: userEmail,
       },
     })
     if (user === undefined || user === null) {
@@ -26,11 +26,11 @@ export class AuthService {
       // set session (CleanUp session and add new refresh token to session)
     }
   }
-  async signUp(email: string) {
+  async signup(userEmail: string) {
     // find matched email from User table
     const user: User = await this.userRepository.findOne({
       where: {
-        userName: email,
+        userName: userEmail,
       },
     })
     if (user === undefined || user === null) {
