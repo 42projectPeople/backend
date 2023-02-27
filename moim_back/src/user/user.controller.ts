@@ -86,20 +86,9 @@ export class UserController {
    * check user name is already exists
    * @param userNickName
    */
-  @Get('verify/nickname/:userNickName')
-  @ApiOperation({
-    summary: 'check user nickname is valid',
-    description: 'validate user nickname',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'check valid nickname',
-    type: CheckNickNameResponseDto,
-  })
-  async checkValidUserNickName(
-    @Param('userNickName') userNickName: string
-  ): Promise<CheckNickNameResponseDto> {
-    return { isValid: await this.userService.checkExistNickname(userNickName) }
+  @Post('verify/nickname/:userNickName')
+  async checkValidUserNickName(@Param('userNickName') userNickName: string) {
+    return
   }
 
   /**
