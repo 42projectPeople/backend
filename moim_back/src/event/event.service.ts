@@ -71,7 +71,7 @@ export class EventService {
         })
         .execute()
 
-      if (!ret)
+      if (ret.affected === 0)
         return new EntityNotFoundError('잘못된 업데이트 요청입니다.', 404)
       return await this.eventGet(eventId)
     } catch (e) {
@@ -88,7 +88,7 @@ export class EventService {
           id: eventId,
         })
         .execute()
-      if (!deleteEvent)
+      if (deleteEvent.affected === 0)
         throw new EntityNotFoundError('잘못된 삭제 요청입니다.', 404)
       return deleteEvent
     } catch (e) {
