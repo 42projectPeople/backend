@@ -4,6 +4,10 @@ import { User_Events } from 'src/entity/User_Events.entity'
 import { Repository } from 'typeorm'
 import { CreateUserEventDto } from './dto/create-user-event.dto'
 
+/**
+ * NOTE: THIS SERVICE IS DEPRECATED
+ */
+
 @Injectable()
 export class UserEventsService {
   constructor(
@@ -43,7 +47,7 @@ export class UserEventsService {
       .createQueryBuilder('user_events')
       .update()
       .set({
-        isDeleted: true,
+        // isDeleted: true,
         deletedAt: () => 'CURRENT_TIMESTAMP',
       })
       .where('user_events.participentId = :id', { id: participateId })

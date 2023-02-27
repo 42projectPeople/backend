@@ -15,11 +15,14 @@ import { Event } from './Event.entity'
 @Unique('unique_UserEvents_userId_eventId_deletedAt', [
   'userId',
   'eventId',
-  'isDeleted',
+  'deletedAt',
 ])
 export class User_Events {
+  /**
+   * pk
+   */
   @PrimaryGeneratedColumn()
-  participentId: number
+  participationId: number
 
   /*
    * special columns for insertion date
@@ -30,20 +33,21 @@ export class User_Events {
   @DeleteDateColumn()
   deletedAt: Date
 
-  @Column({
-    default: false,
-  })
-  isDeleted: boolean
+  @Column({ name: 'userId' })
+  userId: number
 
   @ManyToOne(() => User, (user) => user.userId, { nullable: false })
   @JoinColumn({
     name: 'userId',
   })
-  userId: User | number
+  user: User | number
+
+  @Column({ name: 'eventId' })
+  eventId: number
 
   @ManyToOne(() => Event, (event) => event.eventId, { nullable: false })
   @JoinColumn({
     name: 'eventId',
   })
-  eventId: Event | number
+  event: Event | number
 }
