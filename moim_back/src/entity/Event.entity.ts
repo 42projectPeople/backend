@@ -191,12 +191,12 @@ export class Event {
   @ApiProperty({
     description: '이벤트게시글의 헤시태그아이디',
   })
-  @ManyToOne(() => Hashtag, (hashtag) => hashtag.event)
+  @ManyToOne(() => Hashtag, (hashtag) => hashtag.hashtagId)
   @JoinColumn({
     name: 'hashtagId',
   })
   hashtag: Hashtag | number
 
-  @OneToMany(() => Review, (review) => review.reviewId)
+  @OneToMany(() => Review, (review) => review.eventId)
   reviewIds: Review[]
 }

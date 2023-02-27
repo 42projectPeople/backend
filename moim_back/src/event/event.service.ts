@@ -16,18 +16,17 @@ export class EventService {
   ) {}
 
   async eventGet(eventId: number) {
-    let event = null
     try {
-      event = await this.eventRepository
+      const event = await this.eventRepository
         .createQueryBuilder('event')
-        .innerJoinAndSelect('user', 'user', 'user.userId = event.hostId')
+        .innerJoinAndSelect('event.host', 'u', 'u.userId = event.hostId')
         .innerJoinAndSelect(
-          'hashtag',
-          'hashtag',
-          'hashtag.hashtagId = event.hashtagId'
+          'event.hashtag',
+          'h',
+          'h.hashtagId = event.hashtagId'
         )
         .where('event.eventId=:id AND event.deletedAt IS NULL', { id: eventId })
-        .execute()
+        .getMany()
       return event
     } catch (e) {
       throw new EntityNotFoundError('이벤트가 존재하지 않습니다.', 404)

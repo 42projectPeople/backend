@@ -1,4 +1,4 @@
-import { IsISBN, IsNumber, IsString } from 'class-validator'
+import { IsNumber, IsString } from 'class-validator'
 import { Event } from 'src/entity/Event.entity'
 
 export class EventDefaultDto {
