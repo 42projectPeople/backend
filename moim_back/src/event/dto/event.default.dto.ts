@@ -1,28 +1,16 @@
 import { IsNumber, IsString } from 'class-validator'
 import { Event } from 'src/entity/Event.entity'
 
-export class EventDefaultDto {
-  @IsString()
-  eventDate: string
-  @IsString()
-  main_image: string
-  @IsString()
-  content: string
-  @IsString()
-  location: string
-  @IsNumber()
-  latitude: number
-  @IsNumber()
-  longitude: number
-  @IsString()
-  header: string
-  @IsNumber()
-  maxParticipant: number
-  @IsNumber()
-  hashtag: number
-  @IsNumber()
-  host: number
-
+/*
+  extends Event
+  @9utty
+*/
+export class EventDefaultDto extends Event {
+  /*
+    toEntity 메서드 정의, event엔티티 객체로 반환합니다.
+    @Param newEvent: 컨트롤러 Dto
+    @Return Event entity object
+   */
   static transEventDto(newEvent: EventDefaultDto) {
     const event = new Event()
 
