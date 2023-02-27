@@ -8,13 +8,18 @@ import {
   Patch,
   Post,
 } from '@nestjs/common'
+import { ApiOkResponse } from '@nestjs/swagger'
 import { EventDefaultDto } from './dto/event.default.dto'
+import { EventReturnDto } from './dto/event.return.dto'
 import { EventService } from './event.service'
 
 @Controller('event')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
   @Get('/:id')
+  @ApiOkResponse({
+    type: EventReturnDto,
+  })
   async eventGet(@Param('id', ParseIntPipe) id: number) {
     return await this.eventService.eventGet(id)
   }
