@@ -4,26 +4,24 @@
 * ***Google OAuth2***
   * ***passport-google-oauth2*** 사용
 
-### SIGN IN
-  * `@GET /auth/signin/google`
+### SIGN UP
+  * `@GET /auth/signup/google`
   * **Flow** *(위에서 아래로 순서대로 진행)*
-    * **access** `/auth/signin/google`
+    * **access** `/auth/signup/google`
       * 사용자는 구글 로그인을 행함
-    * **redirect** `/auth/redirect/google-signin` 
+    * **redirect** `/auth/redirect/google-signup` 
       * 이 때 해당 경로로 접근하면서 `access token` & `profile` 정보를 얻게 된다.
       * `User Table` 에 `userName` 을 `profile.email` 으로 갖고 있는 `User`를 생성
     * View 에서는 `User` 데이터를 추가적으로 받아야하는 상황
     * 해당 경로 접근 권한을 위해서는 Google Login 이 우선 필요하다. (JWT Guard)
     * `@GET /auth/login/google` 로 다시 요청 (버튼을 눌러야 함) 
       * 이미 DB에 `userName` 이 존재하므로, token 획득 가능
-        * token 에 `isActivated` 요소에서 `false` 로 설정하여 임시 토큰으로 활용
       * 이 때, 추가정보가 기입되지 않은 경우 token 을 cookie 에 넣어주는 동시에 redirect(추가 정보 기입 페이지)
     * ***추가 정보 기입 페이지***
       * 단순히 페이지 Redirect 라서 뷰만 바뀜... (앱 프론트에서 그냥 페이지 이동... 협의 필요)
       * **`@PUT /user`** 을 통해서 유저의 추가 정보를 업데이트
       * 이 때 유저가 정보를 기입하지 않으면 다른 행동을 하지 못하도록 제한해야한다. 
-        * -> token 에 `isActivated` 요소가 있어서 강제로 추가 정보 기입 페이지로 리다이렉트 시켜야함.
-      * 기입이 완료되면 `isActivated` 가 활성화된 정상 토큰을 재부여...
+        * 강제로 추가 정보 기입 페이지로 리다이렉트 시켜야함.
 
 ### LOG IN
   * `@GET /auth/login/google`
@@ -32,15 +30,15 @@
     * `/auth/redirect/google-login`
       * google 을 통해서 받아온 email 이 `User` table 에 존재하는지 검증
         * 존재하는 경우 Token 발급
-          * 이 때, User 가 activated 상태인지 확인해야한다. (추가 정보 기입이 필요한 상태인지)
-          * 만약 필요하다면, token 을 수정해서 발급한다.
         * 존재하지 않을 경우 fail
     * access token 을 발급할 때, refresh token 을 함께 발급한다. (10m / 7day?)
       * refresh token 을 발급하면서 이 refresh token 을 관리하는 session 을 하나 만들어야함.
+    * 토큰을 받을 때는 header의 authorizaion: bearer {token} 으로 엑세스 토큰 받아냄
+    * 토큰을 줄 때는 { accessToken: {accessToken}, refreshToken: {refreshToken} } 으로 payload 전달
 
 ### LOG OUT
-  * `@GET /auth/logout`
-  * clear cookie 를 통해서 단순히 구현 가능
+  * `@GET /auth/logout
+  * client 에서 여기 요청할 때 알아서 클리어...
   * refresh token 을 관리하는 session 에서도 이 정보를 삭제할 필요가 있다.
 
 ## AUTHORIZATION
@@ -64,3 +62,5 @@
     * valid 하다면, 새로운 access token 을 발급해준다.
     * 만약 이 과정에서 refresh token 의 만료가 가깝다면, 새로운 Refresh Token 또한 이 과정에서 함께 발급한다.
     * session 도 함께 업데이트한다.
+    * payload로 항상 { accessToken: {accessToken}, refreshToken: {refreshToken} } 전달
+        * refresh token 은 expired 에 따라 rotate 될 수도 안될 수도 있음.

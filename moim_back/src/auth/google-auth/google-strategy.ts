@@ -24,7 +24,6 @@ export class GoogleSignupStrategy extends PassportStrategy(
     const { emails } = profile
     return {
       email: emails[0].value,
-      accessToken: accessToken, // 이게 필요할까?
     }
   }
 }
@@ -50,7 +49,6 @@ export class GoogleLoginStrategy extends PassportStrategy(
     const { emails } = profile
     return {
       email: emails[0].value,
-      accessToken: accessToken, // 이게 필요할까?
     }
   }
 }
