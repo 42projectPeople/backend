@@ -6,5 +6,5 @@ export class CheckNickNameResponseDto {
     description: 'is valid nickname (boolean)',
   })
   @IsBoolean()
-  isValid: boolean
+  readonly isValid: boolean
 }

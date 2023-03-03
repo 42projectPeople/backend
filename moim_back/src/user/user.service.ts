@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -25,14 +26,18 @@ export class UserService {
   ) {}
 
   async findUserByUserId(userId: number): Promise<User> {
+    if (userId < 1)
+      throw new BadRequestException('user id must be larger than 1')
     return await this.userRepository.findOne({
       where: { userId: userId },
     })
   }
 
   async findUsersByPage(page: number): Promise<User[]> {
+    if (page < 1)
+      throw new BadRequestException('page number must be larger than 1')
     return await this.userRepository.find({
-      skip: +page * 10,
+      skip: (page === undefined ? 1 : +page) * 10,
       take: 10,
     })
   }
@@ -51,7 +56,7 @@ export class UserService {
       await this.userRepository
         .createQueryBuilder()
         .update()
-        .set(userInfo)
+        .set(new User(userInfo))
         .where('userId = :id', { id: userId })
         .execute()
     } catch (err) {
@@ -89,7 +94,6 @@ export class UserService {
         where: { host: userId },
       })
     } catch (err) {
-      console.log(err)
       throw new InternalServerErrorException('database server error')
     }
   }
@@ -113,47 +117,73 @@ export class UserService {
     }
   }
 
-  /**
-   * NOTE: query runner 를 사용할 경우 개발자에게 권한이 더 주어질 수 있음. (우선은 entityManager 활용함)
-   * @param userId
-   * @param registerEventDto
-   */
   async registerEvent(
     userId: number,
     registerEventDto: RegisterEventRequestDto
   ): Promise<void> {
-    // register event
-    const userEvents = new User_Events()
+    const queryRunner = await this.dataSource.createQueryRunner()
+    await queryRunner.connect()
+    await queryRunner.startTransaction()
 
-    userEvents.userId = userId
-    userEvents.eventId = registerEventDto.eventId
-    await this.dataSource.manager.transaction(async (entityManager) => {
-      await entityManager.save(userEvents)
-      await entityManager.increment(
-        Event,
-        { eventId: registerEventDto.eventId },
-        'curParticipant',
-        1
-      )
-    })
+    try {
+      await queryRunner.manager
+        .createQueryBuilder()
+        .setLock('pessimistic_write')
+        .update(Event)
+        .set({ curParticipant: () => `"curParticipant" + 1` })
+        .where('eventId = :eventId', { eventId: registerEventDto.eventId })
+        .execute()
+      await queryRunner.manager
+        .createQueryBuilder()
+        .insert()
+        .into(User_Events)
+        .values(registerEventDto) // TODO: CHECK THIS CODE IS VALID OR NOT
+        .execute()
+      await queryRunner.commitTransaction()
+    } catch (err) {
+      await queryRunner.rollbackTransaction()
+      throw new InternalServerErrorException('database server error')
+    } finally {
+      await queryRunner.release()
+    }
   }
 
   async unregisterEvent(
     userId: number,
     unregisterEventDto: UnregisterEventRequestDto
   ): Promise<void> {
-    await this.dataSource.manager.transaction(async (entityManager) => {
-      await entityManager.softDelete(User_Events, {
-        userId: userId,
-        eventId: unregisterEventDto.eventId,
-        deletedAt: IsNull(),
-      })
-      await entityManager.decrement(
-        Event,
-        { eventId: unregisterEventDto.eventId },
-        'curParticipant',
-        1
-      )
-    })
+    const queryRunner = await this.dataSource.createQueryRunner()
+    await queryRunner.connect()
+    await queryRunner.startTransaction()
+    queryRunner.manager
+    try {
+      await queryRunner.manager
+        .createQueryBuilder()
+        .setLock('pessimistic_write')
+        .update(Event)
+        .set({ curParticipant: () => `"curParticipant" - 1` })
+        .where('eventId = :eventId', { eventId: unregisterEventDto.eventId })
+        .execute()
+      await queryRunner.manager
+        .createQueryBuilder()
+        .setLock('pessimistic_write')
+        .from(User_Events, 'user_events')
+        .softDelete()
+        .where(
+          'user_events.eventId = :eventId AND user_events.userId = :userId AND user_events.deletedAt is NULL',
+          {
+            userId: userId,
+            eventId: unregisterEventDto.eventId,
+          }
+        )
+        .execute()
+
+      await queryRunner.commitTransaction()
+    } catch (err) {
+      await queryRunner.rollbackTransaction()
+      throw new InternalServerErrorException('database server error')
+    } finally {
+      await queryRunner.release()
+    }
   }
 }

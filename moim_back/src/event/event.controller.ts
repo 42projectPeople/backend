@@ -1,20 +1,44 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common'
-import { Event } from 'src/entity/Event.entity'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+} from '@nestjs/common'
+import { ApiOkResponse } from '@nestjs/swagger'
+import { EventDefaultDto } from './dto/event.default.dto'
+import { EventReturnDto } from './dto/event.return.dto'
 import { EventService } from './event.service'
 
 @Controller('event')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
   @Get('/:id')
-  async FindOneEvent(@Param('id') id: number): Promise<Event> {
-    const ret = await this.eventService.eventFindOneById(id)
-    console.log(`\n\n ret = ${ret}`)
-    return ret
+  @ApiOkResponse({
+    type: EventReturnDto,
+  })
+  async eventGet(@Param('id', ParseIntPipe) id: number) {
+    return await this.eventService.eventGet(id)
   }
-  // @Post('')
-  // async CreateEvent(@Body() body: any): Promise<Event> {
-  //   const ret = await this.eventService.eventCreate(body)
-  //   console.log(`\nCreate :${ret}`)
-  //   return ret
-  // }
+
+  @Post('')
+  async eventCreate(@Body() body: EventDefaultDto) {
+    return await this.eventService.eventCreate(body)
+  }
+
+  @Patch('/:id')
+  async eventUpdate(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: EventDefaultDto
+  ) {
+    return await this.eventService.eventUpdate(id, body)
+  }
+
+  @Delete('/:id')
+  async eventDelete(@Param('id', ParseIntPipe) id: number) {
+    await this.eventService.eventDelete(id)
+  }
 }
