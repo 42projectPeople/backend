@@ -1,3 +1,4 @@
+import { ApiTags } from '@nestjs/swagger'
 import {
   Column,
   Entity,
@@ -10,6 +11,7 @@ import { Event } from './Event.entity'
 import { User } from './User.entity'
 
 @Entity()
+@ApiTags('hashtag api')
 @Unique('unique_Hashtag_hashtagName', ['hashtagName'])
 export class Hashtag {
   @PrimaryGeneratedColumn({
