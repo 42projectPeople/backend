@@ -22,6 +22,6 @@ export default setSeederFactory(Review, (faker) => {
     min: 1,
     max: 10,
   })
-  fakeReview.createdAt = faker.date.recent(10).toISOString()
+  fakeReview.createdAt = faker.date.recent(10)
   return fakeReview
 })
