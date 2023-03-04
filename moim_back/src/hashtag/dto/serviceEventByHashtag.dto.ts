@@ -12,8 +12,8 @@ export class serviceEventByHashtagDto {
 
   constructor(controllerDto: controllerEventByHashtagIdDto, hashtagId: number) {
     this.page = controllerDto.page
-    this.recommendation = controllerDto.recommendation ?? false
-    this.pageSize = controllerDto.pageSize ?? 10
+    this.recommendation = controllerDto.recommendation
+    this.pageSize = controllerDto.pageSize
     this.hashtagId = hashtagId
   }
 
@@ -34,6 +34,6 @@ export class serviceEventByHashtagDto {
   }
 
   getStartIndex(): number {
-    return this.page * this.pageSize
+    return (this.page - 1) * this.pageSize
   }
 }
