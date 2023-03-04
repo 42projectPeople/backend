@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm'
 import { Review } from 'src/entity/Review.entity'
 import { DataSource, Repository } from 'typeorm'
-import { UpdateReviewDto } from './dto/UpdateReview.Dto'
+import { UpdateReviewDto } from './dto/UpdateReview.dto'
 import CreateReviewDto from './dto/createReview.dto'
 import {
   ServiceGetReviewByEventId,
