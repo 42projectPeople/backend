@@ -25,4 +25,12 @@ export class UserSearchDto extends SearchDto {
   @IsBoolean()
   @TransformBooleanInParam()
   private readonly sortByName?: boolean = false
+
+  getSortByLevel(): boolean {
+    return this.sortByLevel
+  }
+
+  getSortByName(): boolean {
+    return this.sortByName
+  }
 }

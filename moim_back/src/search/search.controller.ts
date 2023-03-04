@@ -30,8 +30,7 @@ export class SearchController {
     })
   )
   async getSearchUser(@Query() userSearchDto: UserSearchDto) {
-    return userSearchDto
-    return await this.searchService.searchUser()
+    return await this.searchService.searchUser(userSearchDto)
   }
 
   @DocsGetSearchEvent()
@@ -45,7 +44,7 @@ export class SearchController {
     })
   )
   async getSearchEvent(@Query() eventSearchDto: EventSearchDto) {
-    return await this.searchService.searchEvent()
+    return await this.searchService.searchEvent(eventSearchDto)
   }
 
   @DocsGetSearchHashtag()
@@ -59,6 +58,6 @@ export class SearchController {
     })
   )
   async getSearchHashtag(@Query() hashtagDto: HashtagSearchDto) {
-    return await this.searchService.searchHashtag()
+    return await this.searchService.searchHashtag(hashtagDto)
   }
 }
