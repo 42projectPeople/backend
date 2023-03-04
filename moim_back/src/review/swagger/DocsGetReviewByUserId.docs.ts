@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common'
 import { ApiOperation, ApiOkResponse } from '@nestjs/swagger'
-import ReturnReviews from '../dto/ReturnReview.dto'
+import { Review } from 'src/entity/Review.entity'
 
 export function DocsGetReviewByUserId() {
   return applyDecorators(
@@ -10,7 +10,7 @@ export function DocsGetReviewByUserId() {
     }),
     ApiOkResponse({
       description: 'Get Success',
-      type: ReturnReviews,
+      type: Review,
     })
   )
 }
