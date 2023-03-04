@@ -8,9 +8,10 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { controllerEventByHashtagIdDto } from './dto/controllerEventByHashtagId.dto'
-import { ResponseEventsDto } from './dto/ResponseEvents.dto'
 import { serviceEventByHashtagDto } from './dto/serviceEventByHashtag.dto'
 import { HashtagService } from './hashtag.service'
+import { DocsGetEventsByHashtag } from './swagger/DocsGetEventsByHashtag.dto'
+import { Event } from 'src/entity/Event.entity'
 
 @Controller('hashtag')
 @ApiTags('hashtag api')
@@ -26,10 +27,7 @@ export class HashtagController {
   }
 
   @Get('/events/:hashtagId')
-  @ApiOkResponse({
-    description: 'Returns a list of events',
-    type: ResponseEventsDto,
-  })
+  @DocsGetEventsByHashtag()
   @UsePipes(
     new ValidationPipe({
       transform: true,
@@ -42,7 +40,7 @@ export class HashtagController {
   async getEventsByHashtag(
     @Param('hashtagId') hashtagId: string,
     @Query() queryDto: controllerEventByHashtagIdDto
-  ): Promise<ResponseEventsDto> {
+  ): Promise<Event[]> {
     return await this.hashtagService.findEventsByHashtagId(
       new serviceEventByHashtagDto(queryDto, +hashtagId)
     )
