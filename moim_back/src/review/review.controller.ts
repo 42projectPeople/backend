@@ -9,9 +9,6 @@ import {
   Query,
   ValidationPipe,
   UsePipes,
-  Res,
-  HttpCode,
-  HttpStatus,
 } from '@nestjs/common'
 import { ReviewService } from './review.service'
 import { UpdateReviewDto } from './dto/UpdateReview.Dto'
@@ -114,11 +111,11 @@ export class ReviewController {
     return await this.reviewService.update(updateReviewDto, +reviewId, userId)
   }
 
-  @Delete(':reviewId')
-  @DocsDeleteReview()
-  //need session guard
-  async deleteReview(@Param('reviewId') reviewId: string) {
-    const userId = 1 //jwt
-    return await this.reviewService.remove(+reviewId, userId)
-  }
+  //@Delete(':reviewId')
+  //@DocsDeleteReview()
+  ////need session guard
+  //async deleteReview(@Param('reviewId') reviewId: string) {
+  //  const userId = 1 //jwt
+  //  return await this.reviewService.remove(+reviewId, userId)
+  //}
 }
