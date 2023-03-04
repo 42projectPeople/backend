@@ -30,4 +30,20 @@ export default class SearchDto {
   @IsNumber()
   @IsPositive()
   protected readonly pageSize: number = 5
+
+  getWord(): string {
+    return this.word
+  }
+
+  getPage(): number {
+    return this.page
+  }
+
+  getPageSize(): number {
+    return this.pageSize
+  }
+
+  getStartIndex(): number {
+    return (this.page - 1) * this.pageSize
+  }
 }

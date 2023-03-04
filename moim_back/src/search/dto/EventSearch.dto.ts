@@ -47,4 +47,20 @@ export class EventSearchDto extends SearchDto {
   @IsBoolean()
   @TransformBooleanInParam()
   private readonly sortByLocation?: boolean = false
+
+  getSortByViews(): boolean {
+    return this.sortByViews
+  }
+
+  getIncludeMax(): boolean {
+    return this.includeMax
+  }
+
+  getSortByRating(): boolean {
+    return this.sortByRating
+  }
+
+  getSortByLocation(): boolean {
+    return this.sortByLocation
+  }
 }
