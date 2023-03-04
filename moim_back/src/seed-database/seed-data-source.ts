@@ -28,7 +28,7 @@ console.log(
 console.log('5초뒤 수행됩니다.')
 const runner = async () => {
   dotenv.config({
-    path: '.env.dev.local',
+    path: '.env.dev',
   })
 
   const options: DataSourceOptions & SeederOptions = {
