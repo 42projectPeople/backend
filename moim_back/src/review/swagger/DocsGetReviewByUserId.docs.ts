@@ -13,7 +13,7 @@ export function DocsGetReviewByUserId() {
       type: Review,
     }),
     ApiParam({
-      name: 'reviewId',
+      name: 'userId',
       description: '리뷰를 요청할 사용자의 아이디',
       required: true,
       type: Number,
