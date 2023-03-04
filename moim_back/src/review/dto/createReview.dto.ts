@@ -9,7 +9,7 @@ export default class CreateReviewDto {
     example: 'hello! salut!',
   })
   @IsString()
-  readonly content: string
+  content: string
 
   @ApiProperty({
     description: '작성자 userId',
