@@ -5,13 +5,12 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   Query,
   ValidationPipe,
   UsePipes,
 } from '@nestjs/common'
 import { ReviewService } from './review.service'
-import { UpdateReviewDto } from './dto/UpdateReview.Dto'
+import { UpdateReviewDto } from './dto/UpdateReview.dto'
 import { ApiTags } from '@nestjs/swagger'
 import CreateReviewDto from './dto/createReview.dto'
 import { Review } from 'src/entity/Review.entity'
@@ -20,7 +19,6 @@ import { DocsPatchReview } from './swagger/DocsPatchReview.docs'
 import { DocsPostReview } from './swagger/DocsPostReview.docs'
 import { DocsGetReviewByUserId } from './swagger/DocsGetReviewByUserId.docs'
 import { DocsGetReviewByEventId } from './swagger/DocsGetReviewByEventId.docs'
-import { DocsDeleteReview } from './swagger/DocsDeleteReview.dto'
 import {
   ServiceGetReviewByEventId,
   ServiceGetReviewByUserId,
