@@ -1,3 +1,4 @@
+import { ApiTags } from '@nestjs/swagger'
 import {
   Entity,
   Column,
@@ -7,21 +8,33 @@ import {
   Unique,
   UpdateDateColumn,
   CreateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm'
 import { Event } from './Event.entity'
 import { User } from './User.entity'
 
 @Entity()
+@ApiTags('review api')
 @Unique('unique_Review_createdAt_reviewerId', ['createdAt', 'reviewerId'])
 export class Review {
   @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_Review' })
   reviewId: number
 
   @CreateDateColumn()
-  createdAt: string
+  createdAt: Date
 
   @UpdateDateColumn()
-  modifiedAt: string
+  modifiedAt: Date
+
+  @DeleteDateColumn()
+  deletedAt: Date
+
+  @Column({
+    type: 'enum',
+    enum: ['Y', 'N'],
+    default: 'N',
+  })
+  isDeleted: 'Y' | 'N'
 
   @Column({
     type: 'int',
@@ -35,13 +48,6 @@ export class Review {
     nullable: false,
   })
   content: string
-
-  @Column({
-    type: 'boolean',
-    nullable: false,
-    default: false,
-  })
-  deleted: boolean
 
   /*
    * userId

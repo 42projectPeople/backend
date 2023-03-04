@@ -1,17 +1,19 @@
 import {
-  Controller,
-  Get,
-  Param,
+  BadRequestException,
   Body,
-  Post,
-  Res,
-  HttpStatus,
-  Query,
-  Put,
+  Controller,
+  DefaultValuePipe,
   Delete,
+  Get,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  Query,
+  Res,
   UsePipes,
   ValidationPipe,
-  BadRequestException,
 } from '@nestjs/common'
 import { UserService } from './user.service'
 import { UpdateUserRequestDto } from './dto/updateUserRequestDto'
@@ -31,6 +33,8 @@ import { Users } from './utils/Users.type'
 import { RegisterEventRequestDto } from './dto/registerEventRequestDto'
 import { UnregisterEventRequestDto } from './dto/unregisterEventRequestDto'
 import { CheckNickNameResponseDto } from './dto/checkNickNameResponseDto'
+import { UserEventRoleType } from './utils/UserEventRoleType'
+import { UserRole } from './utils/UserRole.decorator'
 
 @Controller('user')
 @ApiTags('user api')
@@ -75,7 +79,6 @@ export class UserController {
     @Res({ passthrough: true }) res: Response
   ): Promise<void> {
     await this.userService.createUser(createUserDto)
-    this.setResponseStatus(res, HttpStatus.CREATED)
   }
 
   /**
@@ -83,26 +86,16 @@ export class UserController {
    * check user name is already exists
    * @param userNickName
    */
-  @Get('verify/nickname/:userNickName')
-  @ApiOperation({
-    summary: 'check user nickname is valid',
-    description: 'validate user nickname',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'check valid nickname',
-    type: CheckNickNameResponseDto,
-  })
-  async checkValidUserNickName(
-    @Param('userNickName') userNickName: string
-  ): Promise<CheckNickNameResponseDto> {
-    return { isValid: await this.userService.checkExistNickname(userNickName) }
+  @Post('verify/nickname/:userNickName')
+  async checkValidUserNickName(@Param('userNickName') userNickName: string) {
+    return
   }
 
   /**
    * RESTRICTED: login user
    * get user information from db
    * @param userID
+   * @param res
    */
   @Get(':userID')
   @ApiOperation({
@@ -118,16 +111,32 @@ export class UserController {
     description: 'User information',
     type: User,
   })
-  async getUserByUserId(@Param('userID') userID: string): Promise<User> {
-    return await this.userService.findUserByUserId(+userID)
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'bad parameter',
+  })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'there are no matched content',
+  })
+  async getUserByUserId(
+    @Param('userID', ParseIntPipe) userID: number,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<User> {
+    const user = await this.userService.findUserByUserId(+userID)
+    if (user === null) {
+      this.setResponseStatus(res, HttpStatus.NO_CONTENT)
+    }
+    return user
   }
 
   /**
    * RESTRICTED: admin user
-   * TODO: Check user role
    * to show exist user on db. it will send you by 10 users per page
    */
   @Get()
+  @UserRole('admin')
+  // TODO: auth needed, auth checks user is admin user
   @ApiOperation({
     summary: 'get users by page',
     description: 'get users by userID. 10 users returned by 1 page',
@@ -141,15 +150,20 @@ export class UserController {
     description: '10 User list by page',
     type: Users,
   })
-  async getUsersByPage(@Query('page') page: number): Promise<Users> {
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'bad query',
+  })
+  async getUsersByPage(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number
+  ): Promise<Users> {
     return { Users: await this.userService.findUsersByPage(page) }
   }
 
   /**
    * RESTRICTED: any user
-   * find user by nickname
-   * TODO: make service
    * @param userNickName
+   * @param res
    */
   @Get('/nickname/:userNickName')
   @ApiOperation({
@@ -165,18 +179,26 @@ export class UserController {
     description: 'get user by nickname',
     type: User,
   })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'there are no user matched',
+  })
   async getUserByNickName(
-    @Param('userNickName') userNickName: string
+    @Param('userNickName') userNickName: string,
+    @Res({ passthrough: true }) res: Response
   ): Promise<User> {
-    return await this.userService.findUserByNickName(userNickName)
+    const user = await this.userService.findUserByNickName(userNickName)
+    if (user === null) {
+      this.setResponseStatus(res, HttpStatus.NO_CONTENT)
+    }
+    return user
   }
 
   /**
-   * RESTRICTED: login user && userid == login user
+   * RESTRICTED: (login user && userid == login user) || (user.role === admin)
    * update user information in db
    * @param userID
    * @param updateUserDto
-   * @param res
    */
   @Put(':userID')
   @UsePipes(
@@ -187,6 +209,7 @@ export class UserController {
       forbidUnknownValues: true,
     })
   )
+  // TODO: auth needed
   @ApiOperation({
     summary: 'update user',
     description: 'update user',
@@ -200,16 +223,18 @@ export class UserController {
     description: 'data that user want to update',
   })
   @ApiResponse({
-    status: HttpStatus.ACCEPTED,
-    description: 'update user accepted',
+    status: HttpStatus.OK,
+    description: 'success update user',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'invalid parameter',
   })
   async updateUser(
-    @Param('userID') userID: string,
-    @Body() updateUserDto: UpdateUserRequestDto,
-    @Res({ passthrough: true }) res: Response
+    @Param('userID', ParseIntPipe) userID: number,
+    @Body() updateUserDto: UpdateUserRequestDto
   ): Promise<void> {
     await this.userService.updateUser(+userID, updateUserDto)
-    this.setResponseStatus(res, HttpStatus.ACCEPTED)
   }
 
   /**
@@ -218,6 +243,7 @@ export class UserController {
    * @param role
    */
   @Get(':userID/event')
+  // TODO: auth needed
   @ApiOperation({
     summary: 'get user events',
     description: 'get user register or hosted events.',
@@ -240,14 +266,14 @@ export class UserController {
     description: 'bad request query',
   })
   async getUserEvents(
-    @Param('userID') userId: string,
-    @Query('role') role: string
+    @Param('userID', ParseIntPipe) userId: number,
+    @Query('role') role: UserEventRoleType
   ): Promise<EventData> {
-    if (role === 'host') {
+    if (role === UserEventRoleType.HOST) {
       return {
         events: await this.userService.findAllUserHostEvent(+userId),
       }
-    } else if (role === undefined || role === 'guest') {
+    } else if (role === undefined || role === UserEventRoleType.GUEST) {
       return {
         events: await this.userService.findAllUserGuestEvent(+userId),
       }
@@ -257,12 +283,12 @@ export class UserController {
   }
 
   /**
-   * RESTRICTED: login user
+   * RESTRICTED: login user || admin user
    * @param userId
    * @param registerEventDto
-   * @param res
    */
   @Post(':userID/event')
+  // TODO: auth needed
   @ApiOperation({
     summary: 'register event',
     description: 'register event',
@@ -288,19 +314,16 @@ export class UserController {
     })
   )
   async registerEvent(
-    @Param('userID') userId: string,
-    @Body() registerEventDto: RegisterEventRequestDto,
-    @Res({ passthrough: true }) res: Response
+    @Param('userID', ParseIntPipe) userId: number,
+    @Body() registerEventDto: RegisterEventRequestDto
   ): Promise<void> {
     await this.userService.registerEvent(+userId, registerEventDto)
-    this.setResponseStatus(res, HttpStatus.CREATED)
   }
 
   /**
-   * RESTRICTED: login user
+   * RESTRICTED: login user || admin user
    * @param userId
    * @param unregisterEventDto
-   * @param res
    */
   @Delete(':userID/event')
   @ApiOperation({
@@ -316,7 +339,7 @@ export class UserController {
     description: 'user id',
   })
   @ApiResponse({
-    status: HttpStatus.ACCEPTED,
+    status: HttpStatus.OK,
     description: 'success unregister event',
   })
   @UsePipes(
@@ -328,11 +351,9 @@ export class UserController {
     })
   )
   async unregisterEvent(
-    @Param('userID') userId: string,
-    @Body() unregisterEventDto: UnregisterEventRequestDto,
-    @Res({ passthrough: true }) res: Response
+    @Param('userID', ParseIntPipe) userId: number,
+    @Body() unregisterEventDto: UnregisterEventRequestDto
   ) {
     await this.userService.unregisterEvent(+userId, unregisterEventDto)
-    this.setResponseStatus(res, HttpStatus.ACCEPTED)
   }
 }
