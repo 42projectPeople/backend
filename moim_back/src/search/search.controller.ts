@@ -60,6 +60,7 @@ export class SearchController {
   ) {
     console.log(eventSearchDto)
     const result = await this.searchService.searchEvent(eventSearchDto)
+
     if (result.length === 0) res.status(HttpStatus.NO_CONTENT).send()
     else return res.status(HttpStatus.OK).send(result)
   }
@@ -74,7 +75,13 @@ export class SearchController {
       forbidUnknownValues: true,
     })
   )
-  async getSearchHashtag(@Query() hashtagDto: HashtagSearchDto) {
-    return await this.searchService.searchHashtag(hashtagDto)
+  async getSearchHashtag(
+    @Query() hashtagDto: HashtagSearchDto,
+    @Res() res: Response
+  ) {
+    const result = await this.searchService.searchHashtag(hashtagDto)
+
+    if (result.length === 0) res.status(HttpStatus.NO_CONTENT).send()
+    else return res.status(HttpStatus.OK).send(result)
   }
 }

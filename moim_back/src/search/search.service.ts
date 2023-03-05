@@ -84,5 +84,20 @@ export class SearchService {
     }
   }
 
-  async searchHashtag(hashtagSearchDto: HashtagSearchDto) {}
+  async searchHashtag(hashtagSearchDto: HashtagSearchDto) {
+    const qb = this.hashtagRepo.createQueryBuilder('h')
+    try {
+      const query = qb.where('h.hashtagName LIKE :word', {
+        word: '%' + hashtagSearchDto.getWord() + '%',
+      })
+
+      query
+        .offset(hashtagSearchDto.getStartIndex())
+        .limit(hashtagSearchDto.getPageSize())
+
+      return await query.execute()
+    } catch (e) {
+      throw new InternalServerErrorException()
+    }
+  }
 }
