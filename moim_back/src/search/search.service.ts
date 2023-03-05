@@ -21,9 +21,25 @@ export class SearchService {
     private hashtagRepo: Repository<Hashtag>
   ) {}
 
-  async searchUser() {}
+  async searchUser(userSearchDto: UserSearchDto) {
+    const qb = this.userRepository.createQueryBuilder('u')
+    try {
+      const query = qb.where('u.userNickName LIKE :word', {
+        word: '%' + userSearchDto.getWord() + '%',
+      })
 
-  async searchEvent() {}
+      if (userSearchDto.getSortByLevel() === true)
+        query.addOrderBy('userLevel', 'DESC')
+      if (userSearchDto.getSortByName() === true)
+        query.addOrderBy('userName', 'DESC')
+      query
+        .offset(userSearchDto.getStartIndex())
+        .limit(userSearchDto.getPageSize())
+      return await query.execute()
+    } catch (e) {
+      throw new InternalServerErrorException()
+    }
+  }
 
   async searchHashtag() {}
 }
