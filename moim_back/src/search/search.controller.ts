@@ -54,9 +54,14 @@ export class SearchController {
       forbidUnknownValues: true,
     })
   )
-  async getSearchEvent(@Query() eventSearchDto: EventSearchDto) {
+  async getSearchEvent(
+    @Query() eventSearchDto: EventSearchDto,
+    @Res() res: Response
+  ) {
     console.log(eventSearchDto)
     const result = await this.searchService.searchEvent(eventSearchDto)
+    if (result.length === 0) res.status(HttpStatus.NO_CONTENT).send()
+    else return res.status(HttpStatus.OK).send(result)
   }
 
   @DocsGetSearchHashtag()
