@@ -41,5 +41,9 @@ export class SearchService {
     }
   }
 
-  async searchHashtag() {}
+  async searchEvent(eventSearchDto: EventSearchDto) {
+    return eventSearchDto.getWord()
+  }
+
+  async searchHashtag(hashtagSearchDto: HashtagSearchDto) {}
 }
