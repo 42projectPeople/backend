@@ -1,11 +1,15 @@
 import {
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   Query,
+  Res,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
+import { Response } from 'express'
 import { EventSearchDto } from './dto/EventSearch.dto'
 import { HashtagSearchDto } from './dto/HashtagSearch.dto'
 import { UserSearchDto } from './dto/UserSearch.dto'
@@ -29,8 +33,15 @@ export class SearchController {
       forbidUnknownValues: true,
     })
   )
-  async getSearchUser(@Query() userSearchDto: UserSearchDto) {
-    return await this.searchService.searchUser(userSearchDto)
+  async getSearchUser(
+    @Query() userSearchDto: UserSearchDto,
+    @Res() res: Response
+  ) {
+    const result = await this.searchService.searchUser(userSearchDto)
+
+    //result의 길이가 0인경우 NO_CONTENT로 반환
+    if (result.length === 0) res.status(HttpStatus.NO_CONTENT).send()
+    else return res.status(HttpStatus.OK).send(result)
   }
 
   @DocsGetSearchEvent()
