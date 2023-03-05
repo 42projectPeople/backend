@@ -48,6 +48,10 @@ export class SearchService {
         word: '%' + eventSearchDto.getWord() + '%',
       })
 
+      //뷰 수에따른 정렬
+      if (eventSearchDto.getSortByViews() === true)
+        query.addOrderBy('e.views', 'DESC')
+
       //정원이 다 찬 이벤트는 검색하지 않는 조건
       if (eventSearchDto.getIncludeMax() === false)
         query.andWhere('e.curParticipant < e.maxParticipant')
