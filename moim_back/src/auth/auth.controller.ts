@@ -27,7 +27,7 @@ export class AuthController {
   @UseGuards(GoogleSignUpGuard)
   async redirectGoogleSignup(@Req() request: Request) {
     // console.log(typeof request.user)
-    return await this.authService.signup(request.user?.email[0]) // check needed
+    return await this.authService.signup((request.user as any)?.email[0]) // check needed
   }
 
   @Get('/login/google')
