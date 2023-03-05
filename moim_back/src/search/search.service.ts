@@ -42,7 +42,42 @@ export class SearchService {
   }
 
   async searchEvent(eventSearchDto: EventSearchDto) {
-    return eventSearchDto.getWord()
+    const qb = this.eventRepository.createQueryBuilder('e')
+    try {
+      const query = qb.where('e.header LIKE :word', {
+        word: '%' + eventSearchDto.getWord() + '%',
+      })
+
+      //정원이 다 찬 이벤트는 검색하지 않는 조건
+      if (eventSearchDto.getIncludeMax() === false)
+        query.andWhere('e.curParticipant < e.maxParticipant')
+
+      //이벤트 rating순으로 정렬하는 조건
+      if (eventSearchDto.getSortByRating() === true)
+        query.addOrderBy('e.rating', 'DESC')
+
+      if (eventSearchDto.getLocRange() != null) {
+        query.andWhere(
+          'ST_DISTANCE_SPHERE(point, POINT(:long, :lat)) <= :locRange',
+          {
+            //사용자의 현재 위도경도
+            long: eventSearchDto.getLongitude(),
+            lat: eventSearchDto.getLatitude(),
+            locRange: eventSearchDto.getLocRange(),
+          }
+        )
+      }
+
+      //페이지네이션
+      query
+        .offset(eventSearchDto.getStartIndex())
+        .limit(eventSearchDto.getPageSize())
+
+      return await query.execute()
+    } catch (e) {
+      console.log(e.errno)
+      throw new InternalServerErrorException()
+    }
   }
 
   async searchHashtag(hashtagSearchDto: HashtagSearchDto) {}

@@ -55,7 +55,8 @@ export class SearchController {
     })
   )
   async getSearchEvent(@Query() eventSearchDto: EventSearchDto) {
-    return await this.searchService.searchEvent(eventSearchDto)
+    console.log(eventSearchDto)
+    const result = await this.searchService.searchEvent(eventSearchDto)
   }
 
   @DocsGetSearchHashtag()
