@@ -28,7 +28,7 @@ import { TokenSession } from './entity/TokenSession.entity'
       port: Number.parseInt(process.env.PORT) | 3306,
       username: process.env.DBUSER,
       password: process.env.PASSWORD,
-      database: process.env.DATABSE,
+      database: process.env.DATABASE,
       entities: [Event, Hashtag, Review, User, User_Events],
       // NOTE: user_event의 drop 관련 문제 때문에 꺼뒀습니다.
       // https://github.com/42projectPeople/backend/discussions/39
