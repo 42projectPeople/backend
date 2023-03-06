@@ -2,6 +2,9 @@ import { ExtractJwt, Strategy } from 'passport-jwt'
 import { PassportStrategy } from '@nestjs/passport'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import { InjectRepository } from '@nestjs/typeorm'
+import { User } from '../../entity/User.entity'
+import { Repository } from 'typeorm'
 
 /**
  * FtAuthStrategy uses 42 api to authenticate

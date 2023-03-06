@@ -3,7 +3,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common'
-import { Request } from 'express'
+import { Request, Response } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { User } from '../entity/User.entity'
@@ -22,12 +22,18 @@ export class AuthService {
     private readonly configService: ConfigService
   ) {}
 
+  private dayToSeconds(days: number): number {
+    return days * 24 * 3600
+  }
+
   private getRefreshToken(userId: number): string {
     return this.jwtService.sign(
       { userId: userId },
       {
         secret: this.configService.get('JWT_SECRET'),
-        expiresIn: this.configService.get('JWT_REFRESH_EXPIRE'),
+        expiresIn: this.dayToSeconds(
+          this.configService.get('JWT_REFRESH_EXPIRE')
+        ),
       }
     )
   }
@@ -37,13 +43,15 @@ export class AuthService {
       { userId: userId },
       {
         secret: this.configService.get('JWT_SECRET'),
-        expiresIn: this.configService.get('JWT_ACCESS_EXPIRE'),
+        expiresIn: this.dayToSeconds(
+          this.configService.get('JWT_ACCESS_EXPIRE')
+        ),
       }
     )
   }
 
   private getAccessTokenFromRequest(request: Request): string {
-    const authHeader = request.header('Authorization')
+    const authHeader = request.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
 
     if (token === null || token === undefined) {
@@ -74,8 +82,9 @@ export class AuthService {
     userId: number
   ): string {
     const now: number = Date.now().valueOf() / 1000
-    const days = this.configService.get('EXP_ROTATION_THRESHOLD') // days = n days
-    const refreshTokenExpirationThreshold: number = days * 24 * 60 * 60
+    const refreshTokenExpirationThreshold: number = this.dayToSeconds(
+      this.configService.get('EXP_ROTATION_THRESHOLD')
+    )
     const expiration: number = exp - now
 
     if (expiration > refreshTokenExpirationThreshold) {
@@ -115,8 +124,8 @@ export class AuthService {
   }
 
   private getUserEmailFromGoogleUser(request: Request): string {
-    const googleUser: any = request.user
-    return googleUser.email[0]
+    const { user } = request as any // 기존 Request 구조에 email 이 없어서 any 로 받아야합니다.
+    return user.email
   }
   private async getUserFromGoogleUser(request: Request): Promise<User> {
     const userName = this.getUserEmailFromGoogleUser(request)
@@ -136,12 +145,13 @@ export class AuthService {
   // ******************
   async login(
     request: Request,
-    refreshToken: string
+    response: Response
   ): Promise<{ accessToken: string; refreshToken: string }> {
     // find matched email from User table
     const user: User = await this.getUserFromGoogleUser(request)
     const userId: number = user.userId
     const accessToken: string = this.getNewAccessToken(userId)
+    const refreshToken: string = this.getRefreshToken(userId)
 
     await this.deleteSession(userId)
     await this.createSession(userId, accessToken, refreshToken)
@@ -151,7 +161,7 @@ export class AuthService {
     }
   }
 
-  async signup(request: Request): Promise<void> {
+  async signup(request: Request): Promise<string> {
     const userName: string = this.getUserEmailFromGoogleUser(request)
     if (userName === undefined || userName === null) {
       throw new BadRequestException('bad google login')
@@ -166,6 +176,7 @@ export class AuthService {
     } else {
       throw new BadRequestException('already exists')
     }
+    return 'success'
   }
 
   async logout(request: Request): Promise<void> {
@@ -175,7 +186,7 @@ export class AuthService {
   }
 
   async rotateTokens(
-    request: Request,
+    request,
     body: any
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const accessToken: string = this.getAccessTokenFromRequest(request)
@@ -186,14 +197,17 @@ export class AuthService {
     try {
       const accessTokenPayload = this.jwtService.verify(accessToken, {
         ignoreExpiration: true,
+        secret: this.configService.get('JWT_SECRET'),
       })
-      const refreshTokenPayload = this.jwtService.verify(refreshToken)
+      const refreshTokenPayload = this.jwtService.verify(refreshToken, {
+        secret: this.configService.get('JWT_SECRET'),
+      })
       userId = accessTokenPayload.userId
       exp = refreshTokenPayload.exp
-      await this.checkValidTokenInSession(userId, accessToken, refreshToken)
     } catch (err) {
-      throw new UnauthorizedException('invalid token')
+      throw new UnauthorizedException('token verify failed')
     }
+    await this.checkValidTokenInSession(userId, accessToken, refreshToken)
     // set new token
     const newAccessToken: string = this.getNewAccessToken(userId)
     const newRefreshToken: string = this.rotateToken(refreshToken, exp, userId)

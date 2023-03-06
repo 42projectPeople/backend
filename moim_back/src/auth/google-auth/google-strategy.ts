@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
-import { Strategy } from 'passport-local'
+import { Strategy } from 'passport-google-oauth20'
 import { ConfigService } from '@nestjs/config'
 @Injectable()
 export class GoogleSignupStrategy extends PassportStrategy(
@@ -11,7 +11,7 @@ export class GoogleSignupStrategy extends PassportStrategy(
     super({
       clientID: configService.get('GOOGLE_CLIENT_ID'),
       clientSecret: configService.get('GOOGLE_CLIENT_SECRET'),
-      callbackURL: 'http://localhost:3000/auth/redirect/google-signin',
+      callbackURL: 'http://localhost:3000/auth/redirect/google-signup',
       scope: ['email'],
     })
   }
