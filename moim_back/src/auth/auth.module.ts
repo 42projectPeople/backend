@@ -6,12 +6,9 @@ import { User } from '../entity/User.entity'
 import { ConfigModule } from '@nestjs/config'
 import { TokenSession } from '../entity/TokenSession.entity'
 import { JwtService } from '@nestjs/jwt'
-import { GoogleLoginGuard, GoogleSignUpGuard } from './google-auth/google.guard'
+import { GoogleLoginGuard } from './google-auth/google.guard'
 import { JWTAuthGuard } from './jwt-auth/jwt-auth.guard'
-import {
-  GoogleLoginStrategy,
-  GoogleSignupStrategy,
-} from './google-auth/google-strategy'
+import { GoogleLoginStrategy } from './google-auth/google-strategy'
 import { JwtAuthStrategy } from './jwt-auth/jwt-strategy'
 @Module({
   imports: [
@@ -23,10 +20,8 @@ import { JwtAuthStrategy } from './jwt-auth/jwt-strategy'
     AuthService,
     JwtService,
     GoogleLoginGuard,
-    GoogleSignUpGuard,
     JWTAuthGuard,
     JwtAuthStrategy,
-    GoogleSignupStrategy,
     GoogleLoginStrategy,
   ],
   controllers: [AuthController],
