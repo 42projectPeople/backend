@@ -6,33 +6,76 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
   ValidationPipe,
   UsePipes,
 } from '@nestjs/common'
 import { ReviewService } from './review.service'
-import CreateReviewDto from './dto/createReviewDto'
-import { UpdateReviewDto } from './dto/updateReviewDto'
+import { UpdateReviewDto } from './dto/UpdateReview.Dto'
+import { ApiTags } from '@nestjs/swagger'
+import CreateReviewDto from './dto/createReview.dto'
+import { Review } from 'src/entity/Review.entity'
+import { PaginationDto } from './dto/Pagination.dto'
+import { DocsPatchReview } from './swagger/DocsPatchReview.docs'
+import { DocsPostReview } from './swagger/DocsPostReview.docs'
+import { DocsGetReviewByUserId } from './swagger/DocsGetReviewByUserId.docs'
+import { DocsGetReviewByEventId } from './swagger/DocsGetReviewByEventId.docs'
+import { DocsDeleteReview } from './swagger/DocsDeleteReview.dto'
+import {
+  ServiceGetReviewByEventId,
+  ServiceGetReviewByUserId,
+} from './dto/ServiceGetReview.dto'
 
 @Controller('review')
+@ApiTags('review api')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @Get('/event/:eventId')
-  async getReviewByEventId(@Param('eventId') eventId: string) {
-    return await this.reviewService.findReviewByEventID(+eventId)
+  @DocsGetReviewByEventId()
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
+  async getReviewByEventId(
+    @Param('eventId') eventId: string,
+    @Query() paginationDto: PaginationDto
+  ) {
+    return await this.reviewService.findReviewByEventID(
+      new ServiceGetReviewByEventId(paginationDto, +eventId)
+    )
   }
 
-  @Get('/userId/:user')
-  async getReviewByUserId(@Param('userId') userId: string) {
-    return await this.reviewService.findReviewByUserId(+userId)
+  @Get('/user/:userId')
+  @DocsGetReviewByUserId()
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
+  async getReviewByUserId(
+    @Param('userId') userId: string,
+    @Query() paginationDto: PaginationDto
+  ): Promise<Review[]> {
+    return await this.reviewService.findReviewByUserId(
+      new ServiceGetReviewByUserId(paginationDto, +userId)
+    )
   }
 
   @Post('/')
+  @DocsPostReview()
   //need session guard
   @UsePipes(
     new ValidationPipe({
       transform: true,
-      whitelist: true, //수신돼선 안되는 속성 필터링
+      whitelist: true,
       forbidNonWhitelisted: true,
       forbidUnknownValues: true,
     })
@@ -46,11 +89,12 @@ export class ReviewController {
   }
 
   @Patch(':reviewId')
+  @DocsPatchReview()
   //need session guard
   @UsePipes(
     new ValidationPipe({
-      transform: true, //지정된 객체로 자동변환
-      whitelist: true, //수신돼선 안되는 속성 필터링
+      transform: true,
+      whitelist: true,
       forbidNonWhitelisted: true,
       forbidUnknownValues: true,
     })
@@ -60,16 +104,18 @@ export class ReviewController {
     @Body() updateReviewDto: UpdateReviewDto
   ) {
     /*
-     * if (req.user.userId != updateReviewDto.reviewerId)
-     *	throw new ForbiddenException('FOrbidden access')
+     * if (req.session.userId != UpdateReviewDto.reviewerId)
+     * 	throw new ForbiddenException()
      * */
-    return this.reviewService.update(+reviewId, updateReviewDto)
+    const userId = 1 //jwt user id
+    return await this.reviewService.update(updateReviewDto, +reviewId, userId)
   }
 
-  @Delete(':reviewId')
-  //need session guard
-  deleteReview(@Param('reviewId') reviewId: string) {
-    const userId = 54 //req.session.userId
-    return this.reviewService.remove(+reviewId, 54)
-  }
+  //@Delete(':reviewId')
+  //@DocsDeleteReview()
+  ////need session guard
+  //async deleteReview(@Param('reviewId') reviewId: string) {
+  //  const userId = 1 //jwt
+  //  return await this.reviewService.remove(+reviewId, userId)
+  //}
 }
