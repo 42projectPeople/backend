@@ -14,7 +14,7 @@ import { UserModule } from './user/user.module'
 import { UserEventsModule } from './user-events/user-events.module'
 import { HashtagModule } from './hashtag/hashtag.module'
 import { HealthModule } from './health/health.module'
-import { SearchModule } from './search/search.module';
+import { SearchModule } from './search/search.module'
 
 @Module({
   imports: [
