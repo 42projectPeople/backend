@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm'
 import { Seeder, SeederFactoryManager } from 'typeorm-extension'
 import { Review } from '../../entity/Review.entity'
-import { User } from 'src/entity/User.entity'
-import { Hashtag } from 'src/entity/Hashtag.entity'
+
+const QT = 1000
 
 export default class ReviewSeeder implements Seeder {
   public async run(
@@ -11,7 +11,7 @@ export default class ReviewSeeder implements Seeder {
   ): Promise<any> {
     const Factory = factoryManager.get(Review)
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 1000; i++) {
       try {
         await Factory.save()
       } catch (e) {
