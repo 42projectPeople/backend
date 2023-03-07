@@ -130,6 +130,7 @@ export class AuthService {
     const { user } = request as any // 기존 Request 구조에 email 이 없어서 any 로 받아야합니다.
     return user.email
   }
+
   private async getUserFromGoogleUser(request: Request): Promise<User> {
     const userName = this.getUserEmailFromGoogleUser(request)
     const userFound: User = await this.userRepository.findOne({
