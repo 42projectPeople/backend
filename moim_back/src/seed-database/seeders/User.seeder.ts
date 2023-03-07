@@ -4,6 +4,8 @@ import { DataSource } from 'typeorm'
 import { Seeder, SeederFactoryManager } from 'typeorm-extension'
 import { User } from '../../entity/User.entity'
 
+const QT = 1000
+
 export default class UserSeeder implements Seeder {
   public async run(
     dataSource: DataSource,
@@ -11,7 +13,7 @@ export default class UserSeeder implements Seeder {
   ): Promise<any> {
     const Factory = factoryManager.get(User)
 
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 1000; i++) {
       try {
         await Factory.save()
       } catch (e) {
