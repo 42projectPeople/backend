@@ -1,15 +1,18 @@
 import {
   BadRequestException,
+  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common'
-import { Request, Response } from '@nestjs/common'
+import { Request } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { User } from '../entity/User.entity'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { TokenSession } from '../entity/TokenSession.entity'
+import { Response } from 'express'
+import { TokenDto } from './dto/tokenDto'
 
 @Injectable()
 export class AuthService {
@@ -143,12 +146,17 @@ export class AuthService {
   // ******************
   // * Public Methods *
   // ******************
-  async login(
-    request: Request,
-    response: Response
-  ): Promise<{ accessToken: string; refreshToken: string }> {
-    // find matched email from User table
-    const user: User = await this.getUserFromGoogleUser(request)
+
+  /**
+   * 별도의 회원가입 기능은 없고, 로그인을 하면 구글 로그인을 우선 한 뒤,
+   * 회원이 아닐 경우 내부적으로 회원가입 절차로 넘깁니다.
+   */
+  async login(request: Request, response: Response): Promise<TokenDto> {
+    let user: User = await this.getUserFromGoogleUser(request)
+    // 회원가입 필요하면 회원가입으로 넘김
+    if (user === undefined || user === null) {
+      user = await this.signup(request, response)
+    }
     const userId: number = user.userId
     const accessToken: string = this.getNewAccessToken(userId)
     const refreshToken: string = this.getRefreshToken(userId)
@@ -161,22 +169,27 @@ export class AuthService {
     }
   }
 
-  async signup(request: Request): Promise<string> {
+  /**
+   * Login 버튼을 누르고 구글 유저 로그인을 했으나, 유저가 없는 경우(회원가입을 해야하는 경우) 해당 Method 들어와서 user 얻습니다.
+   * client 에서는 status code 만으로 추가 정보 페이지로 redirect 할지 아닐지에 대해서 결정합니다.
+   */
+  async signup(request: Request, response: Response): Promise<User> {
     const userName: string = this.getUserEmailFromGoogleUser(request)
     if (userName === undefined || userName === null) {
       throw new BadRequestException('bad google login')
     }
-    const user: User = await this.userRepository.findOne({
+    let user: User = await this.userRepository.findOne({
       where: {
         userName: userName,
       },
     })
     if (user === undefined || user === null) {
-      await this.userRepository.save({ userName: userName })
+      user = await this.userRepository.save({ userName: userName })
+      response.status(HttpStatus.CREATED)
+      return user
     } else {
-      throw new BadRequestException('already exists')
+      throw new BadRequestException('already exists') // 정상적인 경우에는 발생할 수가 없습니다.
     }
-    return 'success'
   }
 
   async logout(request: Request): Promise<void> {
@@ -185,10 +198,7 @@ export class AuthService {
     await this.deleteSession(userId)
   }
 
-  async rotateTokens(
-    request,
-    body: any
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  async rotateTokens(request, body: any): Promise<TokenDto> {
     const accessToken: string = this.getAccessTokenFromRequest(request)
     const refreshToken: string = body.refreshToken
     let userId: number

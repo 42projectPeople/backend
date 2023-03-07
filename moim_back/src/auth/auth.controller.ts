@@ -7,11 +7,12 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common'
-import { Request, Response } from '@nestjs/common'
+import { Request } from '@nestjs/common'
 import { AuthService } from './auth.service'
-import { GoogleSignUpGuard, GoogleLoginGuard } from './google-auth/google.guard'
+import { GoogleLoginGuard } from './google-auth/google.guard'
 import { JWTAuthGuard } from './jwt-auth/jwt-auth.guard'
-import { response } from 'express'
+import { Response } from 'express'
+import { TokenDto } from './dto/tokenDto'
 
 @Controller('auth')
 export class AuthController {
@@ -26,19 +27,6 @@ export class AuthController {
   /*****************************
    * Authentication via Google *
    *****************************/
-  @Get('/signup/google')
-  @UseGuards(GoogleSignUpGuard)
-  async signupGoogle() {
-    return null // in Guard, it will be redirected. so, never happens
-  }
-
-  @Get('/redirect/google-signup')
-  @UseGuards(GoogleSignUpGuard)
-  async redirectGoogleSignup(@Req() request: Request) {
-    // console.log(typeof request.user)
-    return await this.authService.signup(request) // check needed
-  }
-
   @Get('/login/google')
   @UseGuards(GoogleLoginGuard)
   async loginGoogle() {
@@ -50,12 +38,12 @@ export class AuthController {
   async redirectGoogleLogin(
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response
-  ) {
+  ): Promise<TokenDto> {
     return await this.authService.login(request, response)
   }
 
   @Post('/refresh')
-  async rotateToken(@Req() request: Request, @Body() body) {
+  async rotateToken(@Req() request: Request, @Body() body): Promise<TokenDto> {
     return await this.authService.rotateTokens(request, body)
   }
 }
