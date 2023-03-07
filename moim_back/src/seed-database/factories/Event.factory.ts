@@ -19,8 +19,8 @@ export default setSeederFactory(Event, (faker) => {
     max: 90,
   })
   fakeEvent.longitude = faker.datatype.float({
-    min: -90,
-    max: +90,
+    min: -180,
+    max: +180,
   })
   fakeEvent.header = faker.word.adjective({
     length: {
