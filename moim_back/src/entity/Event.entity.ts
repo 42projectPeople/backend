@@ -21,8 +21,8 @@ import { User_Events } from './User_Events.entity'
 @Unique('unique_event_createdAt_host', ['createdAt', 'host'])
 export class Event {
   @ApiProperty({
-    example: '1',
     description: '이벤트의 고유 아이디',
+    example: '1',
   })
   @IsNumber()
   @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_Event' })
@@ -30,6 +30,7 @@ export class Event {
 
   @ApiProperty({
     description: '이벤트가 진행되는 날짜',
+    example: 'Wed Mar 08 2023 10:30:00 GMT+0900 (한국 표준시)',
   })
   @IsString()
   @Column()
@@ -65,6 +66,12 @@ export class Event {
   })
   isDelete: boolean
 
+  @ApiProperty({
+    description: '이미지 URL모음',
+    isArray: true,
+    example:
+      'https://image-resizef-origin.s3.ap-northeast-2.amazonaws.com/resized/1324123420132123123',
+  })
   @ApiProperty({
     example: 'URL',
     description: '이벤트게시글의 메인이미지(주로 노출)',
@@ -105,6 +112,7 @@ export class Event {
 
   @ApiProperty({
     description: '이벤트가 진행되는 장소',
+    example: '서울특별시 강남구 개포로',
   })
   @IsString()
   @Column({
@@ -116,6 +124,7 @@ export class Event {
 
   @ApiProperty({
     description: '이벤트가 진행되는 장소의 위도',
+    example: '37.48822297429607',
   })
   @Column({
     type: 'float',
@@ -125,6 +134,7 @@ export class Event {
 
   @ApiProperty({
     description: '이벤트가 진행되는 장소의 경도',
+    example: '127.0648014823014',
   })
   @Column({
     type: 'float',
@@ -134,6 +144,7 @@ export class Event {
 
   @ApiProperty({
     description: '이벤트 게시글의 메인주제(노출할)',
+    example: '테스트 타이틀 1',
   })
   @IsString()
   @Column({
@@ -154,6 +165,7 @@ export class Event {
 
   @ApiProperty({
     description: '이벤트에 참가할 수 있는 총 인원',
+    example: '4',
   })
   @IsNumber()
   @Column({
@@ -163,6 +175,7 @@ export class Event {
 
   @ApiProperty({
     description: '이벤트에 참가 중인 인원',
+    example: '2',
   })
   @IsNumber()
   @Column({
@@ -172,6 +185,7 @@ export class Event {
 
   @ApiProperty({
     description: '이벤트게시글 작성자(유저)',
+    example: 1,
   })
   @ManyToOne(() => User, (user) => user.userId)
   @JoinColumn({
