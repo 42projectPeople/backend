@@ -2,6 +2,14 @@ import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
 import { globalExceptionFilter } from './exception/globalExceptionFilter'
+import { IUser } from './auth/interface/IUser'
+
+//User 인터페이스
+declare global {
+  namespace Express {
+    interface User extends IUser {}
+  }
+}
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
