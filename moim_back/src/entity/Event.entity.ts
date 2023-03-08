@@ -67,14 +67,9 @@ export class Event {
   isDelete: boolean
 
   @ApiProperty({
-    description: '이미지 URL모음',
-    isArray: true,
+    description: '이벤트게시글의 메인이미지(주로 노출)',
     example:
       'https://image-resizef-origin.s3.ap-northeast-2.amazonaws.com/resized/1324123420132123123',
-  })
-  @ApiProperty({
-    example: 'URL',
-    description: '이벤트게시글의 메인이미지(주로 노출)',
   })
   @IsString()
   @Column({
@@ -86,16 +81,28 @@ export class Event {
   main_image: string
 
   @ApiProperty({
-    example: 'URL',
-    description:
-      '이벤트의 이미지URL들과, 상세설명 내용을 담고 있는 S3저장소 URL',
+    description: '게시글에 들어간 이미지 URL모음',
+    isArray: true,
+    example:
+      'https://image-resizef-origin.s3.ap-northeast-2.amazonaws.com/resized/1324123420132123123',
   })
   @IsString()
   @Column({
-    type: 'char',
-    length: 100,
+    type: 'text',
+    nullable: true,
+    comment: 'URL array',
+  })
+  images: string
+
+  @ApiProperty({
+    description: '상세 설명 문구',
+    example: '안녕하세요 moim입니다.',
+  })
+  @IsString()
+  @Column({
+    type: 'text',
     nullable: false,
-    comment: 'URL',
+    comment: 'string',
   })
   content: string
 
@@ -121,6 +128,19 @@ export class Event {
     nullable: false,
   })
   location: string
+
+  @ApiProperty({
+    description: '상호명',
+    nullable: true,
+    example: '42서울',
+  })
+  @IsString()
+  @Column({
+    type: 'char',
+    length: 50,
+    nullable: true,
+  })
+  tradeName: string
 
   @ApiProperty({
     description: '이벤트가 진행되는 장소의 위도',
@@ -180,6 +200,7 @@ export class Event {
   @IsNumber()
   @Column({
     type: 'int',
+    default: 0,
   })
   curParticipant: number
 
@@ -204,6 +225,7 @@ export class Event {
    * */
   @ApiProperty({
     description: '이벤트게시글의 헤시태그아이디',
+    example: '1',
   })
   @ManyToOne(() => Hashtag, (hashtag) => hashtag.hashtagId)
   @JoinColumn({
