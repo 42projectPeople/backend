@@ -38,6 +38,10 @@ export class globalExceptionFilter implements ExceptionFilter {
       case 'EntityNotFoundError' || 'NotFoundException':
         status = HttpStatus.NOT_FOUND
         break
+      case 'BadRequestException':
+        status = HttpStatus.BAD_REQUEST
+        console.log(exception.response.message.join('\n'))
+        break
       default:
         status = HttpStatus.INTERNAL_SERVER_ERROR
         message = '데이터베이스 서버 에러'
