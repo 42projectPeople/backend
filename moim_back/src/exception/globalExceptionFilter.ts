@@ -15,7 +15,7 @@ export class globalExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp()
     const res = ctx.getResponse<Response>()
     const req = ctx.getRequest<Request>()
-    const message = (exception as any).message
+    let message = (exception as any).message
 
     Logger.error(message, (exception as any).stack, `${req.method} ${req.url}`)
 
@@ -40,6 +40,7 @@ export class globalExceptionFilter implements ExceptionFilter {
         break
       default:
         status = HttpStatus.INTERNAL_SERVER_ERROR
+        message = '데이터베이스 서버 에러'
     }
     res.status(status).json({
       statusCode: status,
