@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNumber, IsString } from 'class-validator'
+import { Transform } from 'class-transformer'
+import {
+  IsInt,
+  IsISO8601,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  IsUrl,
+} from 'class-validator'
 import {
   Entity,
   Column,
@@ -30,11 +39,13 @@ export class Event {
 
   @ApiProperty({
     description: '이벤트가 진행되는 날짜',
-    example: 'Wed Mar 08 2023 10:30:00 GMT+0900 (한국 표준시)',
+    example: '2023-03-08T10:30:15+09:00',
   })
-  @IsString()
-  @Column()
-  eventDate: string
+  @IsISO8601()
+  @Column({
+    type: 'datetime',
+  })
+  eventDate: Date | string
 
   @ApiProperty({
     description: '이벤트게시글 생성 시간',
@@ -67,24 +78,16 @@ export class Event {
   isDelete: boolean
 
   @ApiProperty({
-    description: '이벤트게시글의 메인이미지(주로 노출)',
-    example:
-      'https://image-resizef-origin.s3.ap-northeast-2.amazonaws.com/resized/1324123420132123123',
-  })
-  @IsString()
-  @Column({
-    type: 'char',
-    length: '100',
-    nullable: true,
-    comment: 'URL',
-  })
-  main_image: string
-
-  @ApiProperty({
     description: '게시글에 들어간 이미지 URL모음',
     isArray: true,
-    example:
+    example: [
       'https://image-resizef-origin.s3.ap-northeast-2.amazonaws.com/resized/1324123420132123123',
+      'https://image-resizef-origin.s3.ap-northeast-2.amazonaws.com/resized/1324123420132123123',
+    ],
+  })
+  @Transform(({ value }) => {
+    console.log(value)
+    return value.join(' ')
   })
   @IsString()
   @Column({
@@ -93,6 +96,18 @@ export class Event {
     comment: 'URL array',
   })
   images: string
+
+  @ApiProperty({
+    description: '오픈톡 링크',
+    example: 'www.kakaotalk.com',
+  })
+  @IsUrl()
+  @Column({
+    type: 'char',
+    length: 150,
+    comment: 'URL',
+  })
+  openTalkLink: string
 
   @ApiProperty({
     description: '상세 설명 문구',
@@ -134,13 +149,14 @@ export class Event {
     nullable: true,
     example: '42서울',
   })
-  @IsString()
   @Column({
     type: 'char',
     length: 50,
     nullable: true,
   })
-  tradeName: string
+  @IsOptional()
+  @IsString()
+  tradeName?: string
 
   @ApiProperty({
     description: '이벤트가 진행되는 장소의 위도',
@@ -150,6 +166,7 @@ export class Event {
     type: 'float',
     nullable: false,
   })
+  @IsNumber()
   latitude: number
 
   @ApiProperty({
@@ -160,6 +177,7 @@ export class Event {
     type: 'float',
     nullable: false,
   })
+  @IsNumber()
   longitude: number
 
   @ApiProperty({
@@ -188,6 +206,8 @@ export class Event {
     example: '4',
   })
   @IsNumber()
+  @IsInt()
+  @IsPositive()
   @Column({
     type: 'int',
   })
@@ -225,8 +245,10 @@ export class Event {
    * */
   @ApiProperty({
     description: '이벤트게시글의 헤시태그아이디',
-    example: '1',
+    example: 1,
   })
+  @IsInt()
+  @IsPositive()
   @ManyToOne(() => Hashtag, (hashtag) => hashtag.hashtagId)
   @JoinColumn({
     name: 'hashtagId',
