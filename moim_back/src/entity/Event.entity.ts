@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import {
+  IsArray,
   IsInt,
   IsISO8601,
   IsNumber,
@@ -85,8 +86,8 @@ export class Event {
       'https://image-resizef-origin.s3.ap-northeast-2.amazonaws.com/resized/1324123420132123123',
     ],
   })
+  @IsOptional()
   @Transform(({ value }) => {
-    console.log(value)
     return value.join(' ')
   })
   @IsString()
@@ -95,19 +96,22 @@ export class Event {
     nullable: true,
     comment: 'URL array',
   })
-  images: string
+  images?: string
 
   @ApiProperty({
     description: '오픈톡 링크',
     example: 'www.kakaotalk.com',
+    nullable: true,
   })
+  @IsOptional()
   @IsUrl()
   @Column({
     type: 'char',
     length: 150,
     comment: 'URL',
+    nullable: true,
   })
-  openTalkLink: string
+  openTalkLink?: string
 
   @ApiProperty({
     description: '상세 설명 문구',
@@ -163,7 +167,9 @@ export class Event {
     example: '37.48822297429607',
   })
   @Column({
-    type: 'float',
+    type: 'decimal',
+    precision: 11,
+    scale: 8,
     nullable: false,
   })
   @IsNumber()
@@ -174,7 +180,9 @@ export class Event {
     example: '127.0648014823014',
   })
   @Column({
-    type: 'float',
+    type: 'decimal',
+    precision: 11,
+    scale: 8,
     nullable: false,
   })
   @IsNumber()
