@@ -33,6 +33,10 @@ export class EventController {
 
   @Get('/:id')
   @DocsGetEvent()
+  async eventGet(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+    const result = await this.eventService.eventGet(id)
+    if (result.length === 0) return res.sendStatus(HttpStatus.NO_CONTENT)
+    else return res.status(HttpStatus.OK).send(result)
   }
 
   @Post('')
