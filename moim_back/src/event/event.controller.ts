@@ -27,22 +27,19 @@ import { DocsGetEvent } from './swagger/DocsGetEvent.docs'
 import { DocsDeleteEvent } from './swagger/DocsDeleteEvent.docs'
 
 @Controller('event')
+@ApiTags('event api')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
   @Get('/:id')
-  @ApiOkResponse({
-    type: EventReturnDto,
-  })
-  async eventGet(@Param('id', ParseIntPipe) id: number) {
-    return await this.eventService.eventGet(id)
+  @DocsGetEvent()
   }
 
   @Post('')
-  async eventCreate(@Body() body: EventDefaultDto) {
-    return await this.eventService.eventCreate(body)
+  @DocsCreateEvent()
   }
 
   @Patch('/:id')
+  @DocsUpdateEvent()
   async eventUpdate(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: EventDefaultDto
@@ -51,7 +48,6 @@ export class EventController {
   }
 
   @Delete('/:id')
-  async eventDelete(@Param('id', ParseIntPipe) id: number) {
-    await this.eventService.eventDelete(id)
+  @DocsDeleteEvent()
   }
 }
