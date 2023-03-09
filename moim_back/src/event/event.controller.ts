@@ -41,6 +41,24 @@ export class EventController {
 
   @Post('')
   @DocsCreateEvent()
+  @UseGuards(JWTAuthGuard)
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
+  async eventCreate(
+    @Body() body: CreateEventDto,
+    @Req() req: Request,
+    @Res() res: Response
+  ) {
+    const userId = req.user.userId
+    console.log(body)
+    await this.eventService.eventCreate(body, userId)
+    return res.sendStatus(HttpStatus.CREATED)
   }
 
   @Patch('/:id')
