@@ -90,5 +90,15 @@ export class EventController {
 
   @Delete('/:id')
   @DocsDeleteEvent()
+  @UseGuards(JWTAuthGuard)
+  async eventDelete(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+    @Res() res: Response
+  ) {
+    const result = await this.eventService.eventDelete(id, req.user.userId)
+    if (result.affected === 0)
+      throw new NotFoundException('삭제할 데이터가 없습니다.')
+    return res.sendStatus(HttpStatus.NO_CONTENT)
   }
 }

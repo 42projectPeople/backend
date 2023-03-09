@@ -74,20 +74,25 @@ export class EventService {
     }
   }
 
-  async eventDelete(eventId: number) {
+  async eventDelete(eventId: number, userId: number) {
     try {
-      const deleteEvent = await this.eventRepository
+      return await this.eventRepository
         .createQueryBuilder('event')
-        .softDelete()
-        .where('event.eventId = :id AND event.deletedAt IS NULL', {
-          id: eventId,
+        .update()
+        .set({
+          deletedAt: () => 'CURRENT_TIMESTAMP()',
+          isDelete: true,
         })
+        .where(
+          'event.eventId = :eventId AND event.isDelete = false AND event.hostId = :userId',
+          {
+            eventId,
+            userId,
+          }
+        )
         .execute()
-      if (deleteEvent.affected === 0)
-        throw new EntityNotFoundError('잘못된 삭제 요청입니다.', 404)
-      return deleteEvent
     } catch (e) {
-      throw new ConflictException('이벤트 삭제에 실패했습니다.')
+      throw new InternalServerErrorException()
     }
   }
 }
