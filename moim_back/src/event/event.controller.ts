@@ -3,15 +3,28 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
   Post,
+  Req,
+  Res,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common'
-import { ApiOkResponse } from '@nestjs/swagger'
-import { EventDefaultDto } from './dto/event.default.dto'
-import { EventReturnDto } from './dto/event.return.dto'
+import { ApiTags } from '@nestjs/swagger'
+import { Request, Response } from 'express'
+import { JWTAuthGuard } from 'src/auth/jwt-auth/jwt-auth.guard'
+import { CreateEventDto } from './dto/CreateEvent.dto'
+import { UpdateEventDto } from './dto/UpdateEvent.dto'
 import { EventService } from './event.service'
+import { DocsCreateEvent } from './swagger/DocsCreateEvent.docs'
+import { DocsUpdateEvent } from './swagger/DocsUpdateEvent.docs'
+import { DocsGetEvent } from './swagger/DocsGetEvent.docs'
+import { DocsDeleteEvent } from './swagger/DocsDeleteEvent.docs'
 
 @Controller('event')
 export class EventController {
