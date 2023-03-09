@@ -1,18 +1,18 @@
 import {
   ConflictException,
   Injectable,
-  NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Event } from 'src/entity/Event.entity'
-import { DataSource, EntityNotFoundError, Repository } from 'typeorm'
-import { EventDefaultDto } from './dto/event.default.dto'
+import { Repository } from 'typeorm'
+import { CreateEventDto } from './dto/CreateEvent.dto'
+import { UpdateEventDto } from './dto/UpdateEvent.dto'
 
 @Injectable()
 export class EventService {
   constructor(
-    @InjectRepository(Event) private eventRepository: Repository<Event>,
-    private dataSource: DataSource
+    @InjectRepository(Event) private eventRepository: Repository<Event>
   ) {}
 
   async eventGet(eventId: number) {
@@ -32,20 +32,17 @@ export class EventService {
     }
   }
 
-  async eventCreate(newEvent: EventDefaultDto) {
-    const queryRunner = this.dataSource.createQueryRunner()
-    await queryRunner.connect()
-    await queryRunner.startTransaction()
+  async eventCreate(newEvent: CreateEventDto, userId: number) {
+    //새로운 event 객체 생성
+    const event = this.eventRepository.create({ ...newEvent, host: userId })
+    //insert
     try {
-      const event = await queryRunner.manager.save(
-        EventDefaultDto.transEventDto(newEvent)
-      )
-      await queryRunner.commitTransaction()
-      await queryRunner.release()
-      return event
+      await this.eventRepository.insert(event)
     } catch (e) {
-      await queryRunner.rollbackTransaction()
-      throw new ConflictException('생성에 실패했습니다.')
+      console.log(e.message)
+      if (e.errno === 1062)
+        throw new ConflictException('너무 빠른 데이터 생성요청')
+      else throw new InternalServerErrorException()
     }
   }
 
