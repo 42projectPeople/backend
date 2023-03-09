@@ -7,13 +7,19 @@ export default setSeederFactory(Event, (faker) => {
   fakeEvent.createdAt = faker.date.past(10).toISOString()
   fakeEvent.eventDate = faker.date.soon().toISOString()
   fakeEvent.modifiedAt = faker.date.recent().toISOString()
-  fakeEvent.main_image = faker.image.avatar()
-  fakeEvent.content = faker.internet.url()
+  fakeEvent.images = [
+    faker.image.fashion(),
+    faker.image.fashion(),
+    faker.image.sports(),
+  ].join(' ')
+  fakeEvent.openTalkLink = faker.internet.url()
+  fakeEvent.content = faker.word.conjunction()
   fakeEvent.views = faker.datatype.number({
     min: 0,
     max: 5,
   })
   fakeEvent.location = faker.address.streetAddress()
+  fakeEvent.tradeName = faker.address.buildingNumber()
   fakeEvent.latitude = faker.datatype.float({
     min: -90,
     max: 90,

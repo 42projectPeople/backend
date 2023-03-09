@@ -15,6 +15,7 @@ export default class ReviewSeeder implements Seeder {
       try {
         await Factory.save()
       } catch (e) {
+        console.log(e.message)
         i--
         continue
       }
