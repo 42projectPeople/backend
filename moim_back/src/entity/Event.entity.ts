@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import {
-  IsArray,
   IsInt,
   IsISO8601,
   IsNumber,
@@ -21,6 +20,9 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
   DeleteDateColumn,
+  Index,
+  BeforeInsert,
+  BeforeUpdate,
 } from 'typeorm'
 import { Hashtag } from './Hashtag.entity'
 import { Review } from './Review.entity'
@@ -187,6 +189,32 @@ export class Event {
   })
   @IsNumber()
   longitude: number
+
+  @Column({
+    type: 'geometry',
+    nullable: false,
+  })
+  @Index({
+    //set spatial index
+    spatial: true,
+  })
+  point: any //not used in create, update dto. only used in raw query in database
+
+  @BeforeInsert()
+  setGeom() {
+    if (this.latitude && this.longitude) {
+      this.point = () =>
+        `ST_PointFromText(CONCAT('POINT(', ${this.longitude}, ' ', ${this.latitude}, ')'))`
+    }
+  }
+
+  @BeforeUpdate()
+  setUpdateGeom() {
+    if (this.latitude && this.longitude) {
+      this.point = () =>
+        `ST_PointFromText(CONCAT('POINT(', ${this.longitude}, ' ', ${this.latitude}, ')'))`
+    }
+  }
 
   @ApiProperty({
     description: '이벤트 게시글의 메인주제(노출할)',

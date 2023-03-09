@@ -54,5 +54,6 @@ export default setSeederFactory(Event, (faker) => {
     min: 0,
     max: 10,
   })
+
   return fakeEvent
 })
