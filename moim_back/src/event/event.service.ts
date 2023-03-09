@@ -46,32 +46,31 @@ export class EventService {
     }
   }
 
-  async eventUpdate(eventId: number, update: EventDefaultDto) {
+  /*
+   * @Param eventId: 삭제할 이벤트의 아이디
+   * @Param userId: 삭제할 이벤트의 소유자
+   * @Param updateDto: 업데이트할 정보
+   * */
+  async eventUpdate(
+    eventId: number,
+    userId: number,
+    updateDto: UpdateEventDto
+  ) {
     try {
-      const ret = await this.eventRepository
+      return await this.eventRepository
         .createQueryBuilder('event')
         .update()
-        .set({
-          eventDate: update.eventDate,
-          main_image: update.main_image,
-          content: update.content,
-          location: update.location,
-          latitude: update.latitude,
-          longitude: update.longitude,
-          header: update.header,
-          maxParticipant: update.maxParticipant,
-          hashtag: update.hashtag,
-        })
-        .where('event.eventId = :id AND event.deletedAt IS NULL', {
-          id: eventId,
-        })
+        .set(updateDto)
+        .where(
+          'event.eventId = :eventId AND event.isDelete = false AND event.hostId = :userId',
+          {
+            eventId,
+            userId,
+          }
+        )
         .execute()
-
-      if (ret.affected === 0)
-        return new EntityNotFoundError('잘못된 업데이트 요청입니다.', 404)
-      return await this.eventGet(eventId)
     } catch (e) {
-      throw new ConflictException('이벤트 업데이트를 실패했습니다.')
+      throw new InternalServerErrorException()
     }
   }
 

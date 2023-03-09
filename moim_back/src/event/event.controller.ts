@@ -63,11 +63,29 @@ export class EventController {
 
   @Patch('/:id')
   @DocsUpdateEvent()
+  @UseGuards(JWTAuthGuard)
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
   async eventUpdate(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: EventDefaultDto
+    @Body() body: UpdateEventDto,
+    @Req() req: Request,
+    @Res() res: Response
   ) {
-    return await this.eventService.eventUpdate(id, body)
+    const result = await this.eventService.eventUpdate(
+      id,
+      req.user.userId,
+      body
+    )
+    if (result.affected === 0)
+      throw new NotFoundException('업데이트할 데이터가 없습니다.')
+    return res.sendStatus(HttpStatus.OK)
   }
 
   @Delete('/:id')
