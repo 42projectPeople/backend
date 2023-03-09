@@ -34,7 +34,10 @@ export class EventService {
 
   async eventCreate(newEvent: CreateEventDto, userId: number) {
     //새로운 event 객체 생성
-    const event = this.eventRepository.create({ ...newEvent, host: userId })
+    const event = this.eventRepository.create({
+      ...newEvent,
+      host: userId,
+    })
     //insert
     try {
       await this.eventRepository.insert(event)
