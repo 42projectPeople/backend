@@ -30,6 +30,7 @@ import { DocsDeleteEvent } from './swagger/DocsDeleteEvent.docs'
 @ApiTags('event api')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
+
   @Get('/:id')
   @DocsGetEvent()
   }
