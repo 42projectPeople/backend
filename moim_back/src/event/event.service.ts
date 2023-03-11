@@ -15,7 +15,7 @@ export class EventService {
     @InjectRepository(Event) private eventRepository: Repository<Event>
   ) {}
 
-  async eventGet(eventId: number) {
+  async getEvent(eventId: number) {
     try {
       return await this.eventRepository
         .createQueryBuilder('event')
