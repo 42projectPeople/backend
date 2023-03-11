@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import {
   IsBoolean,
   IsInt,
+  IsLatitude,
   IsNumber,
   IsOptional,
   IsPositive,
@@ -61,7 +62,7 @@ export class EventSearchDto extends SearchDto {
     example: null,
   })
   @IsOptional()
-  @IsNumber()
+  @IsLatitude()
   private readonly latitude?: number = null
 
   @ApiProperty({
@@ -71,7 +72,7 @@ export class EventSearchDto extends SearchDto {
     example: null,
   })
   @IsOptional()
-  @IsNumber()
+  @IsLatitude()
   private readonly longitude?: number = null
 
   getSortByViews(): boolean {
