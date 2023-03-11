@@ -4,11 +4,13 @@ import {
   IsBoolean,
   IsInt,
   IsLatitude,
+  IsLongitude,
   IsNumber,
   IsOptional,
   IsPositive,
 } from 'class-validator'
 import { TransformBooleanInParam } from './utils/TransformBooleanInDto'
+import { Transform, Type } from 'class-transformer'
 
 export class EventSearchDto extends SearchDto {
   @ApiProperty({
@@ -51,6 +53,7 @@ export class EventSearchDto extends SearchDto {
     example: null,
   })
   @IsOptional()
+  @Type(() => Number)
   @IsPositive()
   @IsInt()
   private readonly locRange?: number = null
@@ -72,7 +75,7 @@ export class EventSearchDto extends SearchDto {
     example: null,
   })
   @IsOptional()
-  @IsLatitude()
+  @IsLongitude()
   private readonly longitude?: number = null
 
   getSortByViews(): boolean {
