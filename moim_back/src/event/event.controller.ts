@@ -33,8 +33,8 @@ export class EventController {
 
   @Get('/:id')
   @DocsGetEvent()
-  async eventGet(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
-    const result = await this.eventService.eventGet(id)
+  async getEvent(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+    const result = await this.eventService.findEvent(id)
     if (result.length === 0) return res.sendStatus(HttpStatus.NO_CONTENT)
     else return res.status(HttpStatus.OK).send(result)
   }
@@ -50,14 +50,14 @@ export class EventController {
       forbidUnknownValues: true,
     })
   )
-  async eventCreate(
+  async postEvent(
     @Body() body: CreateEventDto,
     @Req() req: Request,
     @Res() res: Response
   ) {
     const userId = req.user.userId
     console.log(body)
-    await this.eventService.eventCreate(body, userId)
+    await this.eventService.createEvent(body, userId)
     return res.sendStatus(HttpStatus.CREATED)
   }
 
@@ -72,13 +72,13 @@ export class EventController {
       forbidUnknownValues: true,
     })
   )
-  async eventUpdate(
+  async patchEvent(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateEventDto,
     @Req() req: Request,
     @Res() res: Response
   ) {
-    const result = await this.eventService.eventUpdate(
+    const result = await this.eventService.updateEvent(
       id,
       req.user.userId,
       body
@@ -91,12 +91,12 @@ export class EventController {
   @Delete('/:id')
   @DocsDeleteEvent()
   @UseGuards(JWTAuthGuard)
-  async eventDelete(
+  async deleteEvent(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: Request,
     @Res() res: Response
   ) {
-    const result = await this.eventService.eventDelete(id, req.user.userId)
+    const result = await this.eventService.removeEvent(id, req.user.userId)
     if (result.affected === 0)
       throw new NotFoundException('삭제할 데이터가 없습니다.')
     return res.sendStatus(HttpStatus.NO_CONTENT)

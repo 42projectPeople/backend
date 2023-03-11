@@ -15,7 +15,7 @@ export class EventService {
     @InjectRepository(Event) private eventRepository: Repository<Event>
   ) {}
 
-  async getEvent(eventId: number) {
+  async findEvent(eventId: number) {
     try {
       return await this.eventRepository
         .createQueryBuilder('event')
@@ -32,7 +32,7 @@ export class EventService {
     }
   }
 
-  async eventCreate(newEvent: CreateEventDto, userId: number) {
+  async createEvent(newEvent: CreateEventDto, userId: number) {
     //새로운 event 객체 생성
     const event = this.eventRepository.create({
       ...newEvent,
@@ -54,7 +54,7 @@ export class EventService {
    * @Param userId: 삭제할 이벤트의 소유자
    * @Param updateDto: 업데이트할 정보
    * */
-  async eventUpdate(
+  async updateEvent(
     eventId: number,
     userId: number,
     updateDto: UpdateEventDto
@@ -77,7 +77,7 @@ export class EventService {
     }
   }
 
-  async eventDelete(eventId: number, userId: number) {
+  async removeEvent(eventId: number, userId: number) {
     try {
       return await this.eventRepository
         .createQueryBuilder('event')
