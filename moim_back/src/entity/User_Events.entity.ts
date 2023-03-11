@@ -12,11 +12,6 @@ import { User } from './User.entity'
 import { Event } from './Event.entity'
 
 @Entity()
-@Unique('unique_UserEvents_userId_eventId_deletedAt', [
-  'userId',
-  'eventId',
-  'deletedAt',
-])
 export class User_Events {
   /**
    * pk
