@@ -2,6 +2,14 @@ import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
 import { globalExceptionFilter } from './exception/globalExceptionFilter'
+import { IUser } from './auth/interface/IUser'
+
+//User 인터페이스
+declare global {
+  namespace Express {
+    interface User extends IUser {}
+  }
+}
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -11,8 +19,17 @@ async function bootstrap() {
     .setDescription('Moim API description')
     .setVersion('1.0')
     .addTag('moim')
+    .addBearerAuth()
+    .addSecurity('accessToken', {
+      description: 'access Token',
+      name: 'accessToken',
+      scheme: 'bearer',
+      type: 'http',
+      bearerFormat: 'JWT',
+    })
     .build()
   const document = SwaggerModule.createDocument(app, config)
+
   SwaggerModule.setup('api', app, document)
   await app.listen(3000)
 }

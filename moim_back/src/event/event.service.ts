@@ -1,23 +1,23 @@
 import {
   ConflictException,
   Injectable,
-  NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Event } from 'src/entity/Event.entity'
-import { DataSource, EntityNotFoundError, Repository } from 'typeorm'
-import { EventDefaultDto } from './dto/event.default.dto'
+import { Repository } from 'typeorm'
+import { CreateEventDto } from './dto/CreateEvent.dto'
+import { UpdateEventDto } from './dto/UpdateEvent.dto'
 
 @Injectable()
 export class EventService {
   constructor(
-    @InjectRepository(Event) private eventRepository: Repository<Event>,
-    private dataSource: DataSource
+    @InjectRepository(Event) private eventRepository: Repository<Event>
   ) {}
 
-  async eventGet(eventId: number) {
+  async findEvent(eventId: number) {
     try {
-      const event = await this.eventRepository
+      return await this.eventRepository
         .createQueryBuilder('event')
         .innerJoinAndSelect('event.host', 'u', 'u.userId = event.hostId')
         .innerJoinAndSelect(
@@ -25,74 +25,77 @@ export class EventService {
           'h',
           'h.hashtagId = event.hashtagId'
         )
-        .where('event.eventId=:id AND event.deletedAt IS NULL', { id: eventId })
+        .where('event.eventId=:id AND event.isDeleted = false', { id: eventId })
         .getMany()
-      return event
     } catch (e) {
-      throw new EntityNotFoundError('이벤트가 존재하지 않습니다.', 404)
+      throw new InternalServerErrorException()
     }
   }
 
-  async eventCreate(newEvent: EventDefaultDto) {
-    const queryRunner = this.dataSource.createQueryRunner()
-    await queryRunner.connect()
-    await queryRunner.startTransaction()
+  async createEvent(newEvent: CreateEventDto, userId: number) {
+    //새로운 event 객체 생성
+    const event = this.eventRepository.create({
+      ...newEvent,
+      host: userId,
+    })
+    //insert
     try {
-      const event = await queryRunner.manager.save(
-        EventDefaultDto.transEventDto(newEvent)
-      )
-      await queryRunner.commitTransaction()
-      await queryRunner.release()
-      return event
+      await this.eventRepository.insert(event)
     } catch (e) {
-      await queryRunner.rollbackTransaction()
-      throw new ConflictException('생성에 실패했습니다.')
+      console.log(e.message)
+      if (e.errno === 1062)
+        throw new ConflictException('너무 빠른 데이터 생성요청')
+      else throw new InternalServerErrorException()
     }
   }
 
-  async eventUpdate(eventId: number, update: EventDefaultDto) {
+  /*
+   * @Param eventId: 삭제할 이벤트의 아이디
+   * @Param userId: 삭제할 이벤트의 소유자
+   * @Param updateDto: 업데이트할 정보
+   * */
+  async updateEvent(
+    eventId: number,
+    userId: number,
+    updateDto: UpdateEventDto
+  ) {
     try {
-      const ret = await this.eventRepository
+      return await this.eventRepository
+        .createQueryBuilder('event')
+        .update()
+        .set(updateDto)
+        .where(
+          'event.eventId = :eventId AND event.isDelete = false AND event.hostId = :userId',
+          {
+            eventId,
+            userId,
+          }
+        )
+        .execute()
+    } catch (e) {
+      throw new InternalServerErrorException()
+    }
+  }
+
+  async removeEvent(eventId: number, userId: number) {
+    try {
+      return await this.eventRepository
         .createQueryBuilder('event')
         .update()
         .set({
-          eventDate: update.eventDate,
-          main_image: update.main_image,
-          content: update.content,
-          location: update.location,
-          latitude: update.latitude,
-          longitude: update.longitude,
-          header: update.header,
-          maxParticipant: update.maxParticipant,
-          hashtag: update.hashtag,
+          deletedAt: () => 'CURRENT_TIMESTAMP()',
+          isDelete: true,
         })
-        .where('event.eventId = :id AND event.deletedAt IS NULL', {
-          id: eventId,
-        })
+        .where(
+          'event.eventId = :eventId AND event.isDelete = false AND event.hostId = :userId',
+          {
+            eventId,
+            userId,
+          }
+        )
         .execute()
-
-      if (ret.affected === 0)
-        return new EntityNotFoundError('잘못된 업데이트 요청입니다.', 404)
-      return await this.eventGet(eventId)
     } catch (e) {
-      throw new ConflictException('이벤트 업데이트를 실패했습니다.')
-    }
-  }
-
-  async eventDelete(eventId: number) {
-    try {
-      const deleteEvent = await this.eventRepository
-        .createQueryBuilder('event')
-        .softDelete()
-        .where('event.eventId = :id AND event.deletedAt IS NULL', {
-          id: eventId,
-        })
-        .execute()
-      if (deleteEvent.affected === 0)
-        throw new EntityNotFoundError('잘못된 삭제 요청입니다.', 404)
-      return deleteEvent
-    } catch (e) {
-      throw new ConflictException('이벤트 삭제에 실패했습니다.')
+      throw new InternalServerErrorException()
     }
   }
 }

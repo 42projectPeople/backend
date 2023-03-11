@@ -57,4 +57,4 @@ const runner = async () => {
   console.log('end, SIGINT')
 }
 
-setTimeout(runner, 5000)
+setTimeout(runner, 1000)

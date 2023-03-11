@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNumber, IsString } from 'class-validator'
+import { Transform } from 'class-transformer'
+import {
+  IsInt,
+  IsISO8601,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  IsUrl,
+} from 'class-validator'
 import {
   Entity,
   Column,
@@ -11,6 +20,9 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
   DeleteDateColumn,
+  Index,
+  BeforeInsert,
+  BeforeUpdate,
 } from 'typeorm'
 import { Hashtag } from './Hashtag.entity'
 import { Review } from './Review.entity'
@@ -21,8 +33,8 @@ import { User_Events } from './User_Events.entity'
 @Unique('unique_event_createdAt_host', ['createdAt', 'host'])
 export class Event {
   @ApiProperty({
-    example: '1',
     description: '이벤트의 고유 아이디',
+    example: '1',
   })
   @IsNumber()
   @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'pk_Event' })
@@ -30,10 +42,13 @@ export class Event {
 
   @ApiProperty({
     description: '이벤트가 진행되는 날짜',
+    example: '2023-03-08T10:30:15+09:00',
   })
-  @IsString()
-  @Column()
-  eventDate: string
+  @IsISO8601()
+  @Column({
+    type: 'datetime',
+  })
+  eventDate: Date | string
 
   @ApiProperty({
     description: '이벤트게시글 생성 시간',
@@ -66,29 +81,49 @@ export class Event {
   isDelete: boolean
 
   @ApiProperty({
-    example: 'URL',
-    description: '이벤트게시글의 메인이미지(주로 노출)',
+    description: '게시글에 들어간 이미지 URL모음',
+    isArray: true,
+    example: [
+      'https://image-resizef-origin.s3.ap-northeast-2.amazonaws.com/resized/1324123420132123123',
+      'https://image-resizef-origin.s3.ap-northeast-2.amazonaws.com/resized/1324123420132123123',
+    ],
+  })
+  @IsOptional()
+  @Transform(({ value }) => {
+    return value.join(' ')
   })
   @IsString()
   @Column({
-    type: 'char',
-    length: '100',
+    type: 'text',
     nullable: true,
-    comment: 'URL',
+    comment: 'URL array',
   })
-  main_image: string
+  images?: string
 
   @ApiProperty({
-    example: 'URL',
-    description:
-      '이벤트의 이미지URL들과, 상세설명 내용을 담고 있는 S3저장소 URL',
+    description: '오픈톡 링크',
+    example: 'www.kakaotalk.com',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsUrl()
+  @Column({
+    type: 'char',
+    length: 150,
+    comment: 'URL',
+    nullable: true,
+  })
+  openTalkLink?: string
+
+  @ApiProperty({
+    description: '상세 설명 문구',
+    example: '안녕하세요 moim입니다.',
   })
   @IsString()
   @Column({
-    type: 'char',
-    length: 100,
+    type: 'text',
     nullable: false,
-    comment: 'URL',
+    comment: 'string',
   })
   content: string
 
@@ -105,6 +140,7 @@ export class Event {
 
   @ApiProperty({
     description: '이벤트가 진행되는 장소',
+    example: '서울특별시 강남구 개포로',
   })
   @IsString()
   @Column({
@@ -115,25 +151,74 @@ export class Event {
   location: string
 
   @ApiProperty({
-    description: '이벤트가 진행되는 장소의 위도',
+    description: '상호명',
+    nullable: true,
+    example: '42서울',
   })
   @Column({
-    type: 'float',
+    type: 'char',
+    length: 50,
+    nullable: true,
+  })
+  @IsOptional()
+  @IsString()
+  tradeName?: string
+
+  @ApiProperty({
+    description: '이벤트가 진행되는 장소의 위도',
+    example: '37.48822297429607',
+  })
+  @Column({
+    type: 'decimal',
+    precision: 11,
+    scale: 8,
     nullable: false,
   })
+  @IsNumber()
   latitude: number
 
   @ApiProperty({
     description: '이벤트가 진행되는 장소의 경도',
+    example: '127.0648014823014',
   })
   @Column({
-    type: 'float',
+    type: 'decimal',
+    precision: 11,
+    scale: 8,
     nullable: false,
   })
+  @IsNumber()
   longitude: number
+
+  @Column({
+    type: 'geometry',
+    nullable: false,
+  })
+  @Index({
+    //set spatial index
+    spatial: true,
+  })
+  point: any //not used in create, update dto. only used in raw query in database
+
+  @BeforeInsert()
+  setGeom() {
+    if (this.latitude && this.longitude) {
+      this.point = () =>
+        `ST_PointFromText(CONCAT('POINT(', ${this.longitude}, ' ', ${this.latitude}, ')'))`
+    }
+  }
+
+  @BeforeUpdate()
+  setUpdateGeom() {
+    if (this.latitude && this.longitude) {
+      this.point = () =>
+        `ST_PointFromText(CONCAT('POINT(', ${this.longitude}, ' ', ${this.latitude}, ')'))`
+    }
+  }
 
   @ApiProperty({
     description: '이벤트 게시글의 메인주제(노출할)',
+    example: '테스트 타이틀 1',
   })
   @IsString()
   @Column({
@@ -154,8 +239,11 @@ export class Event {
 
   @ApiProperty({
     description: '이벤트에 참가할 수 있는 총 인원',
+    example: '4',
   })
   @IsNumber()
+  @IsInt()
+  @IsPositive()
   @Column({
     type: 'int',
   })
@@ -163,15 +251,18 @@ export class Event {
 
   @ApiProperty({
     description: '이벤트에 참가 중인 인원',
+    example: '2',
   })
   @IsNumber()
   @Column({
     type: 'int',
+    default: 0,
   })
   curParticipant: number
 
   @ApiProperty({
     description: '이벤트게시글 작성자(유저)',
+    example: 1,
   })
   @ManyToOne(() => User, (user) => user.userId)
   @JoinColumn({
@@ -190,7 +281,10 @@ export class Event {
    * */
   @ApiProperty({
     description: '이벤트게시글의 헤시태그아이디',
+    example: 1,
   })
+  @IsInt()
+  @IsPositive()
   @ManyToOne(() => Hashtag, (hashtag) => hashtag.hashtagId)
   @JoinColumn({
     name: 'hashtagId',

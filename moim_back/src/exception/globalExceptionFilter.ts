@@ -15,9 +15,7 @@ export class globalExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp()
     const res = ctx.getResponse<Response>()
     const req = ctx.getRequest<Request>()
-    const message = (exception as any).message
-
-    Logger.error(message, (exception as any).stack, `${req.method} ${req.url}`)
+    let message = (exception as any).message
 
     const name = exception?.constructor?.name || 'HttpException'
     let status = HttpStatus.INTERNAL_SERVER_ERROR
@@ -38,9 +36,16 @@ export class globalExceptionFilter implements ExceptionFilter {
       case 'EntityNotFoundError' || 'NotFoundException':
         status = HttpStatus.NOT_FOUND
         break
+      case 'BadRequestException':
+        status = HttpStatus.BAD_REQUEST
+        console.log(exception.response.message)
+        break
       default:
         status = HttpStatus.INTERNAL_SERVER_ERROR
+        message = '데이터베이스 서버 에러'
     }
+    //로그 남기기
+    Logger.error(message, (exception as any).stack, `${req.method} ${req.url}`)
     res.status(status).json({
       statusCode: status,
       error: name,
