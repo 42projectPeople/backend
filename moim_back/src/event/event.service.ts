@@ -17,7 +17,7 @@ export class EventService {
 
   async findEvent(eventId: number) {
     try {
-      return await this.eventRepository
+      const result = await this.eventRepository
         .createQueryBuilder('event')
         .innerJoinAndSelect('event.host', 'u', 'u.userId = event.hostId')
         .innerJoinAndSelect(
@@ -27,6 +27,8 @@ export class EventService {
         )
         .where('event.eventId=:id AND event.isDeleted = false', { id: eventId })
         .execute()
+      console.log(result)
+      return result
     } catch (e) {
       throw new InternalServerErrorException()
     }
@@ -84,7 +86,7 @@ export class EventService {
         .update()
         .set({
           deletedAt: () => 'CURRENT_TIMESTAMP()',
-          isDelete: true,
+          isDeleted: true,
         })
         .where(
           'event.eventId = :eventId AND event.isDelete = false AND event.hostId = :userId',

@@ -78,7 +78,7 @@ export class Event {
   @Column({
     default: false,
   })
-  isDelete: boolean
+  isDeleted: boolean
 
   @ApiProperty({
     description: '게시글에 들어간 이미지 URL모음',
