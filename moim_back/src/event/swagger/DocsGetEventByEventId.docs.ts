@@ -1,5 +1,6 @@
 import { applyDecorators } from '@nestjs/common'
 import {
+  ApiBearerAuth,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
   ApiOkResponse,
@@ -7,12 +8,13 @@ import {
 } from '@nestjs/swagger'
 import { Event } from 'src/entity/Event.entity'
 
-export function DocsGetEvent() {
+export function DocsGetEventByEventId() {
   return applyDecorators(
     ApiOkResponse({
       description: '성공적으로 요청을 수행했습니다.',
       type: Event,
     }),
+    ApiBearerAuth('accessToken'),
     ApiInternalServerErrorResponse({
       description: '데이터베이스 서버 에러',
     }),
