@@ -80,6 +80,9 @@ export class Review {
   /*
    * userId
    * */
+  @ApiProperty({
+    type: User,
+  })
   @ManyToOne(() => User, (user) => user.userId)
   @JoinColumn({
     name: 'reviewerId',
@@ -89,6 +92,9 @@ export class Review {
   /*
    * referencing event
    * */
+  @ApiProperty({
+    type: Event,
+  })
   @ManyToOne(() => Event, (event) => event.eventId)
   @JoinColumn({
     name: 'eventId',
