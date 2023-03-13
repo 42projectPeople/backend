@@ -18,15 +18,11 @@ export class EventService {
   async findEvent(eventId: number) {
     try {
       const result = await this.eventRepository
-        .createQueryBuilder('event')
-        .innerJoinAndSelect('event.host', 'u', 'u.userId = event.hostId')
-        .innerJoinAndSelect(
-          'event.hashtag',
-          'h',
-          'h.hashtagId = event.hashtagId'
-        )
-        .where('event.eventId=:id AND event.isDeleted = false', { id: eventId })
-        .execute()
+        .createQueryBuilder('e')
+        .innerJoinAndSelect('e.host', 'u', 'u.userId = e.host')
+        .innerJoinAndSelect('e.hashtag', 'h', 'h.hashtagId = e.hashtagId')
+        .where('e.eventId=:id AND e.isDeleted = false', { id: eventId })
+        .getMany()
       console.log(result)
       return result
     } catch (e) {
