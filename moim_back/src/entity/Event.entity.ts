@@ -273,7 +273,7 @@ export class Event {
   @ApiProperty({
     description: '이벤트에 참가중인 유저(?)',
   })
-  @OneToMany(() => User_Events, (ue) => ue.eventId)
+  @OneToMany(() => User_Events, (ue) => ue.event, { cascade: true })
   participent: User_Events[]
 
   /*
