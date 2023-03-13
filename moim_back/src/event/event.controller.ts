@@ -23,8 +23,8 @@ import { UpdateEventDto } from './dto/UpdateEvent.dto'
 import { EventService } from './event.service'
 import { DocsCreateEvent } from './swagger/DocsCreateEvent.docs'
 import { DocsUpdateEvent } from './swagger/DocsUpdateEvent.docs'
-import { DocsGetEvent } from './swagger/DocsGetEvent.docs'
 import { DocsDeleteEvent } from './swagger/DocsDeleteEvent.docs'
+import { DocsGetEventByEventId } from './swagger/DocsGetEventByEventId.docs'
 
 @Controller('event')
 @ApiTags('event api')
@@ -32,7 +32,7 @@ export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Get('/:id')
-  @DocsGetEvent()
+  @DocsGetEventByEventId()
   async getEvent(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     const result = await this.eventService.findEvent(id)
     if (result.length === 0) return res.sendStatus(HttpStatus.NO_CONTENT)
