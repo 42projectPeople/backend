@@ -26,7 +26,7 @@ export class EventService {
           'h.hashtagId = event.hashtagId'
         )
         .where('event.eventId=:id AND event.isDeleted = false', { id: eventId })
-        .getMany()
+        .execute()
     } catch (e) {
       throw new InternalServerErrorException()
     }
