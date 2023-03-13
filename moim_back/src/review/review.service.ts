@@ -48,7 +48,6 @@ export class ReviewService {
         .limit(serviceDto.getPageSize())
       return await qb.getMany()
     } catch (e) {
-      console.log(e.message)
       throw new InternalServerErrorException()
     }
   }
@@ -85,13 +84,16 @@ export class ReviewService {
     }
   }
 
-  async create(createReviewDto: CreateReviewDto): Promise<void> {
+  async create(
+    createReviewDto: CreateReviewDto,
+    userId: number
+  ): Promise<void> {
     try {
       await this.reviewRepository
         .createQueryBuilder()
         .insert()
         .into(Review)
-        .values(CreateReviewDto.toEntity(createReviewDto))
+        .values(CreateReviewDto.toEntity(createReviewDto, userId))
         .execute()
     } catch (e) {
       if (e.errno == 1062)
@@ -109,7 +111,7 @@ export class ReviewService {
     updateReviewDto: UpdateReviewDto,
     reviewId: number,
     userId: number
-  ): Promise<void> {
+  ) {
     const queryRunner = this.datasource.createQueryRunner()
     try {
       await queryRunner.connect() //connection pool에서 connection을 가져옵니다.
@@ -125,13 +127,13 @@ export class ReviewService {
         //업데이트할 partial 객체
       )
 
-      //check if not affected
-      if (queryResult.affected == 0) throw new NotFoundException()
+      if (queryResult.affected == 0)
+        throw new NotFoundException('업데이트 할 리뷰가 없습니다.')
 
       await queryRunner.commitTransaction() //성공시 commit
     } catch (err) {
       await queryRunner.rollbackTransaction() //실패시 rollback
-      if (err.status === 404) throw new NotFoundException()
+      if (err.status === 404) throw err
       if (err.status === 500) throw new InternalServerErrorException()
     } finally {
       await queryRunner.release() //connection pool에 반환
@@ -158,12 +160,13 @@ export class ReviewService {
       )
 
       //check if not affected
-      if (queryResult.affected == 0) throw new NotFoundException()
+      if (queryResult.affected == 0)
+        throw new NotFoundException('삭제할 리뷰가 없습니다.')
 
       await queryRunner.commitTransaction() //성공시 commit
     } catch (err) {
       await queryRunner.rollbackTransaction() //실패시 rollback
-      if (err.status === 404) throw new NotFoundException()
+      if (err.status === 404) throw err
       if (err.status === 500) throw new InternalServerErrorException()
     } finally {
       await queryRunner.release() //connection pool에 반환
