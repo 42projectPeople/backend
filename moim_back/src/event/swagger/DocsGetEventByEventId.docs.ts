@@ -6,13 +6,13 @@ import {
   ApiOkResponse,
   ApiParam,
 } from '@nestjs/swagger'
-import { Event } from 'src/entity/Event.entity'
+import { ReturnEventDto } from '../dto/ReturnEvent.dto'
 
 export function DocsGetEventByEventId() {
   return applyDecorators(
     ApiOkResponse({
       description: '성공적으로 요청을 수행했습니다.',
-      type: Event,
+      type: ReturnEventDto,
     }),
     ApiBearerAuth('accessToken'),
     ApiInternalServerErrorResponse({
@@ -22,7 +22,7 @@ export function DocsGetEventByEventId() {
       description: '요청을 수행했으나, 반환할 자원이 없습니다.',
     }),
     ApiParam({
-      name: 'id',
+      name: 'eventId',
       example: 1,
     })
   )
