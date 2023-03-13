@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiTags } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import {
   IsInt,
@@ -29,6 +29,7 @@ import { Review } from './Review.entity'
 import { User } from './User.entity'
 import { User_Events } from './User_Events.entity'
 
+@ApiTags('event api')
 @Entity()
 @Unique('unique_event_createdAt_host', ['createdAt', 'host'])
 export class Event {
@@ -270,9 +271,6 @@ export class Event {
   })
   host: User | number
 
-  @ApiProperty({
-    description: '이벤트에 참가중인 유저(?)',
-  })
   @OneToMany(() => User_Events, (ue) => ue.event, { cascade: true })
   participent: User_Events[]
 
@@ -281,7 +279,7 @@ export class Event {
    * */
   @ApiProperty({
     description: '이벤트게시글의 헤시태그아이디',
-    example: 1,
+    example: Hashtag,
   })
   @IsInt()
   @IsPositive()
