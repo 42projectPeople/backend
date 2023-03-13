@@ -10,6 +10,7 @@ export function DocsGetReviewByUserId() {
     }),
     ApiOkResponse({
       description: 'Get Success',
+      isArray: true,
       type: Review,
     }),
     ApiParam({
