@@ -2,33 +2,64 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Event } from 'src/entity/Event.entity'
-import { Repository } from 'typeorm'
+import { User_Events } from 'src/entity/User_Events.entity'
+import { DataSource, Repository } from 'typeorm'
 import { CreateEventDto } from './dto/CreateEvent.dto'
+import { ReturnEventDto } from './dto/ReturnEvent.dto'
 import { UpdateEventDto } from './dto/UpdateEvent.dto'
+import { RolesInEvent } from './utils/rolesInEvent.enum'
 
 @Injectable()
 export class EventService {
   constructor(
-    @InjectRepository(Event) private eventRepository: Repository<Event>
+    @InjectRepository(Event) private eventRepository: Repository<Event>,
+    private datasource: DataSource
   ) {}
 
-  async findEvent(eventId: number) {
+  async findEvent(eventId: number, userId: number) {
+    const queryRunner = this.datasource.createQueryRunner()
+    let role = RolesInEvent.LOOKER
     try {
-      return await this.eventRepository
-        .createQueryBuilder('event')
-        .innerJoinAndSelect('event.host', 'u', 'u.userId = event.hostId')
-        .innerJoinAndSelect(
-          'event.hashtag',
-          'h',
-          'h.hashtagId = event.hashtagId'
-        )
-        .where('event.eventId=:id AND event.isDeleted = false', { id: eventId })
-        .getMany()
+      await queryRunner.connect()
+      await queryRunner.startTransaction()
+
+      const event = await queryRunner.manager.find(Event, {
+        relations: ['hashtag'],
+        where: {
+          eventId,
+        },
+      })
+      //check length
+      if (event.length != 1)
+        throw new NotFoundException('해당 이벤트가 존재하지 않습니다.')
+      if (event[0].host === userId) role = RolesInEvent.HOST
+
+      //check if only current user might seems to be looker
+      if (role != RolesInEvent.HOST) {
+        const isGuest = await queryRunner.manager.find(User_Events, {
+          where: {
+            userId,
+            eventId,
+            /*
+             * user: userId,
+             * event: eventId
+             * */
+          },
+        })
+        if (isGuest.length != 0) role = RolesInEvent.GUEST
+      }
+      await queryRunner.commitTransaction()
+      console.log(event)
+      return new ReturnEventDto(event[0], role)
     } catch (e) {
+      if (e.errno === 404) throw e
       throw new InternalServerErrorException()
+    } finally {
+      await queryRunner.release()
     }
   }
 
@@ -84,7 +115,7 @@ export class EventService {
         .update()
         .set({
           deletedAt: () => 'CURRENT_TIMESTAMP()',
-          isDelete: true,
+          isDeleted: true,
         })
         .where(
           'event.eventId = :eventId AND event.isDelete = false AND event.hostId = :userId',

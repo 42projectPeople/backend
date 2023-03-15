@@ -23,20 +23,24 @@ import { UpdateEventDto } from './dto/UpdateEvent.dto'
 import { EventService } from './event.service'
 import { DocsCreateEvent } from './swagger/DocsCreateEvent.docs'
 import { DocsUpdateEvent } from './swagger/DocsUpdateEvent.docs'
-import { DocsGetEvent } from './swagger/DocsGetEvent.docs'
 import { DocsDeleteEvent } from './swagger/DocsDeleteEvent.docs'
+import { DocsGetEventByEventId } from './swagger/DocsGetEventByEventId.docs'
 
 @Controller('event')
 @ApiTags('event api')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
-  @Get('/:id')
-  @DocsGetEvent()
-  async getEvent(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
-    const result = await this.eventService.findEvent(id)
-    if (result.length === 0) return res.sendStatus(HttpStatus.NO_CONTENT)
-    else return res.status(HttpStatus.OK).send(result)
+  @Get('/:eventId')
+  @DocsGetEventByEventId()
+  @UseGuards(JWTAuthGuard)
+  async getEvent(
+    @Param('eventId', ParseIntPipe) eventId: number,
+    @Req() req: Request,
+    @Res() res: Response
+  ) {
+    const result = await this.eventService.findEvent(eventId, req.user.userId)
+    return res.status(HttpStatus.OK).send(result)
   }
 
   @Post('')
