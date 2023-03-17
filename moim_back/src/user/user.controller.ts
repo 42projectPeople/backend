@@ -11,7 +11,9 @@ import {
   Post,
   Put,
   Query,
+  Req,
   Res,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common'
@@ -21,7 +23,7 @@ import { CreateUserRequestDto } from './dto/createUserRequestDto'
 import { User } from '../entity/User.entity'
 import { EventData } from './utils/EventData'
 import { ApiTags } from '@nestjs/swagger'
-import { Response } from 'express'
+import { Request, Response } from 'express'
 import { Users } from './utils/Users.type'
 import { RegisterEventRequestDto } from './dto/registerEventRequestDto'
 import { UnregisterEventRequestDto } from './dto/unregisterEventRequestDto'
@@ -37,6 +39,8 @@ import { DocsUpdateUser } from './swagger/DocsUpdateUser.docs'
 import { DocsGetUserEvents } from './swagger/DocsGetUserEvents.docs'
 import { DocsRegisterEvent } from './swagger/DocsRegisterEvent.docs'
 import { DocsUnregisterEvent } from './swagger/DocsUnregisterEvent.docs'
+import { GetUserEventDto } from './dto/getUserEvents.dto'
+import { JWTAuthGuard } from 'src/auth/jwt-auth/jwt-auth.guard'
 
 @Controller('user')
 @ApiTags('user api')
@@ -165,17 +169,29 @@ export class UserController {
    * @param role
    */
   @Get(':userID/event')
-  // TODO: auth needed
+  @UseGuards(JWTAuthGuard)
   @DocsGetUserEvents()
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
   async getUserEvents(
     @Param('userID', ParseIntPipe) userId: number,
-    @Query('role') role: UserEventRoleType
+    @Query() userEventDto: GetUserEventDto,
+    @Req() req: Request
   ): Promise<EventData> {
-    if (role === UserEventRoleType.HOST) {
+    if (userEventDto.role === UserEventRoleType.HOST) {
       return {
-        events: await this.userService.findAllUserHostEvent(+userId),
+        events: await this.userService.findAllUserHostEvent(req.user.userId),
       }
-    } else if (role === undefined || role === UserEventRoleType.GUEST) {
+    } else if (
+      userEventDto.role === undefined ||
+      userEventDto.role === UserEventRoleType.GUEST
+    ) {
       return {
         events: await this.userService.findAllUserGuestEvent(+userId),
       }
