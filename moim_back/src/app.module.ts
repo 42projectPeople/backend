@@ -16,6 +16,7 @@ import { HashtagModule } from './hashtag/hashtag.module'
 import { HealthModule } from './health/health.module'
 import { AuthModule } from './auth/auth.module'
 import { TokenSession } from './entity/TokenSession.entity'
+// import { SearchModule } from './search/search.module'
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { TokenSession } from './entity/TokenSession.entity'
     HashtagModule,
     HealthModule,
     AuthModule,
+    // SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],
