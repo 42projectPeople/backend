@@ -28,7 +28,10 @@ name: Deploy to Amazon ECS
 
 on:
   pull_request:
-    branches: [ "release_test" ]
+    branches:
+    - release_test
+    schedule:
+    - cron: "0 11 * * 1-7"
 
 env:
   AWS_REGION: ap-northeast-2                   # set this to your preferred AWS region, e.g. us-west-1
