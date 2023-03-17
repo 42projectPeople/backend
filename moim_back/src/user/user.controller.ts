@@ -20,14 +20,7 @@ import { UpdateUserRequestDto } from './dto/updateUserRequestDto'
 import { CreateUserRequestDto } from './dto/createUserRequestDto'
 import { User } from '../entity/User.entity'
 import { EventData } from './utils/EventData'
-import {
-  ApiBody,
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
 import { Users } from './utils/Users.type'
 import { RegisterEventRequestDto } from './dto/registerEventRequestDto'
