@@ -1,6 +1,6 @@
 import { IsNumber, IsString } from 'class-validator'
 
-export class CreateEventDto {
+export class EventCreateDto {
   @IsString()
   main_image: string
 

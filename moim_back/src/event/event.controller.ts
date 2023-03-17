@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common'
 import { Event } from 'src/entity/Event.entity'
 import { EventService } from './event.service'
 
@@ -6,9 +15,16 @@ import { EventService } from './event.service'
 export class EventController {
   constructor(private readonly eventService: EventService) {}
   @Get('/:id')
-  async FindOneEvent(@Param('id') id: number): Promise<Event> {
+  @UsePipes(
+    new ValidationPipe({
+      transform: true, //지정된 객체로 자동변환
+      whitelist: true, //수신돼선 안되는 속성 필터링
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
+  async FindOneEvent(@Param('id', ParseIntPipe) id: number): Promise<Event> {
     const ret = await this.eventService.eventFindOneById(id)
-    console.log(`\n\n ret = ${ret}`)
     return ret
   }
   // @Post('')
