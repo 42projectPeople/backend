@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
 import { MapController } from './map.controller'
 import { MapService } from './map.service'
 
 @Module({
-  imports: [],
+  imports: [ConfigModule],
   controllers: [MapController],
   providers: [MapService],
 })

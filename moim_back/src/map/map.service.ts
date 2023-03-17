@@ -33,13 +33,12 @@ export class MapService {
     const URL = `https://openapi.naver.com/v1/search/local.json?query=${query.keyword}&display=5&sort=random`
     const response = await fetch(URL, {
       headers: {
-        'X-Naver-Client-Id': this.NAVER_CLOUD_MAP_CLIENT_KEY,
-        'X-Naver-Client-Secret': this.NAVER_CLOUD_MAP_SECRET_KEY,
+        'X-Naver-Client-Id': this.NAVER_CLOUD_SEARCH_CLIENT_KEY,
+        'X-Naver-Client-Secret': this.NAVER_CLOUD_SEARCH_SECRET_KEY,
       },
     })
     const data = await response.json()
     if (data && data.items && data.items.length > 0) {
-    } else {
       const newPlaces: Place[] = []
       for (let i = 0; i < 5; ++i) {
         const tmp = data.items[i]
@@ -47,15 +46,26 @@ export class MapService {
           name: tmp.title.replace(/(<([^>]+)>)/gi, ''),
           address: tmp.roadAddress.replace(/(<([^>]+)>)/gi, ''),
         }
-        newPlaces.push(place)
+        newPlaces[i] = place
       }
-      return {
+      const ret: SearchPlaceResponseDto = {
         place1: newPlaces[0],
         place2: newPlaces[1],
         place3: newPlaces[2],
         place4: newPlaces[3],
         place5: newPlaces[4],
       }
+      return ret
+    } else {
+      const ret: SearchPlaceResponseDto = {
+        place1: undefined,
+        place2: undefined,
+        place3: undefined,
+        place4: undefined,
+        place5: undefined,
+      }
+
+      return ret
     }
   }
 
@@ -71,14 +81,11 @@ export class MapService {
       },
     })
     const data = await response.json()
-    if (data.addresses.length === 0) {
-      return
-    } else {
-      return {
-        address: query.address,
-        latitude: data.addresses[0].y,
-        longitude: data.addresses[0].x,
-      }
+
+    return {
+      address: query.address,
+      latitude: data.addresses[0].y,
+      longitude: data.addresses[0].x,
     }
   }
 }
