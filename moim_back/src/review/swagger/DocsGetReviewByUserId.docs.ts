@@ -1,5 +1,9 @@
 import { applyDecorators } from '@nestjs/common'
+<<<<<<< HEAD
 import { ApiOperation, ApiOkResponse, ApiParam } from '@nestjs/swagger'
+=======
+import { ApiOperation, ApiOkResponse } from '@nestjs/swagger'
+>>>>>>> 9171845 (docs(return dto): review entity example추가해서 해결)
 import { Review } from 'src/entity/Review.entity'
 
 export function DocsGetReviewByUserId() {
@@ -11,6 +15,7 @@ export function DocsGetReviewByUserId() {
     ApiOkResponse({
       description: 'Get Success',
       type: Review,
+<<<<<<< HEAD
     }),
     ApiParam({
       name: 'userId',
@@ -18,6 +23,8 @@ export function DocsGetReviewByUserId() {
       required: true,
       type: Number,
       example: 1,
+=======
+>>>>>>> 9171845 (docs(return dto): review entity example추가해서 해결)
     })
   )
 }
