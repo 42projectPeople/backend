@@ -40,7 +40,7 @@ export class User {
   })
   userName: string
 
-  @Column({ type: 'char', length: 100, nullable: false })
+  @Column({ type: 'char', length: 100, nullable: true, default: null })
   @ApiProperty({
     description: 'user nickname (unique)',
   })

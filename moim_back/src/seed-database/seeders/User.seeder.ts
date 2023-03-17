@@ -17,7 +17,7 @@ export default class UserSeeder implements Seeder {
       try {
         await Factory.save()
       } catch (e) {
-        console.log(e)
+        console.log(e.message)
         i--
         continue
       }

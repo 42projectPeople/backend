@@ -14,6 +14,7 @@ export default class EventSeeder implements Seeder {
       try {
         await Factory.save()
       } catch (e) {
+        console.log(e)
         i--
         continue
       }

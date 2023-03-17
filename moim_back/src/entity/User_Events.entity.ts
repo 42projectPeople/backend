@@ -2,7 +2,6 @@ import {
   Entity,
   ManyToOne,
   JoinColumn,
-  Unique,
   PrimaryGeneratedColumn,
   DeleteDateColumn,
   CreateDateColumn,
@@ -28,6 +27,9 @@ export class User_Events {
   @DeleteDateColumn()
   deletedAt: Date
 
+  /*
+   * @depreciated
+   */
   @Column({ name: 'userId' })
   userId: number
 
@@ -37,10 +39,13 @@ export class User_Events {
   })
   user: User | number
 
+  /*
+   * @depreciated
+   */
   @Column({ name: 'eventId' })
   eventId: number
 
-  @ManyToOne(() => Event, (event) => event.eventId, { nullable: false })
+  @ManyToOne(() => Event, (event) => event.participent, { nullable: false })
   @JoinColumn({
     name: 'eventId',
   })

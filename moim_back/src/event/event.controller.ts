@@ -3,42 +3,106 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
   Post,
+  Req,
+  Res,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common'
-import { ApiOkResponse } from '@nestjs/swagger'
-import { EventDefaultDto } from './dto/event.default.dto'
-import { EventReturnDto } from './dto/event.return.dto'
+import { ApiTags } from '@nestjs/swagger'
+import { Request, Response } from 'express'
+import { JWTAuthGuard } from 'src/auth/jwt-auth/jwt-auth.guard'
+import { CreateEventDto } from './dto/CreateEvent.dto'
+import { UpdateEventDto } from './dto/UpdateEvent.dto'
 import { EventService } from './event.service'
+import { DocsCreateEvent } from './swagger/DocsCreateEvent.docs'
+import { DocsUpdateEvent } from './swagger/DocsUpdateEvent.docs'
+import { DocsDeleteEvent } from './swagger/DocsDeleteEvent.docs'
+import { DocsGetEventByEventId } from './swagger/DocsGetEventByEventId.docs'
 
 @Controller('event')
+@ApiTags('event api')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
-  @Get('/:id')
-  @ApiOkResponse({
-    type: EventReturnDto,
-  })
-  async eventGet(@Param('id', ParseIntPipe) id: number) {
-    return await this.eventService.eventGet(id)
+
+  @Get('/:eventId')
+  @DocsGetEventByEventId()
+  @UseGuards(JWTAuthGuard)
+  async getEvent(
+    @Param('eventId', ParseIntPipe) eventId: number,
+    @Req() req: Request,
+    @Res() res: Response
+  ) {
+    const result = await this.eventService.findEvent(eventId, req.user.userId)
+    return res.status(HttpStatus.OK).send(result)
   }
 
   @Post('')
-  async eventCreate(@Body() body: EventDefaultDto) {
-    return await this.eventService.eventCreate(body)
+  @DocsCreateEvent()
+  @UseGuards(JWTAuthGuard)
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
+  async postEvent(
+    @Body() body: CreateEventDto,
+    @Req() req: Request,
+    @Res() res: Response
+  ) {
+    const userId = req.user.userId
+    console.log(body)
+    await this.eventService.createEvent(body, userId)
+    return res.sendStatus(HttpStatus.CREATED)
   }
 
   @Patch('/:id')
-  async eventUpdate(
+  @DocsUpdateEvent()
+  @UseGuards(JWTAuthGuard)
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
+  async patchEvent(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: EventDefaultDto
+    @Body() body: UpdateEventDto,
+    @Req() req: Request,
+    @Res() res: Response
   ) {
-    return await this.eventService.eventUpdate(id, body)
+    const result = await this.eventService.updateEvent(
+      id,
+      req.user.userId,
+      body
+    )
+    if (result.affected === 0)
+      throw new NotFoundException('업데이트할 데이터가 없습니다.')
+    return res.sendStatus(HttpStatus.OK)
   }
 
   @Delete('/:id')
-  async eventDelete(@Param('id', ParseIntPipe) id: number) {
-    await this.eventService.eventDelete(id)
+  @DocsDeleteEvent()
+  @UseGuards(JWTAuthGuard)
+  async deleteEvent(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+    @Res() res: Response
+  ) {
+    const result = await this.eventService.removeEvent(id, req.user.userId)
+    if (result.affected === 0)
+      throw new NotFoundException('삭제할 데이터가 없습니다.')
+    return res.sendStatus(HttpStatus.NO_CONTENT)
   }
 }

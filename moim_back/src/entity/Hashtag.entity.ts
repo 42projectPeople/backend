@@ -1,4 +1,4 @@
-import { ApiTags } from '@nestjs/swagger'
+import { ApiProperty, ApiTags } from '@nestjs/swagger'
 import {
   Column,
   Entity,
@@ -14,11 +14,19 @@ import { User } from './User.entity'
 @ApiTags('hashtag api')
 @Unique('unique_Hashtag_hashtagName', ['hashtagName'])
 export class Hashtag {
+  @ApiProperty({
+    description: '해시태그 아이디',
+    example: 1,
+  })
   @PrimaryGeneratedColumn({
     primaryKeyConstraintName: 'pk_Hashtag',
   })
   hashtagId: number
 
+  @ApiProperty({
+    description: '해시태그 이름',
+    example: '커피',
+  })
   @Column({
     type: 'char',
     length: '50',
