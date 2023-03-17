@@ -17,6 +17,7 @@ import { HealthModule } from './health/health.module'
 import { AuthModule } from './auth/auth.module'
 import { TokenSession } from './entity/TokenSession.entity'
 import { SearchModule } from './search/search.module'
+import { MapModule } from './map/map.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { SearchModule } from './search/search.module'
     HealthModule,
     AuthModule,
     SearchModule,
+    MapModule,
   ],
   controllers: [AppController],
   providers: [AppService],
