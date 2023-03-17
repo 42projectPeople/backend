@@ -21,7 +21,7 @@ import { TokenSession } from './entity/TokenSession.entity'
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env.dev'],
+      envFilePath: ['.env.dev.local'],
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
