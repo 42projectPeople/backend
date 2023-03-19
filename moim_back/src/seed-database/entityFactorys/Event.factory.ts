@@ -50,7 +50,10 @@ const EventFactory = (): Event => {
   })
   fakeEvent.host = UserFactory()
 
-  fakeEvent.hashtag = HashtagFactory()
+  fakeEvent.hashtag = faker.datatype.number({
+    min: 1,
+    max: 7,
+  })
 
   return fakeEvent
 }
