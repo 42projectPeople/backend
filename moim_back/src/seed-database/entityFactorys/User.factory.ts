@@ -1,4 +1,4 @@
-import { User } from 'src/entity/User.entity'
+import { User } from '../../entity/User.entity'
 import { faker } from '@faker-js/faker'
 
 const UserFactory = (): User => {

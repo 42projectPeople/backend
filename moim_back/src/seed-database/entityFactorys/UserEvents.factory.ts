@@ -1,4 +1,4 @@
-import { User_Events } from 'src/entity/User_Events.entity'
+import { User_Events } from '../../entity/User_Events.entity'
 import EventFactory from './Event.factory'
 import UserFactory from './User.factory'
 

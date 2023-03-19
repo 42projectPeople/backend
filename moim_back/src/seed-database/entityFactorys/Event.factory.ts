@@ -1,4 +1,4 @@
-import { Event } from 'src/entity/Event.entity'
+import { Event } from '../../entity/Event.entity'
 import { faker } from '@faker-js/faker'
 import HashtagFactory from './Hashtag.factory'
 import UserFactory from './User.factory'

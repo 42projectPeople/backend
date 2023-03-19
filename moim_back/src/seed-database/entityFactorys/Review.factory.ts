@@ -1,4 +1,4 @@
-import { Review } from 'src/entity/Review.entity'
+import { Review } from '../../entity/Review.entity'
 import { faker } from '@faker-js/faker'
 import EventFactory from './Event.factory'
 import UserFactory from './User.factory'
