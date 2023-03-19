@@ -20,14 +20,14 @@ hooks:
   #파일을 모두 이동한 후 실행되는 스크립트들
   #Timeout 옵션은 시간 내에 스크립트 실행이 완료되지 않으면 실패로 간주한다.
   AfterInstall:
-    - location: moim_back/scripts/InstallDependency.sh
-    - location: moim_back/scripts/InstallEnv.sh
-    - location: moim_back/scripts/BuildServer.sh
+    - location: .github/scripts/InstallDependency.sh
+    - location: .github/scripts/InstallEnv.sh
+    - location: .github/scripts/BuildServer.sh
 
   #어플리케이션 시작할 때 사용하는 스크립트
   #서버 시작하고 최대 20초 기다린다.
   ApplicationStart:
-    - location: moim_back/scripts/StartServer.sh
+    - location: .github/scripts/StartServer.sh
       # timeout: 180 #완전하게 실행될때까지 대기 
 
   #서비스 재시작하고 서비스 올바르게 실행되는지 확인.
