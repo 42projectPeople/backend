@@ -1,9 +1,9 @@
-import { setSeederFactory } from 'typeorm-extension'
 import { Event } from '../../entity/Event.entity'
-import UserFactory from '../entityFactorys/User.factory'
-import HashtagFactory from '../entityFactorys/Hashtag.factory'
+import { faker } from '@faker-js/faker'
+import HashtagFactory from './Hashtag.factory'
+import UserFactory from './User.factory'
 
-export default setSeederFactory(Event, (faker) => {
+const EventFactory = (): Event => {
   const fakeEvent = new Event()
 
   fakeEvent.createdAt = faker.date.past(10).toISOString()
@@ -49,7 +49,10 @@ export default setSeederFactory(Event, (faker) => {
     max: 5,
   })
   fakeEvent.host = UserFactory()
+
   fakeEvent.hashtag = HashtagFactory()
 
   return fakeEvent
-})
+}
+
+export default EventFactory
