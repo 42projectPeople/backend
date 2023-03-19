@@ -56,7 +56,7 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
 
     - name: S3 업로드
-      run: aws deploy push --application-name test_release --description "study-app server" --s3-location s3://moim-test-release/moim.zip --source .
+      run: aws deploy push --application-name test_release --description "upload test server file in s3" --s3-location s3://moim-test-release/moim.zip --source .
 
     - name: Create CodeDeploy Deployment
       run: |
