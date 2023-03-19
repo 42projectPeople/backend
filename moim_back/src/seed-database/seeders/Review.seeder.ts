@@ -11,7 +11,7 @@ export default class ReviewSeeder implements Seeder {
   ): Promise<any> {
     const Factory = factoryManager.get(Review)
 
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < QT; i++) {
       try {
         await Factory.save()
       } catch (e) {
