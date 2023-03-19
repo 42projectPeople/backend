@@ -9,7 +9,6 @@ files:
     destination: /home/ubuntu
     overwrite: yes
 
-
 #배포시 발생하는 생명주기마다 원하는 스크립트 실행 후크 제공
 #실행할 스크립트들은 scripts폴더 내에 두고 보관한다.
 #실행권한을 추가해야한다.
