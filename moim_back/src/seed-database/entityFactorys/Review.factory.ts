@@ -1,9 +1,9 @@
-import { setSeederFactory } from 'typeorm-extension'
-import { Review } from '../../entity/Review.entity'
-import EventFactory from '../entityFactorys/Event.factory'
-import UserFactory from '../entityFactorys/User.factory'
+import { Review } from 'src/entity/Review.entity'
+import { faker } from '@faker-js/faker'
+import EventFactory from './Event.factory'
+import UserFactory from './User.factory'
 
-export default setSeederFactory(Review, (faker) => {
+const ReviewFactory = (): Review => {
   const fakeReview = new Review()
 
   fakeReview.content = faker.word.noun({
@@ -20,4 +20,6 @@ export default setSeederFactory(Review, (faker) => {
   fakeReview.eventId = EventFactory()
   fakeReview.createdAt = faker.date.recent(10)
   return fakeReview
-})
+}
+
+export default ReviewFactory

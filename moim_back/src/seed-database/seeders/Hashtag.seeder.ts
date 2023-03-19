@@ -11,7 +11,7 @@ export default class HashtagSeeder implements Seeder {
   ): Promise<any> {
     const Factory = factoryManager.get(Hashtag)
 
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < QT; i++) {
       try {
         await Factory.save()
       } catch (e) {
