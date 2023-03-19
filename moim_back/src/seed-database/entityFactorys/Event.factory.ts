@@ -10,9 +10,9 @@ const EventFactory = (): Event => {
   fakeEvent.eventDate = faker.date.soon().toISOString()
   fakeEvent.modifiedAt = faker.date.recent().toISOString()
   fakeEvent.images = [
-    faker.image.fashion(),
-    faker.image.fashion(),
-    faker.image.sports(),
+    faker.image.imageUrl(640, 480, 'cat', true),
+    faker.image.imageUrl(640, 480, 'fashion', true),
+    faker.image.imageUrl(640, 480, 'people', true),
   ].join(' ')
   fakeEvent.openTalkLink = faker.internet.url()
   fakeEvent.content = faker.word.conjunction()
