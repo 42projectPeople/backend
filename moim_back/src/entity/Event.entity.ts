@@ -265,13 +265,13 @@ export class Event {
     description: '이벤트게시글 작성자(유저)',
     example: 1,
   })
-  @ManyToOne(() => User, (user) => user.userId)
+  @ManyToOne(() => User, (user) => user.userId, { cascade: true })
   @JoinColumn({
     name: 'hostId',
   })
   host: User | number
 
-  @OneToMany(() => User_Events, (ue) => ue.event, { cascade: true })
+  @OneToMany(() => User_Events, (ue) => ue.event)
   participent: User_Events[]
 
   /*
@@ -283,7 +283,7 @@ export class Event {
   })
   @IsInt()
   @IsPositive()
-  @ManyToOne(() => Hashtag, (hashtag) => hashtag.hashtagId)
+  @ManyToOne(() => Hashtag, (hashtag) => hashtag.hashtagId, { cascade: true })
   @JoinColumn({
     name: 'hashtagId',
   })

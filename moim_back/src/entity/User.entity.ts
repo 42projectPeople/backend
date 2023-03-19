@@ -83,7 +83,7 @@ export class User {
   @OneToMany(() => User_Events, (ue) => ue.userId)
   participants: User_Events[]
 
-  @ManyToMany(() => Hashtag, (hashtag) => hashtag.users)
+  @ManyToMany(() => Hashtag, (hashtag) => hashtag.users, { cascade: true })
   @JoinTable({
     name: 'user_interest_hashtags',
     joinColumn: {

@@ -80,7 +80,7 @@ export class Review {
   /*
    * userId
    * */
-  @ManyToOne(() => User, (user) => user.userId)
+  @ManyToOne(() => User, (user) => user.userId, { cascade: true })
   @JoinColumn({
     name: 'reviewerId',
   })
@@ -89,7 +89,7 @@ export class Review {
   /*
    * referencing event
    * */
-  @ManyToOne(() => Event, (event) => event.eventId)
+  @ManyToOne(() => Event, (event) => event.eventId, { cascade: true })
   @JoinColumn({
     name: 'eventId',
   })
