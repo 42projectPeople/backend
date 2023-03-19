@@ -55,7 +55,17 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
 
     - name: S3 업로드
-      run: aws deploy push --application-name test_release --description "study-app server" --s3-location s3://moim-test-release/files.zip --source .
+      run: aws deploy push --application-name test_release --description "study-app server" --s3-location s3://moim-test-release/moim.zip --source .
 
-    - name: code deploy
-      run: aws deploy create-deployment --application-name test_release --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name test_group --s3-location bucket=moim-test-release, bundleType=zip, key=files.zip
+    - name: Create CodeDeploy Deployment
+      run: |
+        aws deploy create-deployment \
+        --application-name test_release \
+        --deployment-config-name CodeDeployDefault.OneAtATime \
+        --deployment-group-name test_group \
+        --s3-location bucket=moim-test-release,bundleType=zip,key=moim.zip
+
+    - name: Wait for Deployment
+      run: |
+        aws deploy wait deployment-successful \
+        --deployment-id ${{ env.DEPLOYMENT_ID }}
