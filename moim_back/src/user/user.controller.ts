@@ -4,6 +4,7 @@ import {
   Controller,
   DefaultValuePipe,
   Delete,
+  ForbiddenException,
   Get,
   HttpStatus,
   Param,
@@ -168,7 +169,7 @@ export class UserController {
    * @param userId
    * @param role
    */
-  @Get(':userID/event')
+  @Get(':userId/event/host')
   @UseGuards(JWTAuthGuard)
   @DocsGetUserEvents()
   @UsePipes(
@@ -179,24 +180,49 @@ export class UserController {
       forbidUnknownValues: true,
     })
   )
-  async getUserEvents(
-    @Param('userID', ParseIntPipe) userId: number,
+  async getUserEventsHost(
+    @Param('userId', ParseIntPipe) userId: number,
     @Query() userEventDto: GetUserEventDto,
     @Req() req: Request
-  ): Promise<EventData> {
-    if (userEventDto.role === UserEventRoleType.HOST) {
-      return {
-        events: await this.userService.findAllUserHostEvent(req.user.userId),
-      }
-    } else if (
-      userEventDto.role === undefined ||
-      userEventDto.role === UserEventRoleType.GUEST
-    ) {
-      return {
-        events: await this.userService.findAllUserGuestEvent(+userId),
-      }
-    } else {
-      throw new BadRequestException('invalid query')
+  ) {
+    if (userId != req.user.userId)
+      throw new ForbiddenException('Forbidden resource')
+    return {
+      events: await this.userService.findAllUserHostEvent(
+        req.user.userId,
+        userEventDto
+      ),
+    }
+  }
+
+  /**
+   * RESTRICTED: login user
+   * @param userId
+   * @param role
+   */
+  @Get(':userId/event/guest')
+  @UseGuards(JWTAuthGuard)
+  @DocsGetUserEvents()
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
+  async getUserEventsGuest(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Query() userEventDto: GetUserEventDto,
+    @Req() req: Request
+  ) {
+    if (userId != req.user.userId)
+      throw new ForbiddenException('Forbidden resource')
+    return {
+      events: await this.userService.findAllUserGuestEvent(
+        req.user.userId,
+        userEventDto
+      ),
     }
   }
 

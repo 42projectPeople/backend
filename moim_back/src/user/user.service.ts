@@ -13,6 +13,7 @@ import { RegisterEventRequestDto } from './dto/registerEventRequestDto'
 import { User_Events } from '../entity/User_Events.entity'
 import { UnregisterEventRequestDto } from './dto/unregisterEventRequestDto'
 import { Event } from '../entity/Event.entity'
+import { GetUserEventDto } from './dto/getUserEvents.dto'
 
 @Injectable()
 export class UserService {
@@ -88,7 +89,10 @@ export class UserService {
     return info.length === 0
   }
 
-  async findAllUserHostEvent(userId: number): Promise<Event[]> {
+  async findAllUserHostEvent(
+    userId: number,
+    userEventDto: GetUserEventDto
+  ): Promise<Event[]> {
     const qb = this.eventRepository.createQueryBuilder('e')
 
     try {
@@ -99,12 +103,14 @@ export class UserService {
     }
   }
 
-  async findAllUserGuestEvent(userId: number): Promise<Event[]> {
+  async findAllUserGuestEvent(
+    userId: number,
+    userEventDto: GetUserEventDto
+  ): Promise<Event[]> {
     const qb = this.eventRepository.createQueryBuilder('e')
 
     try {
-      return await this.eventRepository
-        .createQueryBuilder('e')
+      const query = qb
         .leftJoin(
           'user_events',
           'user_events',
@@ -114,7 +120,8 @@ export class UserService {
           'user_events.userId = :userId and user_events.deletedAt is null',
           { userId }
         )
-        .getMany()
+
+      return await query.getMany()
     } catch (err) {
       throw new InternalServerErrorException('database server error')
     }
