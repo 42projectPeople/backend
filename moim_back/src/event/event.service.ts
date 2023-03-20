@@ -27,35 +27,40 @@ export class EventService {
       await queryRunner.connect()
       await queryRunner.startTransaction()
 
-      const event = await queryRunner.manager.find(Event, {
-        relations: ['hashtag'],
-        where: {
-          eventId,
-        },
-      })
+      //eventId인 이벤트를 가져온다.
+      const event = await queryRunner.manager
+        .createQueryBuilder(Event, 'e')
+        .select()
+        .leftJoinAndSelect('e.hashtag', 'h', 'e.hashtagId = h.hashtagId')
+        .leftJoinAndSelect('e.host', 'u', 'e.hostId = u.userId')
+        .where('eventId = :id', {
+          id: eventId,
+        })
+        .getRawMany()
+
       //check length
       if (event.length != 1)
         throw new NotFoundException('해당 이벤트가 존재하지 않습니다.')
-      if (event[0].host === userId) role = RolesInEvent.HOST
+      if (event[0].e_hostId === userId) {
+        role = RolesInEvent.HOST
+      }
 
       //check if only current user might seems to be looker
-      if (role != RolesInEvent.HOST) {
-        const isGuest = await queryRunner.manager.find(User_Events, {
-          where: {
-            userId,
-            eventId,
-            /*
-             * user: userId,
-             * event: eventId
-             * */
-          },
-        })
+      if (role !== RolesInEvent.HOST) {
+        const isGuest = await queryRunner.manager
+          .createQueryBuilder(User_Events, 'u_e')
+          .select()
+          .where('u_e.eventId = :eventId AND u_e.userId = :userId', {
+            eventId: eventId,
+            userId: userId,
+          })
+          .getRawMany()
         if (isGuest.length != 0) role = RolesInEvent.GUEST
       }
       await queryRunner.commitTransaction()
-      console.log(event)
       return new ReturnEventDto(event[0], role)
     } catch (e) {
+      console.log(e)
       if (e.errno === 404) throw e
       throw new InternalServerErrorException()
     } finally {
