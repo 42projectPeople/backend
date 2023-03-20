@@ -274,7 +274,7 @@ export class Event {
   })
   host: User | number
 
-  @OneToMany(() => User_Events, (ue) => ue.event, { cascade: true })
+  @OneToMany(() => User_Events, (ue) => ue.event)
   participent: User_Events[]
 
   /*
@@ -286,7 +286,7 @@ export class Event {
   })
   @IsInt()
   @IsPositive()
-  @ManyToOne(() => Hashtag, (hashtag) => hashtag.hashtagId)
+  @ManyToOne(() => Hashtag, (hashtag) => hashtag.hashtagId, { cascade: true })
   @JoinColumn({
     name: 'hashtagId',
   })

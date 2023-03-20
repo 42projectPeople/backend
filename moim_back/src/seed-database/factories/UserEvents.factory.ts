@@ -6,8 +6,13 @@ import UserFactory from '../entityFactorys/User.factory'
 export default setSeederFactory(User_Events, (faker) => {
   const fakeUserEvents = new User_Events()
 
-  fakeUserEvents.event = EventFactory()
-  fakeUserEvents.user = UserFactory()
+  const fakeEvent = EventFactory()
+  const fakeUser = UserFactory()
+
+  fakeUserEvents.event = fakeEvent
+  fakeUserEvents.eventId = fakeEvent.eventId
+  fakeUserEvents.user = fakeUser
+  fakeUserEvents.userId = fakeUser.userId
 
   return fakeUserEvents
 })

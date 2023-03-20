@@ -33,7 +33,10 @@ export class User_Events {
   @Column({ name: 'userId' })
   userId: number
 
-  @ManyToOne(() => User, (user) => user.userId, { nullable: false })
+  @ManyToOne(() => User, (user) => user.userId, {
+    nullable: false,
+    cascade: true,
+  })
   @JoinColumn({
     name: 'userId',
   })
@@ -45,7 +48,10 @@ export class User_Events {
   @Column({ name: 'eventId' })
   eventId: number
 
-  @ManyToOne(() => Event, (event) => event.participent, { nullable: false })
+  @ManyToOne(() => Event, (event) => event.participent, {
+    nullable: false,
+    cascade: true,
+  })
   @JoinColumn({
     name: 'eventId',
   })

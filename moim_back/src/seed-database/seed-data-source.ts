@@ -7,10 +7,6 @@ import { Hashtag } from '../entity/Hashtag.entity'
 import { Review } from '../entity/Review.entity'
 import { Event } from '../entity/Event.entity'
 import UserSeeder from './seeders/User.seeder'
-import HashtagSeeder from './seeders/Hashtag.seeder'
-import ReviewSeeder from './seeders/Review.seeder'
-import EventSeeder from './seeders/Event.seeder'
-import UserEventSeeder from './seeders/UserEvents.seeder'
 
 console.log('.dev.dev.local로만 작동합니다.')
 console.log('.dev.dev.local로만 작동합니다.')
@@ -41,13 +37,7 @@ const runner = async () => {
     dropSchema: true,
     synchronize: true,
     entities: [User, User_Events, Hashtag, Event, Review],
-    seeds: [
-      UserSeeder,
-      HashtagSeeder,
-      EventSeeder,
-      ReviewSeeder,
-      UserEventSeeder,
-    ],
+    seeds: [UserSeeder],
     factories: ['src/seed-database/factories/*.ts'],
   }
   const datasource = new DataSource(options)
