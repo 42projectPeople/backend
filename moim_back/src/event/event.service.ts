@@ -32,6 +32,7 @@ export class EventService {
         .createQueryBuilder(Event, 'e')
         .select()
         .leftJoinAndSelect('e.hashtag', 'h', 'e.hashtagId = h.hashtagId')
+        .leftJoinAndSelect('e.host', 'u', 'e.hostId = u.userId')
         .where('eventId = :id', {
           id: eventId,
         })
@@ -45,7 +46,7 @@ export class EventService {
       }
 
       //check if only current user might seems to be looker
-      if (role != RolesInEvent.HOST) {
+      if (role !== RolesInEvent.HOST) {
         const isGuest = await queryRunner.manager
           .createQueryBuilder(User_Events, 'u_e')
           .select()
@@ -59,6 +60,7 @@ export class EventService {
       await queryRunner.commitTransaction()
       return new ReturnEventDto(event[0], role)
     } catch (e) {
+      console.log(e)
       if (e.errno === 404) throw e
       throw new InternalServerErrorException()
     } finally {
