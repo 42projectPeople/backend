@@ -263,7 +263,7 @@ export class Event {
 
   @ApiProperty({
     description: '이벤트게시글 작성자(유저)',
-    example: 1,
+    example: User,
   })
   @ManyToOne(() => User, (user) => user.userId, {
     eager: true,
