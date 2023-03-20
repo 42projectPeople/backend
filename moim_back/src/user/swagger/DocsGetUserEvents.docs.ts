@@ -3,8 +3,8 @@ import {
   ApiBadRequestResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiQuery,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger'
 import { EventData } from '../utils/EventData'
 
@@ -14,12 +14,9 @@ export function DocsGetUserEvents() {
       summary: 'get user events',
       description: 'get user register or hosted events.',
     }),
-    ApiQuery({
-      name: 'role',
-      description: 'user role in event. (host || guest)',
-    }),
+    ApiBearerAuth('accessToken'),
     ApiParam({
-      name: 'userID',
+      name: 'userId',
       description: 'user id',
     }),
     ApiOkResponse({

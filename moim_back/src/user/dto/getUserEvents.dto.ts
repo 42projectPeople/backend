@@ -1,20 +1,42 @@
-import { ApiProperty, PickType } from '@nestjs/swagger'
-import { UserEventRoleType } from '../utils/UserEventRoleType'
+import { PickType, ApiProperty } from '@nestjs/swagger'
+import { IsBoolean, IsOptional } from 'class-validator'
+import { TransformBooleanInParam } from 'src/search/dto/utils/TransformBooleanInDto'
 import { PaginationDto } from './Pagination.dto'
-
-// enum UserRole {
-//   ADMIN = 'admin',
-//   USER = 'user',
-//   GUEST = 'guest',
-// }
 
 export class GetUserEventDto extends PickType(PaginationDto, [
   'page',
   'pageSize',
 ] as const) {
   @ApiProperty({
-    enum: UserEventRoleType,
-    enumName: 'UserEventRoleType',
+    description: '이벤트 조회순으로 정렬하는가?',
+    required: false,
+    default: false,
+    example: false,
   })
-  role: UserEventRoleType
+  @IsOptional()
+  @IsBoolean()
+  @TransformBooleanInParam()
+  private readonly sortByViews?: boolean = false
+
+  @ApiProperty({
+    description: '이벤트 시작 날짜로 정렬하는가?',
+    required: false,
+    default: false,
+    example: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  @TransformBooleanInParam()
+  private readonly sortByEventStartDate?: boolean = false
+
+  @ApiProperty({
+    description: '종료된 이벤트를 포함하는가?',
+    required: false,
+    default: false,
+    example: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  @TransformBooleanInParam()
+  private readonly includeEndEvent?: boolean = false
 }
