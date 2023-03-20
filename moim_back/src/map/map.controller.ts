@@ -3,7 +3,9 @@ import { MapService } from './map.service'
 import { GetCoordinationRequestDto } from './dto/getCoordinationRequestDto'
 import { GetCoordinationResponseDto } from './dto/getCoordinationResponse.dto'
 import { SearchPlaceRequestDto } from './dto/searchPlaceRequest.dto'
+import { ApiTags } from '@nestjs/swagger'
 
+@ApiTags('map api')
 @Controller('map')
 export class MapController {
   constructor(private mapService: MapService) {}
