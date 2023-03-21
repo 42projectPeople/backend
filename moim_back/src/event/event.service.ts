@@ -27,6 +27,7 @@ export class EventService {
       await queryRunner.connect()
       await queryRunner.startTransaction()
 
+<<<<<<< HEAD
       //eventId인 이벤트를 가져온다.
       const event = await queryRunner.manager
         .createQueryBuilder(Event, 'e')
@@ -61,6 +62,37 @@ export class EventService {
       return new ReturnEventDto(event[0], role)
     } catch (e) {
       console.log(e)
+=======
+      const event = await queryRunner.manager.find(Event, {
+        relations: ['hashtag'],
+        where: {
+          eventId,
+        },
+      })
+      //check length
+      if (event.length != 1)
+        throw new NotFoundException('해당 이벤트가 존재하지 않습니다.')
+      if (event[0].host === userId) role = RolesInEvent.HOST
+
+      //check if only current user might seems to be looker
+      if (role != RolesInEvent.HOST) {
+        const isGuest = await queryRunner.manager.find(User_Events, {
+          where: {
+            userId,
+            eventId,
+            /*
+             * user: userId,
+             * event: eventId
+             * */
+          },
+        })
+        if (isGuest.length != 0) role = RolesInEvent.GUEST
+      }
+      await queryRunner.commitTransaction()
+      console.log(event)
+      return new ReturnEventDto(event[0], role)
+    } catch (e) {
+>>>>>>> feat_user
       if (e.errno === 404) throw e
       throw new InternalServerErrorException()
     } finally {

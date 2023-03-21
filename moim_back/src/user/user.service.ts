@@ -13,6 +13,7 @@ import { RegisterEventRequestDto } from './dto/registerEventRequestDto'
 import { User_Events } from '../entity/User_Events.entity'
 import { UnregisterEventRequestDto } from './dto/unregisterEventRequestDto'
 import { Event } from '../entity/Event.entity'
+import { GetUserEventDto } from './dto/getUserEvents.dto'
 
 @Injectable()
 export class UserService {
@@ -88,30 +89,58 @@ export class UserService {
     return info.length === 0
   }
 
-  async findAllUserHostEvent(userId: number): Promise<Event[]> {
+  async findAllUserHostEvent(
+    userId: number,
+    userEventDto: GetUserEventDto
+  ): Promise<Event[]> {
+    const qb = this.eventRepository.createQueryBuilder('e')
+
     try {
-      return await this.eventRepository.find({
-        where: { host: userId },
-      })
+      const query = qb.select().where('e.hostId = :id', { id: userId })
+
+      if (userEventDto.sortByViews) query.addOrderBy('views', 'DESC')
+      if (userEventDto.sortByEventStartDate)
+        query.addOrderBy('eventDate', 'DESC')
+      if (!userEventDto.includeEndEvent) query.andWhere('eventDate > CURDATE()')
+
+      query
+        .offset((userEventDto.page - 1) * userEventDto.pageSize)
+        .limit(userEventDto.pageSize)
+
+      return await query.getRawMany()
     } catch (err) {
       throw new InternalServerErrorException('database server error')
     }
   }
 
-  async findAllUserGuestEvent(userId: number): Promise<Event[]> {
+  async findAllUserGuestEvent(
+    userId: number,
+    userEventDto: GetUserEventDto
+  ): Promise<Event[]> {
+    const qb = this.eventRepository.createQueryBuilder('e')
+
     try {
-      return await this.eventRepository
-        .createQueryBuilder()
+      const query = qb
         .leftJoin(
           'user_events',
           'user_events',
-          'user_events.event_id = events.id'
+          'user_events.eventId = e.eventId'
         )
         .where(
-          'user_events.user_id = :userId and user_events.deletedAt is null',
+          'user_events.userId = :userId and user_events.deletedAt is null',
           { userId }
         )
-        .getMany()
+
+      if (userEventDto.sortByViews) query.addOrderBy('views', 'DESC')
+      if (userEventDto.sortByEventStartDate)
+        query.addOrderBy('eventDate', 'DESC')
+      if (!userEventDto.includeEndEvent) query.andWhere('eventDate > CURDATE()')
+
+      query
+        .offset((userEventDto.page - 1) * userEventDto.pageSize)
+        .limit(userEventDto.pageSize)
+
+      return await query.getRawMany()
     } catch (err) {
       throw new InternalServerErrorException('database server error')
     }

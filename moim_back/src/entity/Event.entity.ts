@@ -263,18 +263,28 @@ export class Event {
 
   @ApiProperty({
     description: '이벤트게시글 작성자(유저)',
+<<<<<<< HEAD
     example: User,
   })
   @ManyToOne(() => User, (user) => user.userId, {
     eager: true,
     nullable: false,
   })
+=======
+    example: 1,
+  })
+  @ManyToOne(() => User, (user) => user.userId)
+>>>>>>> feat_user
   @JoinColumn({
     name: 'hostId',
   })
   host: User | number
 
+<<<<<<< HEAD
   @OneToMany(() => User_Events, (ue) => ue.event)
+=======
+  @OneToMany(() => User_Events, (ue) => ue.event, { cascade: true })
+>>>>>>> feat_user
   participent: User_Events[]
 
   /*
@@ -286,7 +296,11 @@ export class Event {
   })
   @IsInt()
   @IsPositive()
+<<<<<<< HEAD
   @ManyToOne(() => Hashtag, (hashtag) => hashtag.hashtagId, { cascade: true })
+=======
+  @ManyToOne(() => Hashtag, (hashtag) => hashtag.hashtagId)
+>>>>>>> feat_user
   @JoinColumn({
     name: 'hashtagId',
   })

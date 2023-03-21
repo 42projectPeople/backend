@@ -48,10 +48,14 @@ export class User_Events {
   @Column({ name: 'eventId' })
   eventId: number
 
+<<<<<<< HEAD
   @ManyToOne(() => Event, (event) => event.participent, {
     nullable: false,
     cascade: true,
   })
+=======
+  @ManyToOne(() => Event, (event) => event.participent, { nullable: false })
+>>>>>>> feat_user
   @JoinColumn({
     name: 'eventId',
   })
