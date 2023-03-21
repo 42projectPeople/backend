@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { ApiProperty, PickType } from '@nestjs/swagger'
 import { Event } from 'src/entity/Event.entity'
 import { RolesInEvent } from '../utils/rolesInEvent.enum'
@@ -177,12 +176,6 @@ class FindEventDto {
   u_userTitle: string
 }
 
-=======
-import { ApiProperty } from '@nestjs/swagger'
-import { Event } from 'src/entity/Event.entity'
-import { RolesInEvent } from '../utils/rolesInEvent.enum'
-
->>>>>>> feat_user
 export class ReturnEventDto {
   @ApiProperty({
     examples: ['host', 'guest', 'looker'],
@@ -190,17 +183,10 @@ export class ReturnEventDto {
   role: string
 
   @ApiProperty({
-<<<<<<< HEAD
     type: FindEventDto,
     example: FindEventDto,
   })
   readonly event: Event
-=======
-    type: Event,
-    example: Event,
-  })
-  event: Event
->>>>>>> feat_user
 
   constructor(event: Event, role: RolesInEvent) {
     this.event = event
