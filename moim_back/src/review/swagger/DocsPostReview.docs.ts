@@ -5,6 +5,7 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiTooManyRequestsResponse,
+  ApiBearerAuth,
 } from '@nestjs/swagger'
 import CreateReviewDto from '../dto/createReview.dto'
 
@@ -17,6 +18,7 @@ export function DocsPostReview() {
     ApiCreatedResponse({
       description: 'created',
     }),
+    ApiBearerAuth('accessToken'),
     ApiTooManyRequestsResponse({
       description: 'too fast request',
     }),

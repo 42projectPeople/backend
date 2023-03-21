@@ -12,14 +12,6 @@ export default class CreateReviewDto {
   content: string
 
   @ApiProperty({
-    description: '작성자 userId',
-    required: true,
-    example: 1,
-  })
-  @IsNumber()
-  readonly reviewerId: number
-
-  @ApiProperty({
     description: '댓글이 적힌 이벤트의 ID',
     required: true,
     example: 56,
@@ -30,11 +22,14 @@ export default class CreateReviewDto {
   /*
    * dto to entity, static
    * */
-  static toEntity(createReviewDto: CreateReviewDto): Review {
+  static toEntity(
+    createReviewDto: CreateReviewDto,
+    reviewerId: number
+  ): Review {
     const review = new Review()
     review.content = createReviewDto.content
     review.eventId = createReviewDto.eventId
-    review.reviewerId = createReviewDto.reviewerId
+    review.reviewerId = reviewerId
     return review
   }
 }
