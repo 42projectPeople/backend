@@ -27,6 +27,7 @@ import {
 } from './dto/ServiceGetReview.dto'
 import { JWTAuthGuard } from 'src/auth/jwt-auth/jwt-auth.guard'
 import { Request } from 'express'
+import { GetReviewByHostIdDto } from './dto/GetReviewByHostId.dto'
 
 @Controller('review')
 @ApiTags('review api')
@@ -68,6 +69,25 @@ export class ReviewController {
   ): Promise<Review[]> {
     return await this.reviewService.findReviewByUserId(
       new ServiceGetReviewByUserId(paginationDto, +userId)
+    )
+  }
+
+  @Get('/user/host/:hostId')
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
+  async getReviewByHostId(
+    @Param('hostId') hostId: string,
+    @Query() getReviewByHostId: GetReviewByHostIdDto
+  ): Promise<Review[]> {
+    return await this.reviewService.findReviewByHostId(
+      getReviewByHostId,
+      +hostId
     )
   }
 
