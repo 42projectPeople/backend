@@ -19,7 +19,7 @@ export class GetUserEventDto extends PickType(PaginationDto, [
   readonly sortByViews?: boolean = false
 
   @ApiProperty({
-    description: '이벤트 시작 날짜로 정렬하는가?',
+    description: '이벤트 시작 날짜로 정렬(시작날짜가 가까운 순)하는가?',
     required: false,
     default: false,
     example: false,
