@@ -5,6 +5,8 @@ import {
   ApiOperation,
   ApiUnauthorizedResponse,
   ApiParam,
+  ApiBearerAuth,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger'
 
 export function DocsPatchReview() {
@@ -13,14 +15,18 @@ export function DocsPatchReview() {
       summary: 'update review',
       description: 'update review',
     }),
+    ApiBearerAuth('accessToken'),
     ApiUnauthorizedResponse({
-      description: 'unauthorized',
+      description: '로그인하세요',
     }),
     ApiOkResponse({
       description: 'updated',
     }),
     ApiInternalServerErrorResponse({
       description: 'database server error',
+    }),
+    ApiNotFoundResponse({
+      description: '업데이트하고자 하는 리뷰가 없습니다.',
     }),
     ApiParam({
       name: 'reviewId',

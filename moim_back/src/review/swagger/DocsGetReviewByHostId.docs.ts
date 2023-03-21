@@ -2,11 +2,11 @@ import { applyDecorators } from '@nestjs/common'
 import { ApiOperation, ApiOkResponse, ApiParam } from '@nestjs/swagger'
 import { Review } from 'src/entity/Review.entity'
 
-export function DocsGetReviewByUserId() {
+export function DocsGetReviewByHostId() {
   return applyDecorators(
     ApiOperation({
-      summary: 'get reviews by userId',
-      description: 'get reviews by user',
+      summary: 'get reviews by hostId',
+      description: 'get reviews by hostId',
     }),
     ApiOkResponse({
       description: 'Get Success',
@@ -14,8 +14,8 @@ export function DocsGetReviewByUserId() {
       type: Review,
     }),
     ApiParam({
-      name: 'userId',
-      description: '리뷰를 요청할 사용자의 아이디',
+      name: 'hostId',
+      description: '리뷰를 가져올 호스트의 아이디',
       required: true,
       type: Number,
       example: 1,

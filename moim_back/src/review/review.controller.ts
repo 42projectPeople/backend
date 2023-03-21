@@ -8,6 +8,8 @@ import {
   Query,
   ValidationPipe,
   UsePipes,
+  UseGuards,
+  Req,
 } from '@nestjs/common'
 import { ReviewService } from './review.service'
 import { UpdateReviewDto } from './dto/UpdateReview.dto'
@@ -23,6 +25,9 @@ import {
   ServiceGetReviewByEventId,
   ServiceGetReviewByUserId,
 } from './dto/ServiceGetReview.dto'
+import { JWTAuthGuard } from 'src/auth/jwt-auth/jwt-auth.guard'
+import { Request } from 'express'
+import { GetReviewByHostIdDto } from './dto/GetReviewByHostId.dto'
 
 @Controller('review')
 @ApiTags('review api')
@@ -67,9 +72,7 @@ export class ReviewController {
     )
   }
 
-  @Post('/')
-  @DocsPostReview()
-  //need session guard
+  @Get('/user/host/:hostId')
   @UsePipes(
     new ValidationPipe({
       transform: true,
@@ -78,17 +81,35 @@ export class ReviewController {
       forbidUnknownValues: true,
     })
   )
-  async create(@Body() createReviewDto: CreateReviewDto) {
-    /*
-     * if (req.user.userId != createReviewDto.reviewerId)
-     * 	throw new ForbiddenException('Forbidden access')
-     * */
-    await this.reviewService.create(createReviewDto)
+  async getReviewByHostId(
+    @Param('hostId') hostId: string,
+    @Query() getReviewByHostId: GetReviewByHostIdDto
+  ): Promise<Review[]> {
+    return await this.reviewService.findReviewByHostId(
+      getReviewByHostId,
+      +hostId
+    )
+  }
+
+  @Post('/')
+  @DocsPostReview()
+  @UseGuards(JWTAuthGuard)
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
+  async create(@Body() createReviewDto: CreateReviewDto, @Req() req: Request) {
+    await this.reviewService.create(createReviewDto, req.user.userId)
   }
 
   @Patch(':reviewId')
   @DocsPatchReview()
   //need session guard
+  @UseGuards(JWTAuthGuard)
   @UsePipes(
     new ValidationPipe({
       transform: true,
@@ -99,14 +120,14 @@ export class ReviewController {
   )
   async patchReview(
     @Param('reviewId') reviewId: string,
-    @Body() updateReviewDto: UpdateReviewDto
+    @Body() updateReviewDto: UpdateReviewDto,
+    @Req() req: Request
   ) {
-    /*
-     * if (req.session.userId != UpdateReviewDto.reviewerId)
-     * 	throw new ForbiddenException()
-     * */
-    const userId = 1 //jwt user id
-    return await this.reviewService.update(updateReviewDto, +reviewId, userId)
+    return await this.reviewService.update(
+      updateReviewDto,
+      +reviewId,
+      req.user.userId
+    )
   }
 
   //@Delete(':reviewId')

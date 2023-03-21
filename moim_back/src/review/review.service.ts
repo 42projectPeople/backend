@@ -13,12 +13,17 @@ import {
   ServiceGetReviewByEventId,
   ServiceGetReviewByUserId,
 } from './dto/ServiceGetReview.dto'
+import { PaginationDto } from './dto/Pagination.dto'
+import { GetReviewByHostIdDto } from './dto/GetReviewByHostId.dto'
+import { Event } from 'src/entity/Event.entity'
 
 @Injectable()
 export class ReviewService {
   constructor(
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
+    @InjectRepository(Event)
+    private readonly eventRepository: Repository<Event>,
     private datasource: DataSource
   ) {}
 
@@ -48,7 +53,6 @@ export class ReviewService {
         .limit(serviceDto.getPageSize())
       return await qb.getMany()
     } catch (e) {
-      console.log(e.message)
       throw new InternalServerErrorException()
     }
   }
@@ -56,10 +60,9 @@ export class ReviewService {
   async findReviewByUserId(
     serviceDto: ServiceGetReviewByUserId
   ): Promise<Review[]> {
+    const qb = this.reviewRepository.createQueryBuilder('r')
     try {
-      const qb = this.reviewRepository
-        .createQueryBuilder('r')
-        .innerJoin('r.eventId', 'e', 'e.eventId = r.eventId')
+      const query = qb
         .innerJoinAndSelect('r.reviewerId', 'u', 'u.userId = r.reviewerId')
         .select([
           'r.reviewId',
@@ -74,24 +77,51 @@ export class ReviewService {
           'u.userProfilePhoto',
           'u.userLevel',
         ])
-        .where("reviewerId = :id AND isDeleted = 'N'", {
+        .where("r.reviewerId = :id AND r.isDeleted = 'N'", {
           id: serviceDto.getUserId(),
         })
         .offset(serviceDto.getStartIndex())
         .limit(serviceDto.getPageSize())
-      return await qb.getMany()
+      return await query.getRawMany()
     } catch (e) {
       throw new InternalServerErrorException()
     }
   }
 
-  async create(createReviewDto: CreateReviewDto): Promise<void> {
+  async findReviewByHostId(
+    getReviewByHostId: GetReviewByHostIdDto,
+    hostId: number
+  ): Promise<Review[]> {
+    const qb = this.eventRepository.createQueryBuilder('e')
+    try {
+      const query = qb
+        .innerJoinAndSelect('e.reviewIds', 'r')
+        .where('e.hostId = :hostId', { hostId: hostId })
+
+      if (getReviewByHostId.sortByEventDate)
+        query.addOrderBy('e.eventDate', 'DESC')
+      if (getReviewByHostId.sortByEventRating)
+        query
+          .addOrderBy('e.rating', 'DESC')
+
+          .offset((getReviewByHostId.page - 1) * getReviewByHostId.pageSize)
+          .limit(getReviewByHostId.page)
+      return await query.getRawMany()
+    } catch (e) {
+      throw new InternalServerErrorException()
+    }
+  }
+
+  async create(
+    createReviewDto: CreateReviewDto,
+    userId: number
+  ): Promise<void> {
     try {
       await this.reviewRepository
         .createQueryBuilder()
         .insert()
         .into(Review)
-        .values(CreateReviewDto.toEntity(createReviewDto))
+        .values(CreateReviewDto.toEntity(createReviewDto, userId))
         .execute()
     } catch (e) {
       if (e.errno == 1062)
@@ -109,7 +139,7 @@ export class ReviewService {
     updateReviewDto: UpdateReviewDto,
     reviewId: number,
     userId: number
-  ): Promise<void> {
+  ) {
     const queryRunner = this.datasource.createQueryRunner()
     try {
       await queryRunner.connect() //connection pool에서 connection을 가져옵니다.
@@ -125,13 +155,13 @@ export class ReviewService {
         //업데이트할 partial 객체
       )
 
-      //check if not affected
-      if (queryResult.affected == 0) throw new NotFoundException()
+      if (queryResult.affected == 0)
+        throw new NotFoundException('업데이트 할 리뷰가 없습니다.')
 
       await queryRunner.commitTransaction() //성공시 commit
     } catch (err) {
       await queryRunner.rollbackTransaction() //실패시 rollback
-      if (err.status === 404) throw new NotFoundException()
+      if (err.status === 404) throw err
       if (err.status === 500) throw new InternalServerErrorException()
     } finally {
       await queryRunner.release() //connection pool에 반환
@@ -158,12 +188,13 @@ export class ReviewService {
       )
 
       //check if not affected
-      if (queryResult.affected == 0) throw new NotFoundException()
+      if (queryResult.affected == 0)
+        throw new NotFoundException('삭제할 리뷰가 없습니다.')
 
       await queryRunner.commitTransaction() //성공시 commit
     } catch (err) {
       await queryRunner.rollbackTransaction() //실패시 rollback
-      if (err.status === 404) throw new NotFoundException()
+      if (err.status === 404) throw err
       if (err.status === 500) throw new InternalServerErrorException()
     } finally {
       await queryRunner.release() //connection pool에 반환
