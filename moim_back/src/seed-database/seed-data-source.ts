@@ -38,7 +38,6 @@ const runner = async () => {
     synchronize: true,
     entities: [User, User_Events, Hashtag, Event, Review],
     seeds: [UserSeeder],
-    factories: ['src/seed-database/factories/*.ts'],
   }
   const datasource = new DataSource(options)
   await datasource.initialize()
