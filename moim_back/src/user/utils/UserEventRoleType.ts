@@ -1,4 +1,4 @@
-export const enum UserEventRoleType {
+export enum UserEventRoleType {
   HOST = 'host',
   GUEST = 'guest',
 }
