@@ -139,7 +139,7 @@ export class AuthService {
       },
     })
     if (userFound === undefined || userFound === null) {
-      throw new UnauthorizedException('invalid token')
+      return null
     }
     return userFound
   }
@@ -200,7 +200,7 @@ export class AuthService {
   }
 
   async rotateTokens(request, body: any): Promise<TokenDto> {
-    const accessToken: string = this.getAccessTokenFromRequest(request)
+    const accessToken: string = body.accessToken
     const refreshToken: string = body.refreshToken
     let userId: number
     let exp: number
