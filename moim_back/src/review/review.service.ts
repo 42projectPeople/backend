@@ -58,7 +58,6 @@ export class ReviewService {
     try {
       const qb = this.reviewRepository
         .createQueryBuilder('r')
-        .innerJoin('r.eventId', 'e', 'e.eventId = r.eventId')
         .innerJoinAndSelect('r.reviewerId', 'u', 'u.userId = r.reviewerId')
         .select([
           'r.reviewId',
@@ -73,12 +72,12 @@ export class ReviewService {
           'u.userProfilePhoto',
           'u.userLevel',
         ])
-        .where("reviewerId = :id AND isDeleted = 'N'", {
+        .where("r.reviewerId = :id AND r.isDeleted = 'N'", {
           id: serviceDto.getUserId(),
         })
         .offset(serviceDto.getStartIndex())
         .limit(serviceDto.getPageSize())
-      return await qb.getMany()
+      return await qb.getRawMany()
     } catch (e) {
       throw new InternalServerErrorException()
     }
