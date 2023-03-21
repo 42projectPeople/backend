@@ -1,9 +1,7 @@
 import { Event } from '../../entity/Event.entity'
 import { faker } from '@faker-js/faker'
-import HashtagFactory from './Hashtag.factory'
-import UserFactory from './User.factory'
 
-const EventFactory = (): Event => {
+const EventFactory = (maxUserNumber: number): Event => {
   const fakeEvent = new Event()
 
   fakeEvent.createdAt = faker.date.past(10).toISOString()
@@ -44,11 +42,12 @@ const EventFactory = (): Event => {
     min: 5,
     max: 100,
   })
-  fakeEvent.curParticipant = faker.datatype.number({
-    min: 0,
-    max: 5,
+  fakeEvent.curParticipant = 0
+
+  fakeEvent.host = faker.datatype.number({
+    min: 1,
+    max: maxUserNumber,
   })
-  fakeEvent.host = UserFactory()
 
   fakeEvent.hashtag = faker.datatype.number({
     min: 1,

@@ -1,9 +1,7 @@
 import { Review } from '../../entity/Review.entity'
 import { faker } from '@faker-js/faker'
-import EventFactory from './Event.factory'
-import UserFactory from './User.factory'
 
-const ReviewFactory = (): Review => {
+const ReviewFactory = (maxUserNumber: number): Review => {
   const fakeReview = new Review()
 
   fakeReview.content = faker.word.noun({
@@ -16,8 +14,16 @@ const ReviewFactory = (): Review => {
     min: 0,
     max: 100,
   })
-  fakeReview.reviewerId = UserFactory()
-  fakeReview.eventId = EventFactory()
+  fakeReview.reviewerId = faker.datatype.number({
+    min: 1,
+    max: maxUserNumber,
+  })
+
+  fakeReview.eventId = faker.datatype.number({
+    min: 1,
+    max: maxUserNumber,
+  })
+
   fakeReview.createdAt = faker.date.recent(10)
   return fakeReview
 }

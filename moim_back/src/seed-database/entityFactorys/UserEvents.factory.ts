@@ -1,13 +1,24 @@
+import { faker } from '@faker-js/faker'
 import { User_Events } from '../../entity/User_Events.entity'
-import EventFactory from './Event.factory'
-import UserFactory from './User.factory'
 
-const UserEventFactory = () => {
+const UserEventFactory = (maxUserNumber: number) => {
   const fakeUserEvents = new User_Events()
 
-  fakeUserEvents.event = EventFactory()
+  const eventId = faker.datatype.number({
+    min: 1,
+    max: maxUserNumber,
+  })
 
-  fakeUserEvents.user = UserFactory()
+  fakeUserEvents.event = eventId
+  fakeUserEvents.eventId = eventId
+
+  const userId = faker.datatype.number({
+    min: 1,
+    max: maxUserNumber,
+  })
+
+  fakeUserEvents.user = userId
+  fakeUserEvents.userId = userId
 
   return fakeUserEvents
 }
