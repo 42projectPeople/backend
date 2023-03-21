@@ -268,6 +268,7 @@ export class Event {
   @ManyToOne(() => User, (user) => user.userId, {
     eager: true,
     nullable: false,
+    cascade: true,
   })
   @JoinColumn({
     name: 'hostId',
