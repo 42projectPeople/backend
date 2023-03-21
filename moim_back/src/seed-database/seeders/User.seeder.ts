@@ -13,8 +13,6 @@ import UserEventFactory from '../entityFactorys/UserEvents.factory'
 
 const QT = 100
 
-const QT = 1000
-
 export default class UserSeeder implements Seeder {
   public async run(
     dataSource: DataSource,
