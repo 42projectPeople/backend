@@ -11,7 +11,7 @@ import ReviewFactory from '../entityFactorys/Review.factory'
 import UserFactory from '../entityFactorys/User.factory'
 import UserEventFactory from '../entityFactorys/UserEvents.factory'
 
-const QT = 100
+const QT = 500
 
 export default class UserSeeder implements Seeder {
   public async run(
@@ -26,7 +26,45 @@ export default class UserSeeder implements Seeder {
       try {
         await dataSource.getRepository(Hashtag).save(fakeHashtag)
       } catch (e) {
-        console.log(e.message)
+        console.log(e)
+        i--
+        continue
+      }
+    }
+
+    //make default 100 user
+    for (let i = 0; i < QT; i++) {
+      const fakeUser = UserFactory()
+      try {
+        await dataSource.getRepository(User).save(fakeUser)
+      } catch (e) {
+        console.log(e)
+        i--
+        continue
+      }
+    }
+    // =========================================================================
+
+    //save event
+    for (let i = 0; i < QT; i++) {
+      const fakeEvent = EventFactory(QT)
+      try {
+        await dataSource.getRepository(Event).save(fakeEvent)
+      } catch (e) {
+        console.log(e)
+        i--
+        continue
+      }
+    }
+
+    //save review
+    //dependency: user, event
+    for (let i = 0; i < QT; i++) {
+      const fakeReview = ReviewFactory(QT)
+      try {
+        await dataSource.getRepository(Review).save(fakeReview)
+      } catch (e) {
+        console.log(e)
         i--
         continue
       }
@@ -34,46 +72,11 @@ export default class UserSeeder implements Seeder {
 
     //save userEvents
     for (let i = 0; i < QT; i++) {
-      const fakeUserEvent = UserEventFactory()
+      const fakeUserEvent = UserEventFactory(QT)
       try {
         await dataSource.getRepository(User_Events).save(fakeUserEvent)
       } catch (e) {
-        console.log(e.message)
-        i--
-        continue
-      }
-    }
-
-    //save review
-    for (let i = 0; i < QT; i++) {
-      const fakeReview = ReviewFactory()
-      try {
-        await dataSource.getRepository(Review).save(fakeReview)
-      } catch (e) {
-        console.log(e.message)
-        i--
-        continue
-      }
-    }
-
-    for (let i = 0; i < QT; i++) {
-      const fakeUser = UserFactory()
-      try {
-        await dataSource.getRepository(User).save(fakeUser)
-      } catch (e) {
-        console.log(e.message)
-        i--
-        continue
-      }
-    }
-
-    //save 100 event
-    for (let i = 0; i < QT; i++) {
-      const fakeEvent = EventFactory()
-      try {
-        await dataSource.getRepository(Event).save(fakeEvent)
-      } catch (e) {
-        console.log(e.message)
+        console.log(e)
         i--
         continue
       }
