@@ -96,27 +96,6 @@ export class UserController {
   @Get(':userID')
   @DocsGetUserByUserId()
   @UseGuards(JWTAuthGuard)
-  @ApiOperation({
-    summary: 'get user by user id',
-    description: 'get user by user id',
-  })
-  @ApiParam({
-    name: 'userID',
-    description: 'user id',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'User information',
-    type: User,
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'bad parameter',
-  })
-  @ApiResponse({
-    status: HttpStatus.NO_CONTENT,
-    description: 'there are no matched content',
-  })
   async getUserByUserId(
     @Param('userID', ParseIntPipe) userID: number,
     @Res({ passthrough: true }) res: Response
