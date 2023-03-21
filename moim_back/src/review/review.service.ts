@@ -13,12 +13,17 @@ import {
   ServiceGetReviewByEventId,
   ServiceGetReviewByUserId,
 } from './dto/ServiceGetReview.dto'
+import { PaginationDto } from './dto/Pagination.dto'
+import { GetReviewByHostIdDto } from './dto/GetReviewByHostId.dto'
+import { Event } from 'src/entity/Event.entity'
 
 @Injectable()
 export class ReviewService {
   constructor(
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
+    @InjectRepository(Event)
+    private readonly eventRepository: Repository<Event>,
     private datasource: DataSource
   ) {}
 
@@ -55,9 +60,9 @@ export class ReviewService {
   async findReviewByUserId(
     serviceDto: ServiceGetReviewByUserId
   ): Promise<Review[]> {
+    const qb = this.reviewRepository.createQueryBuilder('r')
     try {
-      const qb = this.reviewRepository
-        .createQueryBuilder('r')
+      const query = qb
         .innerJoinAndSelect('r.reviewerId', 'u', 'u.userId = r.reviewerId')
         .select([
           'r.reviewId',
@@ -77,7 +82,31 @@ export class ReviewService {
         })
         .offset(serviceDto.getStartIndex())
         .limit(serviceDto.getPageSize())
-      return await qb.getRawMany()
+      return await query.getRawMany()
+    } catch (e) {
+      throw new InternalServerErrorException()
+    }
+  }
+
+  async findReviewByHostId(
+    getReviewByHostId: GetReviewByHostIdDto,
+    hostId: number
+  ): Promise<Review[]> {
+    const qb = this.eventRepository.createQueryBuilder('e')
+    try {
+      const query = qb
+        .innerJoinAndSelect('e.reviewIds', 'r')
+        .where('e.hostId = :hostId', { hostId: hostId })
+
+      if (getReviewByHostId.sortByEventDate)
+        query.addOrderBy('e.eventDate', 'DESC')
+      if (getReviewByHostId.sortByEventRating)
+        query
+          .addOrderBy('e.rating', 'DESC')
+
+          .offset((getReviewByHostId.page - 1) * getReviewByHostId.pageSize)
+          .limit(getReviewByHostId.page)
+      return await query.getRawMany()
     } catch (e) {
       throw new InternalServerErrorException()
     }
