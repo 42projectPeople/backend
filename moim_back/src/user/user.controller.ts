@@ -92,8 +92,10 @@ export class UserController {
    * @param userID
    * @param res
    */
+
   @Get(':userID')
   @DocsGetUserByUserId()
+  @UseGuards(JWTAuthGuard)
   async getUserByUserId(
     @Param('userID', ParseIntPipe) userID: number,
     @Res({ passthrough: true }) res: Response

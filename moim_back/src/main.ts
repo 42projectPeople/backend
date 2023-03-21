@@ -12,7 +12,7 @@ declare global {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule, { cors: true })
   app.useGlobalFilters(new globalExceptionFilter())
   const config = new DocumentBuilder()
     .setTitle('Moim Api')
@@ -28,6 +28,13 @@ async function bootstrap() {
       bearerFormat: 'JWT',
     })
     .build()
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+    allowedHeaders:
+      'Authorization, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept',
+  })
   const document = SwaggerModule.createDocument(app, config)
 
   SwaggerModule.setup('api', app, document)
