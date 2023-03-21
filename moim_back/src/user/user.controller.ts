@@ -21,7 +21,7 @@ import { UserService } from './user.service'
 import { UpdateUserRequestDto } from './dto/updateUserRequestDto'
 import { CreateUserRequestDto } from './dto/createUserRequestDto'
 import { User } from '../entity/User.entity'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Request, Response } from 'express'
 import { Users } from './utils/Users.type'
 import { RegisterEventRequestDto } from './dto/registerEventRequestDto'
@@ -92,8 +92,31 @@ export class UserController {
    * @param userID
    * @param res
    */
+
   @Get(':userID')
   @DocsGetUserByUserId()
+  @UseGuards(JWTAuthGuard)
+  @ApiOperation({
+    summary: 'get user by user id',
+    description: 'get user by user id',
+  })
+  @ApiParam({
+    name: 'userID',
+    description: 'user id',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'User information',
+    type: User,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'bad parameter',
+  })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'there are no matched content',
+  })
   async getUserByUserId(
     @Param('userID', ParseIntPipe) userID: number,
     @Res({ passthrough: true }) res: Response

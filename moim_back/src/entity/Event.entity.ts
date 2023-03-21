@@ -107,7 +107,6 @@ export class Event {
     nullable: true,
   })
   @IsOptional()
-  @IsUrl()
   @Column({
     type: 'char',
     length: 150,

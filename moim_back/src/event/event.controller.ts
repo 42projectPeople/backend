@@ -59,10 +59,12 @@ export class EventController {
     @Req() req: Request,
     @Res() res: Response
   ) {
-    const userId = req.user.userId
-    console.log(body)
-    await this.eventService.createEvent(body, userId)
-    return res.sendStatus(HttpStatus.CREATED)
+    const ret = await this.eventService.createEvent(body, req.user.userId)
+    res.status(HttpStatus.CREATED).json({
+      message: 'Event created successfully',
+      data: ret,
+    })
+    return res
   }
 
   @Patch('/:id')

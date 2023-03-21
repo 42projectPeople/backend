@@ -37,7 +37,6 @@ export class EventService {
           id: eventId,
         })
         .getRawMany()
-
       //check length
       if (event.length != 1)
         throw new NotFoundException('해당 이벤트가 존재하지 않습니다.')
@@ -62,6 +61,7 @@ export class EventService {
     } catch (e) {
       console.log(e)
       if (e.errno === 404) throw e
+      console.error('Error occurred while finding event:', e)
       throw new InternalServerErrorException()
     } finally {
       await queryRunner.release()
@@ -76,7 +76,8 @@ export class EventService {
     })
     //insert
     try {
-      await this.eventRepository.insert(event)
+      const tmp = await this.eventRepository.insert(event)
+      return tmp.identifiers[0].eventId
     } catch (e) {
       console.log(e.message)
       if (e.errno === 1062)
