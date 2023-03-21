@@ -97,7 +97,17 @@ export class UserService {
 
     try {
       const query = qb.select().where('e.hostId = :id', { id: userId })
-      return query.execute()
+
+      if (userEventDto.sortByViews) query.addOrderBy('views', 'DESC')
+      if (userEventDto.sortByEventStartDate)
+        query.addOrderBy('eventDate', 'DESC')
+      if (!userEventDto.includeEndEvent) query.andWhere('eventDate > CURDATE()')
+
+      query
+        .offset((userEventDto.page - 1) * userEventDto.pageSize)
+        .limit(userEventDto.pageSize)
+
+      return await query.getRawMany()
     } catch (err) {
       throw new InternalServerErrorException('database server error')
     }
@@ -121,7 +131,16 @@ export class UserService {
           { userId }
         )
 
-      return await query.getMany()
+      if (userEventDto.sortByViews) query.addOrderBy('views', 'DESC')
+      if (userEventDto.sortByEventStartDate)
+        query.addOrderBy('eventDate', 'DESC')
+      if (!userEventDto.includeEndEvent) query.andWhere('eventDate > CURDATE()')
+
+      query
+        .offset((userEventDto.page - 1) * userEventDto.pageSize)
+        .limit(userEventDto.pageSize)
+
+      return await query.getRawMany()
     } catch (err) {
       throw new InternalServerErrorException('database server error')
     }
