@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../entity/User.entity'
-import { DataSource, IsNull, Repository } from 'typeorm'
+import { DataSource, Repository } from 'typeorm'
 import { UpdateUserRequestDto } from './dto/updateUserRequestDto'
 import { CreateUserRequestDto } from './dto/createUserRequestDto'
 import { RegisterEventRequestDto } from './dto/registerEventRequestDto'

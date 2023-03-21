@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   DefaultValuePipe,
@@ -22,14 +21,12 @@ import { UserService } from './user.service'
 import { UpdateUserRequestDto } from './dto/updateUserRequestDto'
 import { CreateUserRequestDto } from './dto/createUserRequestDto'
 import { User } from '../entity/User.entity'
-import { EventData } from './utils/EventData'
 import { ApiTags } from '@nestjs/swagger'
 import { Request, Response } from 'express'
 import { Users } from './utils/Users.type'
 import { RegisterEventRequestDto } from './dto/registerEventRequestDto'
 import { UnregisterEventRequestDto } from './dto/unregisterEventRequestDto'
 import { CheckNickNameResponseDto } from './dto/checkNickNameResponseDto'
-import { UserEventRoleType } from './utils/UserEventRoleType'
 import { UserRole } from './utils/UserRole.decorator'
 import { DocsCreateUser } from './swagger/DocsCreateUser.docs'
 import { DocscheckValidUserNickName } from './swagger/DocsCheckValidUserNickName.docs'
