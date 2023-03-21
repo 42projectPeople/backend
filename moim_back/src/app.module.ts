@@ -37,6 +37,9 @@ import { MapModule } from './map/map.module'
       synchronize: true, //특정 조건하에서 모든 데이터를 삭제하는 것 같습니다. 프로덕션에서는 사용하지 않는게 좋습니다.
       logging: true,
       legacySpatialSupport: false,
+      // ERROR [ExceptionsHandler] ER_SP_DOES_NOT_EXIST
+      //  에러가 발생하여 찾아본 결과 AsText() 함수가 deprecate 되어 발생한 에러였음
+      // 이를 해결하기 위해 TypeOrmModule 설정에서 legacySpatialSupport: false 를 추가하여 해결했음
     }),
     TypeOrmModule.forRoot({
       name: 'session',
