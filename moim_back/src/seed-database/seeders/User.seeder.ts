@@ -11,7 +11,7 @@ import ReviewFactory from '../entityFactorys/Review.factory'
 import UserFactory from '../entityFactorys/User.factory'
 import UserEventFactory from '../entityFactorys/UserEvents.factory'
 
-const QT = 500
+const QT = 1000
 
 export default class UserSeeder implements Seeder {
   public async run(
