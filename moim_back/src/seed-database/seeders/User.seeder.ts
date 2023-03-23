@@ -11,7 +11,7 @@ import ReviewFactory from '../entityFactorys/Review.factory'
 import UserFactory from '../entityFactorys/User.factory'
 import UserEventFactory from '../entityFactorys/UserEvents.factory'
 
-const QT = 500
+const QT = 1000
 
 export default class UserSeeder implements Seeder {
   public async run(
@@ -47,7 +47,7 @@ export default class UserSeeder implements Seeder {
 
     //save event
     for (let i = 0; i < QT; i++) {
-      const fakeEvent = EventFactory(QT)
+      const fakeEvent = EventFactory(Math.floor(QT / 10))
       try {
         await dataSource.getRepository(Event).save(fakeEvent)
       } catch (e) {
@@ -60,7 +60,7 @@ export default class UserSeeder implements Seeder {
     //save review
     //dependency: user, event
     for (let i = 0; i < QT; i++) {
-      const fakeReview = ReviewFactory(QT)
+      const fakeReview = ReviewFactory(Math.floor(QT / 10))
       try {
         await dataSource.getRepository(Review).save(fakeReview)
       } catch (e) {
@@ -72,7 +72,7 @@ export default class UserSeeder implements Seeder {
 
     //save userEvents
     for (let i = 0; i < QT; i++) {
-      const fakeUserEvent = UserEventFactory(QT)
+      const fakeUserEvent = UserEventFactory(Math.floor(QT / 10))
       try {
         await dataSource.getRepository(User_Events).save(fakeUserEvent)
       } catch (e) {
