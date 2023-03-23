@@ -96,6 +96,7 @@ export class ReviewService {
     try {
       const query = qb
         .innerJoinAndSelect('e.reviewIds', 'r')
+        .innerJoinAndSelect('r.reviewerId', 'u', 'r.reviewerId = u.userId')
         .where('e.hostId = :hostId', { hostId: hostId })
 
       if (getReviewByHostId.sortByEventDate)
