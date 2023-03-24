@@ -99,11 +99,11 @@ export class ReviewService {
       if (getReviewByHostId.sortByEventDate)
         query.addOrderBy('e.eventDate', 'DESC')
       if (getReviewByHostId.sortByEventRating)
-        query
-          .addOrderBy('e.rating', 'DESC')
+        query.addOrderBy('e.rating', 'DESC')
 
-          .offset((getReviewByHostId.page - 1) * getReviewByHostId.pageSize)
-          .limit(getReviewByHostId.page)
+      query
+        .offset((getReviewByHostId.page - 1) * getReviewByHostId.pageSize)
+        .limit(getReviewByHostId.page)
       return await query.getRawMany()
     } catch (e) {
       throw new InternalServerErrorException()
