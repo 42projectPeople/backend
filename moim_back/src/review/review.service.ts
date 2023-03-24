@@ -46,7 +46,7 @@ export class ReviewService {
           id: eventId,
         })
         .offset((paginationDto.page - 1) * paginationDto.pageSize)
-        .limit(paginationDto.page)
+        .limit(paginationDto.pageSize)
       return await qb.getMany()
     } catch (e) {
       throw new InternalServerErrorException()
@@ -78,7 +78,7 @@ export class ReviewService {
           id: userId,
         })
         .offset((paginationDto.page - 1) * paginationDto.pageSize)
-        .limit(paginationDto.page)
+        .limit(paginationDto.pageSize)
       return await query.getRawMany()
     } catch (e) {
       throw new InternalServerErrorException()
@@ -103,7 +103,7 @@ export class ReviewService {
 
       query
         .offset((getReviewByHostId.page - 1) * getReviewByHostId.pageSize)
-        .limit(getReviewByHostId.page)
+        .limit(getReviewByHostId.pageSize)
       return await query.getRawMany()
     } catch (e) {
       throw new InternalServerErrorException()
