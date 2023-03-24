@@ -48,9 +48,7 @@ export class ReviewController {
     @Param('eventId') eventId: string,
     @Query() paginationDto: PaginationDto
   ) {
-    return await this.reviewService.findReviewByEventID(
-      new ServiceGetReviewByEventId(paginationDto, +eventId)
-    )
+    return await this.reviewService.findReviewByEventID(paginationDto, +eventId)
   }
 
   @Get('/user/:userId')
@@ -67,9 +65,7 @@ export class ReviewController {
     @Param('userId') userId: string,
     @Query() paginationDto: PaginationDto
   ): Promise<Review[]> {
-    return await this.reviewService.findReviewByUserId(
-      new ServiceGetReviewByUserId(paginationDto, +userId)
-    )
+    return await this.reviewService.findReviewByUserId(paginationDto, +userId)
   }
 
   @Get('/user/host/:hostId')

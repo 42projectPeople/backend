@@ -9,10 +9,6 @@ import { Review } from 'src/entity/Review.entity'
 import { DataSource, Repository } from 'typeorm'
 import { UpdateReviewDto } from './dto/UpdateReview.dto'
 import CreateReviewDto from './dto/createReview.dto'
-import {
-  ServiceGetReviewByEventId,
-  ServiceGetReviewByUserId,
-} from './dto/ServiceGetReview.dto'
 import { PaginationDto } from './dto/Pagination.dto'
 import { GetReviewByHostIdDto } from './dto/GetReviewByHostId.dto'
 import { Event } from 'src/entity/Event.entity'
@@ -27,7 +23,7 @@ export class ReviewService {
     private datasource: DataSource
   ) {}
 
-  async findReviewByEventID(serviceDto: ServiceGetReviewByEventId) {
+  async findReviewByEventID(paginationDto: PaginationDto, eventId: number) {
     try {
       const qb = this.reviewRepository
         .createQueryBuilder('r')
@@ -47,10 +43,10 @@ export class ReviewService {
           'u.userLevel',
         ])
         .where("r.eventId = :id AND r.isDeleted = 'N'", {
-          id: serviceDto.getEventId(),
+          id: eventId,
         })
-        .offset(serviceDto.getStartIndex())
-        .limit(serviceDto.getPageSize())
+        .offset((paginationDto.page - 1) * paginationDto.pageSize)
+        .limit(paginationDto.page)
       return await qb.getMany()
     } catch (e) {
       throw new InternalServerErrorException()
@@ -58,7 +54,8 @@ export class ReviewService {
   }
 
   async findReviewByUserId(
-    serviceDto: ServiceGetReviewByUserId
+    paginationDto: PaginationDto,
+    userId: number
   ): Promise<Review[]> {
     const qb = this.reviewRepository.createQueryBuilder('r')
     try {
@@ -78,10 +75,10 @@ export class ReviewService {
           'u.userLevel',
         ])
         .where("r.reviewerId = :id AND r.isDeleted = 'N'", {
-          id: serviceDto.getUserId(),
+          id: userId,
         })
-        .offset(serviceDto.getStartIndex())
-        .limit(serviceDto.getPageSize())
+        .offset((paginationDto.page - 1) * paginationDto.pageSize)
+        .limit(paginationDto.page)
       return await query.getRawMany()
     } catch (e) {
       throw new InternalServerErrorException()
@@ -102,11 +99,11 @@ export class ReviewService {
       if (getReviewByHostId.sortByEventDate)
         query.addOrderBy('e.eventDate', 'DESC')
       if (getReviewByHostId.sortByEventRating)
-        query
-          .addOrderBy('e.rating', 'DESC')
+        query.addOrderBy('e.rating', 'DESC')
 
-          .offset((getReviewByHostId.page - 1) * getReviewByHostId.pageSize)
-          .limit(getReviewByHostId.page)
+      query
+        .offset((getReviewByHostId.page - 1) * getReviewByHostId.pageSize)
+        .limit(getReviewByHostId.page)
       return await query.getRawMany()
     } catch (e) {
       throw new InternalServerErrorException()
