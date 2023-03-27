@@ -12,7 +12,7 @@ export class HomeController {
 
   @Get('')
   @DocsGetHome()
-  // @UseGuards(JWTAuthGuard)
+  @UseGuards(JWTAuthGuard)
   async getHome(@Res() res: Response) {
     const result = await this.homeService.findHome()
     return res.status(HttpStatus.OK).send(result)
