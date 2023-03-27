@@ -13,7 +13,7 @@ export function DocsGetHome() {
       description: '성공적으로 요청을 수행했습니다.',
       type: HomeReturnDto,
     }),
-    // ApiBearerAuth('accessToken'),
+    ApiBearerAuth('accessToken'),
     ApiInternalServerErrorResponse({
       description: '데이터베이스 서버 에러',
     }),
