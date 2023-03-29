@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger'
 export interface summaryEvent {
   eventId: number
   eventImage: string
-  eventTitle: string
+  eventTilte: string
   eventAddress: string
 }
 export class HomeReturnDto {
