@@ -165,6 +165,7 @@ export class AuthService {
     await this.deleteSession(userId)
     await this.createSession(userId, accessToken, refreshToken)
     return {
+      userId: userId,
       accessToken: accessToken,
       refreshToken: refreshToken,
     }
@@ -225,6 +226,7 @@ export class AuthService {
     // update session and send it
     await this.updateSession(userId, newAccessToken, newRefreshToken)
     return {
+      userId: userId,
       accessToken: newAccessToken,
       refreshToken: newRefreshToken,
     }
