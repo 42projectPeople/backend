@@ -13,6 +13,7 @@ import { Review } from './Review.entity'
 import { User_Events } from './User_Events.entity'
 import { UserRoleType } from '../user/utils/UserRole.type'
 import { ApiProperty, ApiTags } from '@nestjs/swagger'
+import { SocialLoginType } from 'src/user/utils/SocialLogin.type'
 
 @Entity()
 @ApiTags('user api')
@@ -33,6 +34,17 @@ export class User {
     description: 'user id',
   })
   userId: number
+
+  @Column({
+    type: 'enum',
+    enum: SocialLoginType,
+  })
+  @ApiProperty({
+    description: "사용자의 회원가입 방식('G', 'N', 'K')",
+    enum: SocialLoginType,
+    example: 'G',
+  })
+  socialType: SocialLoginType
 
   @Column({ type: 'char', length: 35, nullable: false })
   @ApiProperty({
