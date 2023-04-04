@@ -56,7 +56,7 @@ export class HomeService {
         eventId: events[i].event_eventId,
         eventImage: image[0],
         eventAddress: events[i].event_location,
-        eventTilte: events[i].event_header,
+        eventTitle: events[i].event_header,
       }
       result.events.push(tmpEvent)
     }

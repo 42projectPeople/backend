@@ -36,7 +36,7 @@ export class GoogleLoginStrategy extends PassportStrategy(
     super({
       clientID: configService.get('GOOGLE_CLIENT_ID'),
       clientSecret: configService.get('GOOGLE_CLIENT_SECRET'),
-      callbackURL: 'http://localhost:3000/auth/redirect/google-login',
+      callbackURL: configService.get('GOOGLE_CALLBACK_URL'),
       scope: ['email'],
     })
   }
