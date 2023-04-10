@@ -44,26 +44,22 @@ jobs:
     - name: Install Secret
       run: |
         echo "pwd:: $PWD"
-        echo "ls::"
-        ls
-        echo "DBUSER=$DEV_DB_USER" >> moim_back/.env.dev
-
-        echo "HOST=$DEV_DB_HOST"  >> moim_back/.env.dev
-        echo "DATABASE=$DEV_DB_DATABASE" >> moim_back/.env.dev
-        echo "PASSWORD=$DEV_DB_PASSWORD" >> moim_back/.env.dev
-        echo "PORT=$DEV_DB_PORT" >> moim_back/.env.dev
-        echo "DBUSER=$DEV_DB_USER" >> moim_back/.env.dev
-        echo "JWT_SECRET=$DEV_JWT_SECRET" >> moim_back/.env.dev
-        echo "JWT_ACCESS_EXPIRE=$DEV_JWT_ACCESS_EXPIRE" >> moim_back/.env.dev
-        echo "JWT_REFRESH_EXPIRE=$DEV_JWT_REFRESH_EXPIRE" >> moim_back/.env.dev
-        echo "EXP_ROTATION_THRESHOLD=$DEV_EXP_ROTATION_THRESHOLD" >> moim_back/.env.dev
-        echo "GOOGLE_CLIENT_ID=$DEV_GOOGLE_CLIENT_ID" >> moim_back/.env.dev
-        echo "GOOGLE_CLIENT_SECRET=$DEV_GOOGLE_CLIENT_SECRET" >> moim_back/.env.dev
-        echo "GOOGLE_CALLBACK_URL=$DEV_GOOGLE_CALLBACK_URL" >> moim_back/.env.dev
-        echo "NAVER_CLOUD_MAP_CLIENT_KEY=$DEV_NAVER_CLOUD_MAP_CLIENT_KEY" >> moim_back/.env.dev
-        echo "NAVER_CLOUD_MAP_SECRET_KEY=$DEV_NAVER_CLOUD_MAP_SECRET_KEY" >> moim_back/.env.dev
-        echo "NAVER_CLOUD_SEARCH_CLIENT_KEY=$DEV_NAVER_CLOUD_SEARCH_CLIENT_KEY" >> moim_back/.env.dev
-        echo "NAVER_CLOUD_SEARCH_SECRET_KEY=$DEV_NAVER_CLOUD_SEARCH_SECRET_KEY" >> moim_back/.env.dev
+        echo "HOST=$DEV_DB_HOST"  >> ./moim_back/.env.dev
+        echo "DATABASE=$DEV_DB_DATABASE" >> ./moim_back/.env.dev
+        echo "PASSWORD=$DEV_DB_PASSWORD" >> ./moim_back/.env.dev
+        echo "PORT=$DEV_DB_PORT" >> ./moim_back/.env.dev
+        echo "DBUSER=$DEV_DB_USER" >> ./moim_back/.env.dev
+        echo "JWT_SECRET=$DEV_JWT_SECRET" >> ./moim_back/.env.dev
+        echo "JWT_ACCESS_EXPIRE=$DEV_JWT_ACCESS_EXPIRE" >> ./moim_back/.env.dev
+        echo "JWT_REFRESH_EXPIRE=$DEV_JWT_REFRESH_EXPIRE" >> ./moim_back/.env.dev
+        echo "EXP_ROTATION_THRESHOLD=$DEV_EXP_ROTATION_THRESHOLD" >> ./moim_back/.env.dev
+        echo "GOOGLE_CLIENT_ID=$DEV_GOOGLE_CLIENT_ID" >> ./moim_back/.env.dev
+        echo "GOOGLE_CLIENT_SECRET=$DEV_GOOGLE_CLIENT_SECRET" >> ./moim_back/.env.dev
+        echo "GOOGLE_CALLBACK_URL=$DEV_GOOGLE_CALLBACK_URL" >> ./moim_back/.env.dev
+        echo "NAVER_CLOUD_MAP_CLIENT_KEY=$DEV_NAVER_CLOUD_MAP_CLIENT_KEY" >> ./moim_back/.env.dev
+        echo "NAVER_CLOUD_MAP_SECRET_KEY=$DEV_NAVER_CLOUD_MAP_SECRET_KEY" >> ./moim_back/.env.dev
+        echo "NAVER_CLOUD_SEARCH_CLIENT_KEY=$DEV_NAVER_CLOUD_SEARCH_CLIENT_KEY" >> ./moim_back/.env.dev
+        echo "NAVER_CLOUD_SEARCH_SECRET_KEY=$DEV_NAVER_CLOUD_SEARCH_SECRET_KEY" >> ./moim_back/.env.dev
 
 
 
