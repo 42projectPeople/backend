@@ -104,6 +104,7 @@ jobs:
         --application-name test_release \
         --deployment-config-name CodeDeployDefault.OneAtATime \
         --deployment-group-name test_group \
+        --output text \
         --s3-location bucket=moim-test-release,bundleType=zip,key=moim.zip
 
     - name: Wait for deployment to finish
