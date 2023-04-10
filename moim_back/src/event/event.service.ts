@@ -135,4 +135,14 @@ export class EventService {
       throw new InternalServerErrorException()
     }
   }
+
+  /**
+   * @brief image url을 DeletedImage 테이블에 추가합니다.
+   * imageurl이 해당 사용자의 것인지 확인(host중인 이벤트의 것인지 확인해야합니다.)
+   *
+   * @param string
+   *
+   * @return
+   */
+  async removeImage(imageUrl: string) {}
 }
