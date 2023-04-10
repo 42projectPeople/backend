@@ -42,6 +42,7 @@ jobs:
       deploymentId: ${{ steps.create-deployment.outputs.deploymendId }}
     environment: production
 
+
     steps:
     - name: Install Secret
       run: |
@@ -63,7 +64,6 @@ jobs:
         echo "NAVER_CLOUD_SEARCH_SECRET_KEY=$DEV_NAVER_CLOUD_SEARCH_SECRET_KEY" >> .env.dev
         ls -al
         echo $PWD
-        cd moim_back
 
 
       env:
@@ -87,6 +87,9 @@ jobs:
         
     - name: Checkout
       uses: actions/checkout@v3
+        run: |
+          ls -al
+        
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
