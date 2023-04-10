@@ -45,7 +45,6 @@ jobs:
     steps:
     - name: Install Secret
       run: |
-        echo "pwd:: $PWD"
         echo "HOST=$DEV_DB_HOST"  >> .env.dev
         echo "DATABASE=$DEV_DB_DATABASE" >> .env.dev
         echo "PASSWORD=$DEV_DB_PASSWORD" >> .env.dev
@@ -62,6 +61,7 @@ jobs:
         echo "NAVER_CLOUD_MAP_SECRET_KEY=$DEV_NAVER_CLOUD_MAP_SECRET_KEY" >> .env.dev
         echo "NAVER_CLOUD_SEARCH_CLIENT_KEY=$DEV_NAVER_CLOUD_SEARCH_CLIENT_KEY" >> .env.dev
         echo "NAVER_CLOUD_SEARCH_SECRET_KEY=$DEV_NAVER_CLOUD_SEARCH_SECRET_KEY" >> .env.dev
+        echo "$PWD"
         find . | grep moim_back
       env:
         DEV_DB_HOST:							${{ secrets.DEV_DB_HOST }}
