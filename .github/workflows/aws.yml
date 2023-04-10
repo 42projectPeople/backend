@@ -62,6 +62,7 @@ jobs:
         echo "NAVER_CLOUD_MAP_SECRET_KEY=$DEV_NAVER_CLOUD_MAP_SECRET_KEY" >> .env.dev
         echo "NAVER_CLOUD_SEARCH_CLIENT_KEY=$DEV_NAVER_CLOUD_SEARCH_CLIENT_KEY" >> .env.dev
         echo "NAVER_CLOUD_SEARCH_SECRET_KEY=$DEV_NAVER_CLOUD_SEARCH_SECRET_KEY" >> .env.dev
+        find . | grep moim_back
       env:
         DEV_DB_HOST:							${{ secrets.DEV_DB_HOST }}
         DEV_DB_DATABASE:						${{ secrets.DEV_DB_DATABASE }}
