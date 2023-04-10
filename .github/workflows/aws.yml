@@ -44,6 +44,9 @@ jobs:
 
 
     steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
     - name: Install Secret
       run: |
         echo "HOST=$DEV_DB_HOST"  >> .env.dev
@@ -83,13 +86,6 @@ jobs:
         DEV_NAVER_CLOUD_MAP_SECRET_KEY:			${{ secrets.DEV_NAVER_CLOUD_MAP_SECRET_KEY  }}
         DEV_NAVER_CLOUD_SEARCH_CLIENT_KEY:		${{ secrets.DEV_NAVER_CLOUD_SEARCH_CLIENT_KEY }}
         DEV_NAVER_CLOUD_SEARCH_SECRET_KEY:		${{ secrets.DEV_NAVER_CLOUD_SEARCH_SECRET_KEY }}
-
-        
-    - name: Checkout
-      uses: actions/checkout@v3
-      run: |
-        ls -al
-        
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
