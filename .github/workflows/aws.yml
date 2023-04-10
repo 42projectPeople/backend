@@ -96,7 +96,7 @@ jobs:
 
     - name: Create CodeDeploy Deployment
       id: create-deployment
-      run: aws deploy create-deployment --application-name test_release  --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name test_group --s3-location bucket=moim-test-release,bundleType=zip,key=moim.zip >> $GITHUB_OUTPUT
+      run: aws deploy create-deployment --application-name test_release  --deployment-config-name CodeDeployDefault.OneAtATime --output text --deployment-group-name test_group --s3-location bucket=moim-test-release,bundleType=zip,key=moim.zip >> $GITHUB_OUTPUT
 
     - name: Wait for deployment to finish
       run: |
