@@ -44,9 +44,12 @@ jobs:
 
 
     steps:
+      # 레포지토리로 이동합니다.
     - name: Checkout
       uses: actions/checkout@v3
 
+
+      # 환경변수를 설치합니다.
     - name: Install Secret
       run: |
         echo "HOST=$DEV_DB_HOST"  >> .env.dev
@@ -64,9 +67,8 @@ jobs:
         echo "NAVER_CLOUD_MAP_CLIENT_KEY=$DEV_NAVER_CLOUD_MAP_CLIENT_KEY" >> .env.dev
         echo "NAVER_CLOUD_MAP_SECRET_KEY=$DEV_NAVER_CLOUD_MAP_SECRET_KEY" >> .env.dev
         echo "NAVER_CLOUD_SEARCH_CLIENT_KEY=$DEV_NAVER_CLOUD_SEARCH_CLIENT_KEY" >> .env.dev
-        echo "NAVER_CLOUD_SEARCH_SECRET_KEY=$DEV_NAVER_CLOUD_SEARCH_SECRET_KEY"
-        ls -al
-        echo $PWD
+        echo "NAVER_CLOUD_SEARCH_SECRET_KEY=$DEV_NAVER_CLOUD_SEARCH_SECRET_KEY" >> .env.dev
+        mv .env.dev ./moim_back
 
 
       env:
@@ -87,6 +89,18 @@ jobs:
         DEV_NAVER_CLOUD_SEARCH_CLIENT_KEY:		${{ secrets.DEV_NAVER_CLOUD_SEARCH_CLIENT_KEY }}
         DEV_NAVER_CLOUD_SEARCH_SECRET_KEY:		${{ secrets.DEV_NAVER_CLOUD_SEARCH_SECRET_KEY }}
 
+      # install nodejs
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.14.0'
+
+      # install depls
+      run: |
+        cd moim_back
+        npm i --f
+        npm run build
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -100,7 +114,12 @@ jobs:
     - name: Create CodeDeploy Deployment
       id: create-deployment
       run: |
-        id=$(aws deploy create-deployment --application-name test_release  --deployment-config-name CodeDeployDefault.OneAtATime --output text --deployment-group-name test_group --s3-location bucket=moim-test-release,bundleType=zip,key=moim.zip)
+        id=$(aws deploy create-deployment \
+        --application-name test_release \
+        --deployment-config-name CodeDeployDefault.OneAtATime \
+        --output text --deployment-group-name test_group \
+        --file-exists-behavior OVERWRITE \
+        --s3-location bucket=moim-test-release,bundleType=zip,key=moim.zip)
         echo "deploymentId=$id" >> $GITHUB_OUTPUT
 
     - name: Wait for deployment to finish
