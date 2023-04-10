@@ -87,8 +87,8 @@ jobs:
         
     - name: Checkout
       uses: actions/checkout@v3
-        run: |
-          ls -al
+      run: |
+        ls -al
         
 
     - name: Configure AWS credentials
