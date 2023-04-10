@@ -94,12 +94,9 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18.14.0'
-
-      # install depls
-      run: |
-        cd moim_back
-        npm i --f
-        npm run build
+    - run: echo $PWD
+    - run: cd moim_back && npm i --f
+    - run: cd moim_back && npm run build
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
