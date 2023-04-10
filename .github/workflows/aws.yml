@@ -52,42 +52,12 @@ jobs:
       # 환경변수를 설치합니다.
     - name: Install Secret
       run: |
-        echo "HOST=$DEV_DB_HOST"  >> .env.dev
-        echo "DATABASE=$DEV_DB_DATABASE" >> .env.dev
-        echo "PASSWORD=$DEV_DB_PASSWORD" >> .env.dev
-        echo "PORT=$DEV_DB_PORT" >> .env.dev
-        echo "DBUSER=$DEV_DB_USER" >> .env.dev
-        echo "JWT_SECRET=$DEV_JWT_SECRET" >> .env.dev
-        echo "JWT_ACCESS_EXPIRE=$DEV_JWT_ACCESS_EXPIRE" >> .env.dev
-        echo "JWT_REFRESH_EXPIRE=$DEV_JWT_REFRESH_EXPIRE" >> .env.dev
-        echo "EXP_ROTATION_THRESHOLD=$DEV_EXP_ROTATION_THRESHOLD" >> .env.dev
-        echo "GOOGLE_CLIENT_ID=$DEV_GOOGLE_CLIENT_ID" >> .env.dev
-        echo "GOOGLE_CLIENT_SECRET=$DEV_GOOGLE_CLIENT_SECRET" >> .env.dev
-        echo "GOOGLE_CALLBACK_URL=$DEV_GOOGLE_CALLBACK_URL" >> .env.dev
-        echo "NAVER_CLOUD_MAP_CLIENT_KEY=$DEV_NAVER_CLOUD_MAP_CLIENT_KEY" >> .env.dev
-        echo "NAVER_CLOUD_MAP_SECRET_KEY=$DEV_NAVER_CLOUD_MAP_SECRET_KEY" >> .env.dev
-        echo "NAVER_CLOUD_SEARCH_CLIENT_KEY=$DEV_NAVER_CLOUD_SEARCH_CLIENT_KEY" >> .env.dev
-        echo "NAVER_CLOUD_SEARCH_SECRET_KEY=$DEV_NAVER_CLOUD_SEARCH_SECRET_KEY" >> .env.dev
+        echo "$ENV_DEV"  >> .env.dev
         mv .env.dev ./moim_back
 
 
       env:
-        DEV_DB_HOST:							${{ secrets.DEV_DB_HOST }}
-        DEV_DB_DATABASE:						${{ secrets.DEV_DB_DATABASE }}
-        DEV_DB_PASSWORD:						${{ secrets.DEV_DB_PASSWORD }}
-        DEV_DB_PORT:							${{ secrets.DEV_DB_PORT }}
-        DEV_DB_USER:							${{ secrets.DEV_DB_USER }}
-        DEV_JWT_SECRET:							${{ secrets.DEV_JWT_SECRET }}
-        DEV_JWT_ACCESS_EXPIRE:					${{ secrets.DEV_JWT_ACCESS_EXPIRE }}
-        DEV_JWT_REFRESH_EXPIRE:					${{ secrets.DEV_JWT_REFRESH_EXPIRE }}
-        DEV_EXP_ROTATION_THRESHOLD:				${{ secrets.DEV_EXP_ROTATION_THRESHOLD }}
-        DEV_GOOGLE_CLIENT_ID:					${{ secrets.DEV_GOOGLE_CLIENT_ID }}
-        DEV_GOOGLE_CLIENT_SECRET:				${{ secrets.DEV_GOOGLE_CLIENT_SECRET }}
-        DEV_GOOGLE_CALLBACK_URL:				${{ secrets.DEV_GOOGLE_CALLBACK_URL }}
-        DEV_NAVER_CLOUD_MAP_CLIENT_KEY:			${{ secrets.DEV_NAVER_CLOUD_MAP_CLIENT_KEY }}
-        DEV_NAVER_CLOUD_MAP_SECRET_KEY:			${{ secrets.DEV_NAVER_CLOUD_MAP_SECRET_KEY  }}
-        DEV_NAVER_CLOUD_SEARCH_CLIENT_KEY:		${{ secrets.DEV_NAVER_CLOUD_SEARCH_CLIENT_KEY }}
-        DEV_NAVER_CLOUD_SEARCH_SECRET_KEY:		${{ secrets.DEV_NAVER_CLOUD_SEARCH_SECRET_KEY }}
+        ENV_DEV:	${{ secrets.ENV_DEV }}
 
       # install nodejs
     - name: Use Node.js
