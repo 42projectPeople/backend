@@ -107,4 +107,9 @@ export class EventController {
       throw new NotFoundException('삭제할 데이터가 없습니다.')
     return res.sendStatus(HttpStatus.NO_CONTENT)
   }
+
+  @Delete('/image/:imageUrl')
+  async deleteEventImage(@Param('imageUrl') imageUrl: string) {
+    await this.eventService.removeImage(imageUrl)
+  }
 }
