@@ -62,7 +62,10 @@ jobs:
         echo "NAVER_CLOUD_SEARCH_CLIENT_KEY=$DEV_NAVER_CLOUD_SEARCH_CLIENT_KEY" >> .env.dev
         echo "NAVER_CLOUD_SEARCH_SECRET_KEY=$DEV_NAVER_CLOUD_SEARCH_SECRET_KEY" >> .env.dev
         echo "$PWD"
-        find . | grep moim_back
+        cat  .env.dev
+        mv .env.dev ./moim_back
+        ls
+
       env:
         DEV_DB_HOST:							${{ secrets.DEV_DB_HOST }}
         DEV_DB_DATABASE:						${{ secrets.DEV_DB_DATABASE }}
