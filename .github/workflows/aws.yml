@@ -110,4 +110,5 @@ jobs:
     - name: Wait for deployment to finish
 
       run: |
+        echo ${{ steps.create-deployment }}
         aws deploy wait deployment-successful --deployment-id ${{ steps.create-deployment.outputs.deploymentId }}
