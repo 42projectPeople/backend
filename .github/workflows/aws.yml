@@ -62,9 +62,6 @@ jobs:
         echo "NAVER_CLOUD_MAP_SECRET_KEY=$DEV_NAVER_CLOUD_MAP_SECRET_KEY" >> .env.dev
         echo "NAVER_CLOUD_SEARCH_CLIENT_KEY=$DEV_NAVER_CLOUD_SEARCH_CLIENT_KEY" >> .env.dev
         echo "NAVER_CLOUD_SEARCH_SECRET_KEY=$DEV_NAVER_CLOUD_SEARCH_SECRET_KEY" >> .env.dev
-
-
-
       env:
         DEV_DB_HOST:							${{ secrets.DEV_DB_HOST }}
         DEV_DB_DATABASE:						${{ secrets.DEV_DB_DATABASE }}
@@ -84,9 +81,6 @@ jobs:
         DEV_NAVER_CLOUD_SEARCH_SECRET_KEY:		${{ secrets.DEV_NAVER_CLOUD_SEARCH_SECRET_KEY }}
 
         
-
-
-
     - name: Checkout
       uses: actions/checkout@v3
 
@@ -102,12 +96,7 @@ jobs:
 
     - name: Create CodeDeploy Deployment
       id: create-deployment
-      run: |
-        aws deploy create-deployment \
-        --application-name test_release \
-        --deployment-config-name CodeDeployDefault.OneAtATime \
-        --deployment-group-name test_group \
-        --s3-location bucket=moim-test-release,bundleType=zip,key=moim.zip >> "$GITHUB_OUTPUT"
+      run: aws deploy create-deployment --application-name test_release  --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name test_group --s3-location bucket=moim-test-release,bundleType=zip,key=moim.zip >> $GITHUB_OUTPUT
 
     - name: Wait for deployment to finish
       run: |
