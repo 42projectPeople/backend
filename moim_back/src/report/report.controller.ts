@@ -1,42 +1,30 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common'
+import { Controller, Post, Body, UseGuards } from '@nestjs/common'
 import { ReportService } from './report.service'
-import { CreateReportDto } from './dto/create-report.dto'
-import { UpdateReportDto } from './dto/update-report.dto'
+import { CreateReportDto } from './dto/createReport.dto'
+import { ApiTags } from '@nestjs/swagger'
+import { DocsPostReport } from './swagger/DocsPostReport.docs'
+import { UsePipes, ValidationPipe } from '@nestjs/common'
+import { JWTAuthGuard } from 'src/auth/jwt-auth/jwt-auth.guard'
 
 @Controller('report')
+@ApiTags('report api')
 export class ReportController {
   constructor(private readonly reportService: ReportService) {}
 
-  @Post()
+  @Post('')
+  @DocsPostReport()
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    })
+  )
+  // @UseGuards(JWTAuthGuard)
   create(@Body() createReportDto: CreateReportDto) {
-    return this.reportService.create(createReportDto)
-  }
-
-  @Get()
-  findAll() {
-    return this.reportService.findAll()
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reportService.findOne(+id)
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReportDto: UpdateReportDto) {
-    return this.reportService.update(+id, updateReportDto)
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reportService.remove(+id)
+    // const reporterId = user.userId
+    const reporterId = 1
+    return this.reportService.createReport(createReportDto, reporterId)
   }
 }
