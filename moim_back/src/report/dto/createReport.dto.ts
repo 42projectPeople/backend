@@ -18,10 +18,10 @@ export class CreateReportDto {
   reportType: ReportType
 
   @ApiProperty({
-    description: '신고 내용 min 1, max 250',
+    description: '신고 내용 한글로 min 1, max 100',
     example: '신고 예시',
   })
-  @IsByteLength(1, 250)
+  @IsByteLength(1, 300)
   content: string
 
   @ApiProperty({
