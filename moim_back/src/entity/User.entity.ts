@@ -13,6 +13,8 @@ import { Review } from './Review.entity'
 import { User_Events } from './User_Events.entity'
 import { UserRoleType } from '../user/utils/UserRole.type'
 import { ApiProperty, ApiTags } from '@nestjs/swagger'
+import { Report } from './Report.entity'
+import { report } from 'process'
 
 @Entity()
 @ApiTags('user api')
@@ -102,4 +104,7 @@ export class User {
 
   @OneToMany(() => Review, (review) => review.eventId)
   reviews: Review[]
+
+  @OneToMany(() => Report, (report) => report.reporterId)
+  reports: Report[]
 }
