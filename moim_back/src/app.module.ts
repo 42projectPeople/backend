@@ -19,6 +19,7 @@ import { TokenSession } from './entity/TokenSession.entity'
 import { SearchModule } from './search/search.module'
 import { MapModule } from './map/map.module'
 import { HomeModule } from './home/home.module'
+import { ReportModule } from './report/report.module'
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { HomeModule } from './home/home.module'
     SearchModule,
     MapModule,
     HomeModule,
+    ReportModule,
   ],
   controllers: [AppController],
   providers: [AppService],
