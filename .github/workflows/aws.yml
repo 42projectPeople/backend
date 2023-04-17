@@ -36,6 +36,10 @@ env:
 
 jobs:
   deploy:
+    permissions:
+      id-token: write
+      contents: write
+
     name: Deploy Develop
     runs-on: ubuntu-latest
     outputs:
@@ -72,7 +76,7 @@ jobs:
       run: cd moim_back && npm run build
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@master
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
