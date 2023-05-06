@@ -23,9 +23,14 @@ export class HashtagService {
   async findEventsByHashtagId(dto: serviceEventByHashtagDto): Promise<Event[]> {
     const qb = this.eventRepository.createQueryBuilder('e')
     try {
-      const query = qb.where('e.hashtagId = :id', { id: dto.getHashtagId() })
+      const query = qb
+        .where('e.hashtagId = :id', { id: dto.getHashtagId() })
+        .andWhere('e.isDeleted = false')
+        .andWhere('e.eventDate > now()')
 
+      //view 수에따른 조회
       if (dto.getRecommendation() === true) query.orderBy('views', 'DESC')
+      if (dto.getSortByDate() === true) query.orderBy('eventDate', 'DESC')
 
       query
         .offset(dto.getStartIndex()) //
