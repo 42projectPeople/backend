@@ -18,6 +18,19 @@ export class controllerEventByHashtagIdDto {
   readonly page: number
 
   @ApiProperty({
+    description: '날짜순에 따른 정렬 여부',
+    required: true,
+    default: true,
+  })
+  @IsBoolean()
+  @Transform(({ value }) => {
+    if (value === 'true') return true
+    if (value === 'false') return false
+    return new ValidationError()
+  })
+  readonly sortByDate?: boolean = true
+
+  @ApiProperty({
     description: 'view 수에따른 추천 여부, true면 view 순서대로',
     required: false,
     default: false,

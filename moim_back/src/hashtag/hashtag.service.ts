@@ -23,9 +23,21 @@ export class HashtagService {
   async findEventsByHashtagId(dto: serviceEventByHashtagDto): Promise<Event[]> {
     const qb = this.eventRepository.createQueryBuilder('e')
     try {
-      const query = qb.where('e.hashtagId = :id', { id: dto.getHashtagId() })
+      const query = qb
 
-      if (dto.getRecommendation() === true) query.orderBy('views', 'DESC')
+      /*
+       * ISSUE #126: hashtag없는 경우 전체 글 가져오도록 설정됨.
+       */
+      if (dto.getHashtagId())
+        query.where('e.hashtagId = :id', { id: dto.getHashtagId() })
+
+      query.andWhere('e.isDeleted = false').andWhere('e.eventDate > now()')
+
+      //view 수에따른 조회
+      if (dto.getRecommendation() === true) query.addOrderBy('views', 'DESC')
+
+      //최신순 정렬
+      if (dto.getSortByDate() === true) query.addOrderBy('eventDate', 'DESC')
 
       query
         .offset(dto.getStartIndex()) //

@@ -7,6 +7,7 @@ import { controllerEventByHashtagIdDto } from './controllerEventByHashtagId.dto'
 export class serviceEventByHashtagDto {
   private readonly page: number
   private readonly recommendation: boolean
+  private readonly sortByDate: boolean
   private readonly pageSize: number
   private readonly hashtagId: number
 
@@ -15,6 +16,7 @@ export class serviceEventByHashtagDto {
     this.recommendation = controllerDto.recommendation
     this.pageSize = controllerDto.pageSize
     this.hashtagId = hashtagId
+    this.sortByDate = controllerDto.sortByDate
   }
 
   getPageSize(): number {
@@ -27,6 +29,10 @@ export class serviceEventByHashtagDto {
 
   getRecommendation(): boolean {
     return this.recommendation
+  }
+
+  getSortByDate(): boolean {
+    return this.sortByDate
   }
 
   getHashtagId(): number {

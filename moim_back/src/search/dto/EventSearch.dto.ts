@@ -8,6 +8,7 @@ import {
   IsPositive,
 } from 'class-validator'
 import { TransformBooleanInParam } from './utils/TransformBooleanInDto'
+import { Type } from 'class-transformer'
 
 export class EventSearchDto extends SearchDto {
   @ApiProperty({
@@ -20,6 +21,15 @@ export class EventSearchDto extends SearchDto {
   @IsBoolean()
   @TransformBooleanInParam()
   private readonly sortByViews?: boolean = false
+
+  @ApiProperty({
+    description: '날짜순에 따른 정렬 여부',
+    required: true,
+    default: true,
+  })
+  @IsBoolean()
+  @TransformBooleanInParam()
+  readonly sortByDate?: boolean = true
 
   @ApiProperty({
     description: '정원이 다 찬 이벤트도 포함하는가?',
@@ -49,9 +59,8 @@ export class EventSearchDto extends SearchDto {
     default: null,
     example: null,
   })
-  @IsOptional()
-  @IsPositive()
-  @IsInt()
+  @Type(() => Number)
+  @IsNumber()
   private readonly locRange?: number = null
 
   @ApiProperty({
@@ -60,7 +69,7 @@ export class EventSearchDto extends SearchDto {
     default: null,
     example: null,
   })
-  @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   private readonly latitude?: number = null
 
@@ -70,12 +79,16 @@ export class EventSearchDto extends SearchDto {
     default: null,
     example: null,
   })
-  @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   private readonly longitude?: number = null
 
   getSortByViews(): boolean {
     return this.sortByViews
+  }
+
+  getSortByDate(): boolean {
+    return this.sortByDate
   }
 
   getIncludeMax(): boolean {

@@ -25,8 +25,8 @@ export function DocsGetEventsByHashtag() {
     ApiParam({
       name: 'hashtagId',
       description: '이벤트가 가진 해시태그의 아이디',
-      required: true,
       type: Number,
+      required: false,
       example: 1,
     })
   )
