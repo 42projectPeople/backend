@@ -59,9 +59,8 @@ export class EventSearchDto extends SearchDto {
     default: null,
     example: null,
   })
-  @IsOptional()
-  @IsPositive()
-  @IsInt()
+  @Type(() => Number)
+  @IsNumber()
   private readonly locRange?: number = null
 
   @ApiProperty({
@@ -70,7 +69,7 @@ export class EventSearchDto extends SearchDto {
     default: null,
     example: null,
   })
-  @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   private readonly latitude?: number = null
 
@@ -80,7 +79,7 @@ export class EventSearchDto extends SearchDto {
     default: null,
     example: null,
   })
-  @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   private readonly longitude?: number = null
 
