@@ -48,17 +48,21 @@ export class SearchService {
         word: '%' + eventSearchDto.getWord() + '%',
       })
 
+      //날짜순 정렬
+      if (eventSearchDto.getSortByDate() === true)
+        query.addOrderBy('e.eventDate', 'DESC')
+
       //뷰 수에따른 정렬
       if (eventSearchDto.getSortByViews() === true)
         query.addOrderBy('e.views', 'DESC')
 
-      //정원이 다 찬 이벤트는 검색하지 않는 조건
-      if (eventSearchDto.getIncludeMax() === false)
-        query.andWhere('e.curParticipant < e.maxParticipant')
-
       //이벤트 rating순으로 정렬하는 조건
       if (eventSearchDto.getSortByRating() === true)
         query.addOrderBy('e.rating', 'DESC')
+
+      //정원이 다 찬 이벤트는 검색하지 않는 조건
+      if (eventSearchDto.getIncludeMax() === false)
+        query.andWhere('e.curParticipant < e.maxParticipant')
 
       if (eventSearchDto.getLocRange() != null) {
         query.andWhere(
