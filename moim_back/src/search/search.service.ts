@@ -64,7 +64,11 @@ export class SearchService {
       if (eventSearchDto.getIncludeMax() === false)
         query.andWhere('e.curParticipant < e.maxParticipant')
 
-      if (eventSearchDto.getLocRange() != null) {
+      if (
+        eventSearchDto.getLocRange() != null &&
+        eventSearchDto.getLatitude() != null &&
+        eventSearchDto.getLongitude() != null
+      ) {
         query.andWhere(
           'ST_DISTANCE_SPHERE(point, POINT(:long, :lat)) <= :locRange',
           {
